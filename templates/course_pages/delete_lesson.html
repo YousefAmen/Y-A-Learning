@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="delete-container" style="margin-top: 100px;">
+  <div class="delete-header">
+    <i class="fas fa-exclamation-triangle warning-icon"></i>
+    <h1>Delete Lesson</h1>
+  </div>
+
+  <div class="delete-content">
+    <p class="delete-warning">You are about to delete the Lesson:</p>
+    <p class="module-title">"{{ object.title }}"</p>
+    <p class="delete-consequence"><i class="fas fa-exclamation-circle"></i> This action cannot be undone.Are You Sure
+      About Delete This Lesson.</p>
+  </div>
+
+  <form action="" method="POST" class="delete-form">
+    {% csrf_token %}
+    <div class="button-group">
+      <a href="{% url 'course:create-module' object.module.course.slug object.module.course.token %}"
+        class="btn-cancel">
+        <i class="fas fa-arrow-left me-2"></i> Cancel
+      </a>
+      <button type="submit" class="btn-delete">
+        <i class="fas fa-trash me-2"></i> Confirm Delete
+      </button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .delete-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  .delete-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .delete-header h1 {
+    font-size: 22px;
+    color: #d32f2f;
+    margin: 0 0 0 10px;
+  }
+
+  .warning-icon {
+    color: #d32f2f;
+    font-size: 24px;
+  }
+
+  .delete-content {
+    margin-bottom: 30px;
+  }
+
+  .delete-warning {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+  }
+
+  .module-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-left: 3px solid #d32f2f;
+  }
+
+  .delete-consequence {
+    font-size: 15px;
+    color: #d32f2f;
+    background-color: #fde8e8;
+    padding: 12px;
+    border-radius: 5px;
+    margin-top: 20px;
+  }
+
+  .delete-consequence i {
+    margin-right: 8px;
+  }
+
+  .delete-form {
+    margin-top: 30px;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+  }
+
+  /* Keep original button styles */
+  .btn-delete {
+    background-color: darkred;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-delete:hover {
+    background-color: #a30000;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-cancel {
+    background-color: #b7babe;
+    color: #323b48;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-cancel:hover {
+    background-color: #d1d5db;
+  }
+</style>
+{% endblock %}

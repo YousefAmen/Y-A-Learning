@@ -1,0 +1,500 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #6c63ff;
+        --secondary-color: #5649e6;
+        --accent-color: #ff6584;
+        --background-color: #f8f9fa;
+        --text-color: #2d3748;
+        --light-text: #718096;
+        --border-color: #e2e8f0;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+        background-color: var(--background-color);
+        font-family: 'Inter', sans-serif;
+        color: var(--text-color);
+    }
+
+    .profile-container {
+        max-width: 1200px;
+        margin: 120px auto 40px;
+        padding: 0 20px;
+    }
+
+    /* Header Section */
+    .profile-header {
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        padding: 30px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--primary-color);
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin: 0 auto 20px;
+        overflow: hidden;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .profile-title {
+        font-size: 1.1rem;
+        color: var(--light-text);
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--light-text);
+    }
+
+    /* Main Layout */
+    .profile-layout {
+        display: flex;
+        gap: 30px;
+    }
+
+    /* Sidebar */
+    .profile-sidebar {
+        flex: 0 0 300px;
+    }
+
+    .sidebar-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .sidebar-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-item {
+        margin-bottom: 15px;
+    }
+
+    .info-item i {
+        color: var(--primary-color);
+        width: 20px;
+        text-align: center;
+        margin-right: 10px;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .social-links a {
+        color: var(--light-text);
+        font-size: 1.2rem;
+        transition: color 0.2s;
+    }
+
+    .social-links a:hover {
+        color: var(--primary-color);
+    }
+
+    /* Main Content */
+    .profile-content {
+        flex: 1;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 20px;
+    }
+
+    /* Courses Grid */
+    .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .course-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+
+    .course-details {
+        padding: 15px;
+    }
+
+    .course-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-color);
+    }
+
+    .course-instructor {
+        font-size: 0.9rem;
+        color: var(--light-text);
+        margin-bottom: 10px;
+    }
+
+    .course-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.85rem;
+        color: var(--light-text);
+        margin-bottom: 15px;
+    }
+
+    .course-rating {
+        color: #fbbf24;
+        font-weight: 600;
+    }
+
+    .course-price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    /* Button Styles */
+    .course-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.3rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-btn i {
+        font-size: 0.9rem;
+    }
+
+    .btn-view {
+        background-color: #6c63ff;
+        color: white;
+    }
+
+    .btn-view:hover {
+        background-color: #5649e6;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-edit {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #2980b9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-create {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+    .btn-create:hover {
+        background-color: #27ae60;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-browse {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .btn-browse:hover {
+        background-color: #c0392b;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .course-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .empty-state {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+    }
+
+    .empty-state p {
+        margin-bottom: 20px;
+        color: var(--light-text);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .profile-layout {
+            flex-direction: column;
+        }
+
+        .profile-sidebar {
+            flex: 1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-name {
+            font-size: 1.8rem;
+        }
+
+        .courses-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header text-center">
+        <div class="profile-avatar">
+            {% if profile.profile_pic %}
+            <img src="{{ profile.profile_pic.url }}" alt="{{ profile.first_name }} {{ profile.last_name }}">
+            {% else %}
+            {{ profile.first_name|first|upper }}{{ profile.last_name|first|upper }}
+            {% endif %}
+        </div>
+        <h1 class="profile-name">{{ profile.first_name }} {{ profile.last_name }}</h1>
+        <p class="profile-title">
+            {% if profile.bio %}
+            {{ profile.bio }}
+            {% else %}
+            {% if profile.role == 'instructor' %}Instructor{% else %}Learner{% endif %}
+            {% endif %}
+        </p>
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                {% if request.user.profile.role == 'instructor' %}
+                <div class="stat-value">{{ instructor_courses.count|default:"0" }}</div>
+                <div class="stat-label">Courses</div>
+                {% else %}
+                <div class="stat-value">{{ ernollment.count|default:"0" }}</div>
+                <div class="stat-label">Ernollment Courses</div>
+                {% endif %}
+            </div>
+            <div class="stat-item">
+                {% if request.user.profile.role == 'instructor' %}
+                <div class="stat-value">{{ profile.followers.count|default:"0" }}</div>
+                <div class="stat-label">Followers</div>
+                {% endif %}
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ profile.create_at|date:"Y" }}</div>
+                <div class="stat-label">Member since</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-layout">
+        <!-- Sidebar -->
+        <div class="profile-sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">About</h3>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ profile.user.email }}</span>
+                </div>
+                {% if profile.phone %}
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>{{ profile.phone }}</span>
+                </div>
+                {% endif %}
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ profile.country|default:"Not specified" }}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Joined {{ profile.create_at|date:"M Y" }}</span>
+                </div>
+            </div>
+
+            {% if request.user.profile.role == 'instructor' %}
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Social Links</h3>
+                <div class="social-links">
+                    {% if profile.linkedin %}
+                    <a href="{{ profile.linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    {% endif %}
+                    {% if profile.twitter %}
+                    <a href="{{ profile.twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                    {% endif %}
+                    {% if profile.github %}
+                    <a href="{{ profile.github }}" target="_blank"><i class="fab fa-github"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="profile-content">
+            <h2 class="section-title">
+                {% if request.user.instructor %}
+                My Courses
+                {% else %}
+                Learning Journey
+                {% endif %}
+            </h2>
+
+            {% if instructor_courses %}
+            <div class="courses-grid">
+                {% for course in instructor_courses|slice:'4' %}
+                <div class="course-card">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" class="course-image" alt="{{ course.title }}">
+                    {% else %}
+                    <img src="{% static 'assets/img/gallery/topic7.png' %}" class="course-image"
+                        alt="{{ course.title }}">
+                    {% endif %}
+
+                    <div class="course-details">
+                        <h3 class="course-title">{{ course.title }}</h3>
+                        <p class="course-instructor">By {{ course.instructor.first_name }}
+                            {{course.instructor.last_name}}</p>
+                        <div class="course-meta">
+                            <span class="course-rating">
+                                <i class="fas fa-star"></i> {{ course.rating|default:"4.5" }}
+                            </span>
+                            <span>{{ course.enrollments.count|default:"0" }} students</span>
+                        </div>
+                        <div class="course-actions">
+                            <a href="{% url 'course:course-detail' course.slug course.token %}"
+                                class="course-btn btn-view">
+                                <i class="fas fa-eye"></i> View Course
+                            </a>
+
+
+                            <a href="{% url 'course:update-course' course.slug course.token %}"
+                                class="course-btn btn-edit">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+
+
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+            {% if request.user.instructor %}
+            <a href="{% url 'members:user_public_profile' profile.slug profile.token %}"
+                class="course-btn btn-browse d-flex justify-content-center">
+                <i class="fas fa-search"></i> Public Profile
+            </a>
+            {% endif %}
+            {% else %}
+
+            <div class="empty-state">
+                <p>No courses found</p>
+                {% if request.user.profile.role == 'instructor' %}
+                <a href="{% url 'course:create-course' %}" class="course-btn btn-create">
+                    <i class="fas fa-plus-circle"></i> Create Your First Course
+                </a>
+                {% else %}
+                <a href="{% url 'course:courses-list' %}" class="course-btn btn-browse">
+                    <i class="fas fa-search"></i> Browse All Courses
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

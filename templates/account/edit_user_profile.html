@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --secondary-color: #1e40af;
+        --background-color: #f3f4f6;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    body {
+        background-color: var(--background-color);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .profile-container {
+        padding: 1rem;
+        margin-top: 120px;
+        margin-bottom: 2rem;
+        min-height: auto;
+        overflow: hidden;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--card-shadow);
+        padding: 2rem;
+        position: relative;
+    }
+
+    .profile-header {
+        background: var(--primary-color);
+        height: 4rem;
+        position: relative;
+        border-radius: 1rem 1rem 0 0;
+    }
+
+    .profile-content {
+        position: relative;
+        z-index: 1;
+        padding-top: 1rem;
+    }
+
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        border: 4px solid white;
+        box-shadow: var(--card-shadow);
+        object-fit: cover;
+        display: block;
+    }
+
+    .initials-placeholder {
+        width: 150px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: white;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        margin: 0 auto;
+    }
+
+    .profile-name {
+        color: #1f2937;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 1.5rem;
+    }
+
+    .form-section {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--card-shadow);
+        padding: 2rem;
+    }
+
+    .section-title {
+        color: #1f2937;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e5e7eb;
+        width: 100%;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+    }
+
+    /* Button Styles */
+    .btn-save {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .delete-profile-btn {
+        background-color: #bb2124;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-save:hover {
+        background-color: var(--secondary-color);
+    }
+
+    .btn-cancel {
+        background-color: #e5e7eb;
+        color: #4b5563;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+
+    .btn-cancel:hover {
+        background-color: #d1d5db;
+    }
+
+    .change-password {
+        background-color: #e5e7eb;
+        color: #4b5563;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .delete-profile-btn:hover {
+        background-color: #a71e22;
+    }
+
+    /* Button Container */
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .image-upload-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .image-upload-label {
+        cursor: pointer;
+        display: block;
+    }
+
+    .image-upload-icon {
+        position: absolute;
+        bottom: 10px;
+        left: 150px;
+        background-color: var(--primary-color);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container profile-container">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Profile Picture Section -->
+            <div class="col-lg-4 col-md-5 mb-4">
+                <div class="profile-card">
+                    <div class="profile-header"></div>
+                    <div class="profile-content text-center">
+                        <div class="image-upload-container">
+                            <label for="id_profile_pic" class="image-upload-label">
+                                {% if form.profile_pic.value %}
+                                <img src="{{ form.profile_pic.value.url }}" alt="Profile Picture"
+                                    class="profile-picture rounded-circle" id="profileImagePreview">
+                                {% else %}
+                                <div class="initials-placeholder" id="initialsPlaceholder">
+                                    {{ form.first_name.value|first }}{{ form.last_name.value|first }}
+                                </div>
+                                {% endif %}
+                                <div class="image-upload-icon"
+                                    onclick="document.getElementById('id_profile_pic').click()">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                            </label>
+                            <input type="file" name="profile_pic" accept="image/*" id="id_profile_pic" class="d-none">
+                        </div>
+                        <h2 class="profile-name">{{form.first_name.value}} {{form.last_name.value}}</h2>
+                        {% if form.bio.value %}
+                        <p class="text-muted mb-4">{{form.bio.value}}</p>
+                        {% else %}
+                        <p class="text-muted mb-4">Tell Us About You !</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Form Section -->
+            <div class="col-lg-8 col-md-7">
+                <div class="form-section">
+                    <h2 class="section-title">Profile Information</h2>
+
+                    <div class="row g-4">
+                        <!-- First Row - Name Fields -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                {{ form.first_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+
+                        <!-- Bio Field -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+                                {{ form.bio }}
+                                <small class="form-text text-muted">Tell us about yourself (max 500 characters)</small>
+                            </div>
+                        </div>
+
+                        <!-- Second Row - Personal Info -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                                {{ form.phone }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
+                                {{ form.gender }}
+                            </div>
+                        </div>
+
+                        <!-- Third Row - Location/Date -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                                {{ form.country }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.birth_date.id_for_label }}" class="form-label">Birth Date</label>
+                                {{ form.birth_date }}
+                            </div>
+                        </div>
+
+                        <!-- Social Links (Conditional) -->
+                        {% if user.profile.role == 'instructor' %}
+                        <div class="col-12">
+                            <h4 class="mt-4 mb-3"
+                                style="color: #1f2937; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem;">
+                                Social Links</h4>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.linkedin.id_for_label }}" class="form-label">LinkedIn</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
+                                    {{ form.linkedin }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.twitter.id_for_label }}" class="form-label">Twitter</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fab fa-twitter"></i></span>
+                                    {{ form.twitter }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.github.id_for_label }}" class="form-label">GitHub</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fab fa-github"></i></span>
+                                    {{ form.github }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Button Container -->
+                    <div class="button-container">
+                        <a href="{% url 'account_change_password' %}" class="change-password">
+                            <i class="fas fa-key me-2"></i> Change Password
+                        </a>
+
+                        <a href="{{ get_absolute_url }}" class="btn-cancel">
+                            <i class="fas fa-arrow-left me-2"></i> Cancel
+                        </a>
+
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save me-2"></i> Save Changes
+                        </button>
+
+                        <a href="{% url 'members:delete_profile' profile.slug profile.role profile.token %}"
+                            class="delete-profile-btn">
+                            <i class="fas fa-trash me-2"></i> Delete Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Image preview functionality
+    document.getElementById('id_profile_pic').addEventListener('change', function (event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.getElementById('profileImagePreview');
+            const initialsPlaceholder = document.getElementById('initialsPlaceholder');
+            const container = document.querySelector('.image-upload-container');
+
+            if (preview) {
+                preview.src = URL.createObjectURL(file);
+                preview.onload = () => URL.revokeObjectURL(preview.src);
+            } else if (initialsPlaceholder) {
+                const img = document.createElement('img');
+                img.id = 'profileImagePreview';
+                img.className = 'profile-picture rounded-circle';
+                img.src = URL.createObjectURL(file);
+                img.alt = 'Profile Picture';
+
+                container.querySelector('.image-upload-label').replaceChild(img, initialsPlaceholder);
+                img.onload = () => URL.revokeObjectURL(img.src);
+            }
+        }
+    });
+</script>
+{% endblock %}

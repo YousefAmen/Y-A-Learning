@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{%block content %}
+<div class="error-container">
+  <h1 class="error-code">
+    403
+  </h1>
+  <p class="error-message">
+    Access Denied
+  </p>
+  <p class="error-details">
+    Sorry, you don’t have
+    permission to access this
+    page. {% if message%} {{message }}
+    {%else%}Only authorized
+    users can perform this
+    action.{%endif %}
+  </p>
+  <a href="{% url 'course:index' %}" class="btn btn-secoundry">Back to Courses</a>
+</div>
+
+<style>
+  .error-container {
+    text-align: center;
+    padding: 50px;
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .error-code {
+    font-size: 80px;
+    color: #dc3545;
+    /* Bootstrap danger red */
+    margin: 0;
+    font-weight: bold;
+  }
+
+  .error-message {
+    font-size: 24px;
+    color: #333;
+    margin: 10px 0;
+  }
+
+  .error-details {
+    font-size: 16px;
+    color: #666;
+    margin: 20px 0;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    /* Bootstrap primary blue */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+    color: #fff;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,1018 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load course_tags %}
+{% block content %}
+<div class="course-landing-page">
+  <!-- Breadcrumb Navigation -->
+  <div class="course-breadcrumbs">
+    {% for tag in course.tags.all %}
+    <a href="{% url 'course:fetch-courses-by-tag' tag.name %}">{{tag.name}}</a>
+    <i class="bi bi-chevron-right"></i>
+    {% endfor %}
+    <span>{{ course.title }}</span>
+  </div>
+
+  <!-- Course Header Section -->
+  <div class="course-header">
+    <div class="badge">Bestseller</div>
+    <h1 class="course-title">{{ course.title }}</h1>
+    <p class="course-subtitle">{{ course.subtitle }}</p>
+
+    <div class="course-meta">
+      <div class="rating">
+        <div class="stars">
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-half"></i>
+        </div>
+        <span class="rating-value">{{ course.rating }}</span>
+        <span class="rating-count">({{ course.review_count }} ratings)</span>
+      </div>
+      <div class="enrollment">{{ course.enrollment_count }} students</div>
+      <div class="enrollment">category <a href="{% url 'course:fetch-courses-by-category' course.category %}">
+          {{course.category }}</a></div>
+    </div>
+
+    <div class="instructor-info">
+      <span>Created by</span>
+      <a href="{% url 'members:user_public_profile' course.instructor.slug  course.instructor.token %}"
+        class="instructor-link">
+        {{ course.instructor.first_name }} {{course.instructor.last_name}}
+      </a>
+    </div>
+
+    <div class="course-details">
+      <div class="detail-item">
+        <i class="bi bi-arrow-clockwise"></i>
+        <span>Last updated {{ course.updated_at|date:"M Y" }}</span>
+      </div>
+      <div class="detail-item">
+        <i class="bi bi-globe"></i>
+        <span>{{ course.language }}</span>
+      </div>
+      <div class="detail-item">
+        <i class="bi bi-card-text"></i>
+        <span>{{ course.description }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="course-main-content">
+    <!-- Left Column - Course Content -->
+    <div class="course-content-column">
+      <!-- Course Preview -->
+      <div class="course-preview">
+        <div class="preview-container">
+          <button class="preview-button" aria-label="Play course preview">
+            <video src="{{course.promo_video}}"></video>
+            <div class="preview-overlay">
+              <i class="bi bi-play-circle-fill play-icon"></i>
+              <span class="preview-text">Preview this course</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="course-tabs">
+        <button class="tab-button active" data-tab="overview">
+          <i class="bi bi-info-circle"></i> Overview
+        </button>
+        <button class="tab-button" data-tab="content">
+          <i class="bi bi-list-ul"></i> Content
+        </button>
+        <button class="tab-button" data-tab="instructor">
+          <i class="bi bi-person"></i> Instructor
+        </button>
+        <button class="tab-button" data-tab="reviews">
+          <i class="bi bi-star"></i> Reviews
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content active" id="overview-tab">
+        <h2>What you'll learn</h2>
+        <ul class="learning-outcomes">
+          {% if course.course_outcomes.all %}
+          {% for outcome in course.course_outcomes.all %}
+          <li><i class="bi bi-check-circle-fill"></i> {{ outcome.description }}</li>
+          {% endfor %}
+          {% endif%}
+        </ul>
+
+        <h2>Requirements</h2>
+        <div class="requirements">
+          <li>{{ course.requirements }}</li>
+        </div>
+
+        <h2>Description</h2>
+        <div class="course-description">
+          {{ course.description|safe }}
+        </div>
+      </div>
+
+      <div class="tab-content" id="content-tab">
+        <div class="content-header">
+          <div class="stats">
+            {{ course.modules.count }} sections • {{ course.modules.lessons.count }} lectures •
+            {{total_hours|format_duration }}h total length
+          </div>
+          <button class="expand-all">
+            <i class="bi bi-arrows-angle-expand"></i> Expand all sections
+          </button>
+        </div>
+
+        <div class="course-content">
+          {% for section in course.modules.all %}
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">
+                <h3>{{ section.title }}</h3>
+                <span>{{ section.lectures.count }} lectures • {{ section.duration }}</span>
+              </div>
+              <i class="bi bi-plus-lg toggle-icon"></i>
+            </div>
+            <div class="lectures-list">
+              {% for lecture in section.lessons.all %}
+              <div class="lecture">
+                <div class="lecture-info">
+                  <i class="bi bi-play-circle lecture-icon"></i>
+                  <span class="lecture-title">{{ lecture.title }}</span>
+                  <span><img src="{{lecture.thumbnail.url}}" alt=""></span>
+                  {% if lecture.preview %}
+                  <span class="preview-badge">Preview</span>
+                  {% endif %}
+                </div>
+                <span class="lecture-duration">{{ lecture.duration|format_duration }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="tab-content" id="instructor-tab">
+        <div class="instructor-profile">
+          {% if course.instructor.profile_pic %}
+          <img src="{{ course.instructor.profile_pic.url }}" alt="{{ instructor.name }}" class="instructor-avatar">
+          {% else %}
+          <img src="{% static 'assets/img/gallery/team1.png' %}" alt="{{ instructor.name }}" class="instructor-avatar">
+          {% endif %}
+          <div class="instructor-details">
+            <h2>{{ course.instructor.first_name }} {{course.instructor.last_name}}</h2>
+            <p class="title">{{ course.instructor.bio }}</p>
+
+            <div class="instructor-stats">
+              <div class="stat">
+                <span class="value">{{ course.instructor.course_count }}</span>
+                <span class="label">Courses</span>
+              </div>
+              <div class="stat">
+                <span class="value">{{ course.instructor.student_count }}</span>
+                <span class="label">Students</span>
+              </div>
+              <div class="stat">
+                <span class="value">{{ course.instructor.rating }}</span>
+                <span class="label">Rating</span>
+              </div>
+            </div>
+
+            <div class="instructor-bio">
+              {{ course.instructor.bio|safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="reviews-tab">
+        <div class="reviews-summary">
+          <div class="overall-rating">
+            <span class="rating-value">{{ course.rating }}</span>
+            <div class="stars">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-half"></i>
+            </div>
+            <span class="rating-label">Course Rating</span>
+          </div>
+
+          <div class="rating-distribution">
+            {% for i in "54321" %}
+            <div class="rating-bar">
+              <span class="stars">{{ i }}<i class="bi bi-star-fill"></i></span>
+              <div class="bar-container">
+                <div class="bar" style="width: {% widthratio forloop.counter 1 20 %}%"></div>
+              </div>
+              <span class="percentage">{% widthratio forloop.counter 1 20 %}%</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="reviews-list">
+          {% for review in course.reviews.all %}
+          <div class="review">
+            <div class="reviewer-info">
+              <img src="{{ review.user.avatar.url }}" alt="{{ review.user.name }}" class="reviewer-avatar">
+              <div>
+                <h4>{{ review.user.name }}</h4>
+                <div class="review-meta">
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                  </div>
+                  <span class="date">{{ review.created_at|date:"M j, Y" }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="review-content">
+              <h5>{{ review.title }}</h5>
+              <p>{{ review.content }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Purchase Section -->
+    <div class="purchase-column">
+      <div class="purchase-card">
+        <div class="price-display">
+          <span class="current-price">${{ course.price }}</span>
+          {% if course.discount_price %}
+          <span class="original-price">${{ course.discount_price }}</span>
+          {% endif %}
+        </div>
+
+        <button class="buy-now-btn">
+          <i class="bi bi-credit-card"></i> Buy now
+        </button>
+        <button class="add-to-cart-btn">
+          <i class="bi bi-cart-plus"></i> Add to cart
+        </button>
+
+        <div class="money-back-guarantee">
+          <i class="bi bi-shield-check"></i> 30-Day Money-Back Guarantee
+        </div>
+
+        <div class="course-includes">
+          <h4>This course includes:</h4>
+          <ul>
+            <li><i class="bi bi-play-circle"></i> {{ total_hours|format_duration }} hours on-demand video</li>
+            <li><i class="bi bi-file-earmark"></i> {{ course.resources_count }} downloadable resources</li>
+            <li><i class="bi bi-infinity"></i> Full lifetime access</li>
+            <li><i class="bi bi-award"></i> Certificate of completion</li>
+          </ul>
+        </div>
+
+        <div class="action-buttons">
+          <button class="share-btn">
+            <i class="bi bi-share"></i> Share
+          </button>
+          <button class="gift-btn">
+            <i class="bi bi-gift"></i> Gift this course
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Base Styles */
+  .course-landing-page {
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 20px 40px;
+    font-family: 'Inter', sans-serif;
+    color: #1f2937;
+    line-height: 1.6;
+  }
+
+  /* Breadcrumbs */
+  .course-breadcrumbs {
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .course-breadcrumbs a {
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .course-breadcrumbs a:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .course-breadcrumbs i {
+    margin: 0 5px;
+    color: #6b7280;
+    font-size: 12px;
+  }
+
+  /* Course Header */
+  .course-header {
+    margin-bottom: 40px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: #059669;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  .course-title {
+    font-size: 32px;
+    margin: 0 0 10px;
+    font-weight: 800;
+    color: #1f2937;
+    line-height: 1.2;
+  }
+
+  .course-subtitle {
+    font-size: 18px;
+    color: #4b5563;
+    margin: 0 0 20px;
+    font-weight: 400;
+  }
+
+  .course-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .stars {
+    color: #f59e0b;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .rating-value {
+    font-weight: bold;
+    color: #f59e0b;
+  }
+
+  .rating-count {
+    color: #6b7280;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .enrollment {
+    color: #6b7280;
+  }
+
+  .instructor-info {
+    margin-bottom: 20px;
+    font-size: 15px;
+  }
+
+  .instructor-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .instructor-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .course-details {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6b7280;
+    font-size: 14px;
+  }
+
+  .detail-item i {
+    font-size: 16px;
+  }
+
+  /* Main Content Layout */
+  .course-main-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+  }
+
+  .course-content-column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .purchase-column {
+    width: 340px;
+    position: sticky;
+    top: 20px;
+  }
+
+  /* Course Preview */
+  .course-preview {
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .course-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .preview-container {
+    position: relative;
+    background: #000;
+  }
+
+  .preview-button {
+    position: relative;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    width: 100%;
+    display: block;
+  }
+
+  .preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    transition: background 0.2s;
+  }
+
+  .preview-button:hover .preview-overlay {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .play-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  .preview-text {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  /* Course Tabs */
+  .course-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 30px;
+  }
+
+  .tab-button {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    position: relative;
+    color: #6b7280;
+    font-size: 15px;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tab-button:hover {
+    color: #1f2937;
+  }
+
+  .tab-button.active {
+    color: #2563eb;
+  }
+
+  .tab-button.active:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #2563eb;
+  }
+
+  .tab-content {
+    display: none;
+    margin-bottom: 40px;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* Content Section */
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .stats {
+    color: #6b7280;
+    font-size: 14px;
+  }
+
+  .expand-all {
+    background: none;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .expand-all:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .course-content {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .section {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background 0.2s;
+  }
+
+  .section:last-child {
+    border-bottom: none;
+  }
+
+  .section-header {
+    padding: 16px 20px;
+    background: #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .section-header:hover {
+    background: #eef2f7;
+  }
+
+  .section-title {
+    flex: 1;
+  }
+
+  .section-title h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .section-title span {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+    display: block;
+  }
+
+  .toggle-icon {
+    color: #6b7280;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    font-size: 14px;
+  }
+
+  .lectures-list {
+    display: none;
+    padding: 0;
+  }
+
+  .section.expanded .lectures-list {
+    display: block;
+  }
+
+  .section.expanded .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  .lecture {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px 12px 50px;
+    align-items: center;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.2s;
+  }
+
+  .lecture:last-child {
+    border-bottom: none;
+  }
+
+  .lecture:hover {
+    background: #f3f4f6;
+  }
+
+  .lecture-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 15px;
+  }
+
+  .lecture-icon {
+    color: #6b7280;
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .lecture-title {
+    font-size: 14px;
+    color: #4b5563;
+    flex: 1;
+  }
+
+  .preview-badge {
+    background: #3b82f6;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 10px;
+    font-weight: 600;
+  }
+
+  .lecture-duration {
+    color: #6b7280;
+    font-size: 13px;
+    min-width: 50px;
+    text-align: right;
+  }
+
+  /* Purchase Card */
+  .purchase-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .purchase-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .price-display {
+    margin-bottom: 20px;
+  }
+
+  .current-price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: #6b7280;
+    margin-left: 10px;
+    font-size: 16px;
+  }
+
+  .buy-now-btn,
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+    font-size: 16px;
+    transition: all 0.2s;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .buy-now-btn {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
+  }
+
+  .buy-now-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
+  }
+
+  .add-to-cart-btn {
+    background: white;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+  }
+
+  .add-to-cart-btn:hover {
+    background: #f0f4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .money-back-guarantee {
+    text-align: center;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #6b7280;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .course-includes h4 {
+    margin-top: 0;
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #1f2937;
+  }
+
+  .course-includes ul {
+    padding-left: 20px;
+    margin: 0;
+  }
+
+  .course-includes li {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #4b5563;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+  }
+
+  .share-btn,
+  .gift-btn {
+    background: none;
+    border: none;
+    color: #2563eb;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .share-btn:hover,
+  .gift-btn:hover {
+    color: #1d4ed8;
+  }
+
+  /* Learning Outcomes */
+  .learning-outcomes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 20px;
+    margin: 20px 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .learning-outcomes li {
+    display: flex;
+    align-items: flex-start;
+    font-size: 14px;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  /* Reviews */
+  .review {
+    padding: 20px 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+
+  .reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .review-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6b7280;
+    font-size: 14px;
+  }
+
+  /* Rating Distribution */
+  .rating-distribution {
+    margin-top: 20px;
+  }
+
+  .rating-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+
+  .bar-container {
+    flex: 1;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar {
+    height: 100%;
+    background: #f59e0b;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .course-main-content {
+      flex-direction: column;
+    }
+
+    .purchase-column {
+      width: 100%;
+      position: static;
+      margin-top: 40px;
+    }
+
+    .purchase-card {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .course-landing-page {
+      padding: 20px;
+    }
+
+    .course-title {
+      font-size: 28px;
+    }
+
+    .course-tabs {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 5px;
+    }
+
+    .learning-outcomes {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Tab functionality
+  document.querySelectorAll('.course-tabs .tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all buttons
+      document.querySelectorAll('.course-tabs .tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Add active class to clicked button
+      button.classList.add('active');
+
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // Show corresponding tab content
+      const tabId = button.getAttribute('data-tab') + '-tab';
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
+
+  // Section accordion functionality
+  document.querySelectorAll('.section-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const section = header.parentElement;
+      section.classList.toggle('expanded');
+    });
+  });
+
+  // Expand all sections button
+  document.querySelector('.expand-all')?.addEventListener('click', () => {
+    const allSections = document.querySelectorAll('.section');
+    const isExpanded = allSections[0]?.classList.contains('expanded');
+
+    allSections.forEach(section => {
+      if (isExpanded) {
+        section.classList.remove('expanded');
+      } else {
+        section.classList.add('expanded');
+      }
+    });
+
+    const expandButton = document.querySelector('.expand-all');
+    if (expandButton) {
+      expandButton.textContent = isExpanded ?
+        '<i class="bi bi-arrows-angle-expand"></i> Expand all sections' :
+        '<i class="bi bi-arrows-angle-contract"></i> Collapse all sections';
+    }
+  });
+
+  // Initialize first section as expanded by default
+  document.querySelector('.section')?.classList.add('expanded');
+</script>
+
+
+{% endblock %}

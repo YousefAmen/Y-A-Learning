@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load course_tags %}
+
+{% block content %}
+<div class="outcomes-container">
+  <!-- Create Outcomes Form -->
+  <div class="form-wrapper">
+    <h2>Create Learning Outcomes</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form|crispy }}
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="custom-btn">
+          <i class="fas fa-plus mr-2"></i>Add Outcome
+        </button>
+        <a href="{% url 'course:create-module' course.slug course.token %}" class="next-page-btn">
+          Create Modules <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Display Existing Outcomes -->
+  {% if course_outcomes %}
+  <div class="outcomes-list">
+    <h3>Current Learning Outcomes</h3>
+    <div class="outcomes-card">
+      <ul class="outcomes-items">
+        {% for outcome in course_outcomes %}
+        <li class="outcome-item">
+          <div class="outcome-content">
+            <span class="outcome-bullet">•</span>
+            <span class="outcome-text">{{ outcome.description }}</span>
+          </div>
+          <a href="{% url 'course:edit-learning-objective' outcome.slug %}" class="edit-outcomes-btn">
+            <i class="fas fa-edit me-1"></i>Edit
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .outcomes-container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+
+  .form-wrapper {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 50px;
+  }
+
+  /* Form styles remain the same */
+
+  .btn-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    gap: 15px;
+  }
+
+  /* Smaller buttons */
+  .custom-btn {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .custom-btn:hover {
+    background: #5b21b6;
+  }
+
+  .next-page-btn {
+    background: #10b981;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .next-page-btn:hover {
+    background: #0d9f6e;
+  }
+
+  /* Outcomes List */
+  .outcomes-list h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .outcomes-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.04);
+  }
+
+  .outcomes-items {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .outcome-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .outcome-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+  }
+
+  .outcome-bullet {
+    color: #7c3aed;
+    font-weight: bold;
+    font-size: 20px;
+    margin-right: 12px;
+  }
+
+  .outcome-text {
+    flex-grow: 1;
+  }
+
+  /* Smaller edit button */
+  .edit-outcomes-btn {
+    background-color: #3b82f6;
+    color: white;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    margin-left: 15px;
+  }
+
+  .edit-outcomes-btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+  }
+
+  .edit-outcomes-btn i {
+    margin-right: 5px;
+    font-size: 12px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .btn-group {
+      flex-direction: column;
+    }
+
+    .outcome-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .edit-outcomes-btn {
+      margin-left: 0;
+      align-self: flex-end;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load course_tags %}
+
+{% block content %}
+<div class="edit-objective-container" style="margin-top: 150px;">
+  <div class="edit-objective-card">
+    <div class="edit-objective-header">
+      <h2><i class="fas fa-edit mr-2"></i>Edit Learning Objective</h2>
+      <a href="{% url 'course:course-detail' objective.course.slug objective.course.token %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Course
+      </a>
+    </div>
+
+    <form method="post" class="edit-objective-form">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form|crispy }}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-btn">
+          <i class="fas fa-save mr-2"></i>Save Changes
+        </button>
+        <a href="{% url 'course:delete-learning-objective' object.slug %}" class="delete-btn">
+          <i class="fas fa-trash-alt mr-2"></i>Delete Objective
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .edit-objective-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  .edit-objective-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .edit-objective-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .edit-objective-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .back-btn {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+  }
+
+  .back-btn:hover {
+    color: #3730a3;
+    transform: translateX(-3px);
+  }
+
+  .edit-objective-form {
+    margin-top: 20px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .form-group input[type="text"],
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: border 0.3s ease;
+  }
+
+  .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-group input[type="text"]:focus,
+  .form-group textarea:focus {
+    border-color: #7c3aed;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .save-btn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .save-btn:hover {
+    background: #5b21b6;
+    transform: translateY(-2px);
+  }
+
+  .delete-btn {
+    background: #f43f5e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .delete-btn:hover {
+    background: #e11d48;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .edit-objective-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .save-btn,
+    .delete-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}
