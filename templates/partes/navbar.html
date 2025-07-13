@@ -1,0 +1,123 @@
+{% load static %}
+<div id="preloader-active">
+    <div class="preloader d-flex align-items-center justify-content-center">
+        <div class="preloader-inner position-relative">
+            <div class="preloader-circle"></div>
+            <div class="preloader-img pere-text">
+                <img src="{% static 'assets/img/logo/loder.png' %}" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+<header id="main-header">
+    <!-- Header Start -->
+    <div class="header-area header-transparent">
+        <div class="main-header">
+            <div class="header-bottom header-sticky">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <!-- Logo -->
+                        <div class="col-xl-2 col-lg-2">
+                            <div class="logo">
+                                <a href="{% url 'course:index' %}">
+                                    <img src="{% static 'assets/img/logo/logo2_header.png' %}" alt=""
+                                        style="width: 90px; border-radius: 5px;">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-10">
+                            <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                <!-- Main-menu -->
+                                <div class="main-menu d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li class="active"><a href="{% url 'course:index' %}">Home</a></li>
+                                            <li><a href="{% url 'course:courses-list' %}">Courses</a></li>
+                                            <li><a href="{% url 'course:about' %}">About</a></li>
+                                            {% if request.user.instructor %}
+                                            <li><a href="#">Courses</a>
+                                                <ul class="submenu">
+                                                    <li><a href="{% url 'course:create-course' %}">Create Course</a>
+                                                    </li>
+
+                                                    <li><a
+                                                            href="{% url 'members:user_public_profile' request.user.instructor.slug request.user.instructor.token  %}">All
+                                                            My Public Profile</a></li>
+                                                    <li><a href="#">My Top Courses</a></li>
+                                                </ul>
+                                            </li>
+                                            {% else %}
+                                            <li><a href="#">Trending now 🔥</a>
+                                                <ul class="submenu">
+                                                    <li><a href="#">Top Courses</a></li>
+                                                    <li><a href="#">Beset Seller</a></li>
+                                                    <li><a href="#">Top Instructor</a></li>
+                                                </ul>
+                                            </li>
+                                            {% endif %}
+                                            <li><a href="contact.html">Contact</a></li>
+                                            <!-- Button -->
+                                            {% if user.is_authenticated %}
+                                            {% if request.user.instructor %}
+                                            <li class="button-header"><a
+                                                    href="{{ request.user.instructor.get_absolute_url }}"
+                                                    class="btn btn3">Profile</a></li>
+                                            <li class="button-header margin-left">
+                                                {% else %}
+                                            <li class="button-header"><a
+                                                    href="{{ request.user.student.get_absolute_url }}"
+                                                    class="btn btn3">Profile</a></li>
+                                            {% endif %}
+                                            <a href="{% url 'account_logout' %}" class="btn">Logout</a>
+                                            </li>
+
+                                            {% else %}
+                                            <li class="button-header margin-left">
+                                                <a href="{% url 'account_signup' %}" class="btn">Join</a>
+                                            </li>
+                                            <li class="button-header">
+                                                <a href="{% url 'account_login' %}" class="btn btn3">Log in</a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Mobile Menu -->
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none text-dark"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+</header>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+<style>
+    /* Add this CSS to change the text color of navbar links to black */
+    #navigation li a {
+        color: black !important;
+        /* Force black text color */
+    }
+
+    /* Ensure dropdown links also have black text */
+    #navigation li .submenu li a {
+        color: black !important;
+    }
+
+    /* If the active link needs a different color, you can override it */
+    #navigation li.active a {
+        color: black !important;
+        /* Active link color */
+    }
+</style>

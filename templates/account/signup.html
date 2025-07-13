@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<main class="register-body d-flex justify-content-center align-items-center">
+    <div class="register-container">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5 text-center">
+                <!-- Logo -->
+                <div class="logo-login mb-4">
+                    <a href="{% url 'course:index' %}">
+                        <img src="{% static 'assets/img/logo/loder.png' %}" alt="Logo" class="logo-img">
+                    </a>
+                </div>
+
+                <!-- Title -->
+                <h2 class="card-title fw-bold">Create Your Account</h2>
+                <p class="card-subtitle text-muted mb-4">Join us today!</p>
+
+                <!-- Registration Form -->
+                <form method="POST" action="{% url 'account_signup' %}" class="text-start">
+                    {% csrf_token %}
+                    
+                    {{ form|crispy }}
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Sign Up</button>
+                </form>
+
+                <!-- Login Link -->
+                <div class="mt-4">
+                    <p class="mb-0">Already have an account? <a href="{% url 'account_login' %}" class="text-primary">Log in</a></p>
+                </div>
+                <div class="relative flex items-center my-4 mt-10">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="px-3 text-gray-500 text-sm">OR</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+                <div class="social-login w-full md:w-80 my-8 m-auto space-y-3 font-semibold">
+                    {% include 'account/social_buttons.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+/* Base Styles */
+body { 
+    background: linear-gradient(135deg, #f0eaf7, #b5cbf3);
+
+}
+.register-body {
+    min-height: 100vh;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+    margin-top:90px ;
+}
+
+.register-container {
+    width: 100%;
+    max-width: 700px;
+}
+
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.logo-img {
+    max-width: 80px;
+    height: auto;
+}
+
+.card-title {
+    font-size: 24px;
+    color: #333;
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: #666;
+}
+
+.form-control {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 8px rgba(106, 17, 203, 0.3);
+}
+
+.btn-primary {
+    background: #6a11cb;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #2575fc;
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+</style>
+{% endblock %}

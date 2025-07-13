@@ -1,0 +1,1121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Hero Search Section -->
+<section class="search-hero">
+  <div class="hero-container">
+    <div class="hero-content">
+      <h1>Expand your knowledge with expert courses</h1>
+      <p class="subtitle">Learn from industry leaders and join a community of millions</p>
+
+      <form method="GET" action="{% url 'course:search' %}" class="search-form">
+        <div class="search-input-container">
+          <span class="search-icon">🔍</span>
+          {{form|crispy}}
+          <button type="submit" class="search-btn">Search</button>
+        </div>
+        <div class="popular-tags">
+          <span>Trending:</span>
+          <a href="#">Python</a>
+          <a href="#">JavaScript</a>
+          <a href="#">Data Science</a>
+          <a href="#">UX Design</a>
+        </div>
+      </form>
+    </div>
+    <div class="hero-image">
+      <img src="{% static 'assets/img/gallery/megamenu.png' %}" alt="Learning illustration">
+    </div>
+  </div>
+</section>
+
+<!-- Results Section -->
+<main class="search-results-container">
+  {% if query %}
+  <div class="results-header">
+    <h2>Search results for "{{ query }}"</h2>
+    <div class="results-meta">
+      <span class="results-count">{{ results|length }} courses found</span>
+      <div class="sort-dropdown">
+        <button class="sort-btn">
+          <span>Sort by: Recommended</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="dropdown-content">
+          <a href="#" class="active">Recommended</a>
+          <a href="#">Most Popular</a>
+          <a href="#">Highest Rated</a>
+          <a href="#">Newest</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <aside class="filters-sidebar">
+      <div class="filter-section">
+        <h3>Filter by</h3>
+        <div class="filter-group">
+          <h4>Category</h4>
+          <div class="filter-options">
+            <label class="filter-option">
+              <input type="checkbox" checked>
+              <span>Programming</span>
+              <span class="count">(128)</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox">
+              <span>Design</span>
+              <span class="count">(76)</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox">
+              <span>Business</span>
+              <span class="count">(54)</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox">
+              <span>Data Science</span>
+              <span class="count">(42)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Level</h4>
+          <div class="filter-options">
+            <label class="filter-option">
+              <input type="checkbox" checked>
+              <span>Beginner</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox">
+              <span>Intermediate</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox">
+              <span>Advanced</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Duration</h4>
+          <div class="filter-options">
+            <label class="filter-option">
+              <input type="checkbox">
+              <span>0-5 hours</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" checked>
+              <span>5-10 hours</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox">
+              <span>10+ hours</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="results-content">
+      {% if results.courses %}
+
+      <div class="courses-grid">
+
+
+        {% for course in results.courses %}
+        <article class="course-card">
+          <div class="card-image">
+            {% if course.image %}
+            <img src="{{course.image.url}}" alt="">
+            {% else %}
+            <img src="{% static 'assets/img/gallery/topic1.png' %}" alt="{{ course.title }}">
+            {% endif %}
+            <div class="image-overlay">
+              <span class="difficulty-badge">{{ course.level }}</span>
+              <button class="wishlist-btn">♥</button>
+            </div>
+          </div>
+          <div class="card-content">
+            <h3>{{ course.title }}</h3>
+            <p class="instructor">{{ course.instructor}} {{ course.instructor.last_name }}</p>
+            <div class="course-meta">
+              <div class="rating-container">
+                <div class="stars">★★★★★</div>
+                <span class="rating-value">{{ course.rating|default:"4.8" }}</span>
+                <span class="reviews">({{ course.enrollment_count|default:"1,234" }})</span>
+              </div>
+              <div class="duration">
+                <span class="clock-icon">🕒</span>
+                {{ course.duration }}h
+              </div>
+            </div>
+            <div class="price-container">
+              {% if course.discount_price %}
+              <div class="price-discount">
+                <span class="original-price">${{course.discount_price}}</span>
+                <span class="current-price">${{ course.price }}</span>
+              </div>
+              {% else %}
+              {% if course.price %}
+              <span class="current-price">${{ course.price|default:"19.99" }}</span>
+              {% else%}
+              <span class="current-price">$Free</span>
+              {% endif %}
+              {% endif %}
+              <a href="{% url 'course:course-detail' course.slug course.token %}" class="enroll-btn">Enroll Now</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      {% else %}
+      <div class="empty-state">
+        <img src="{% static 'assets/img/gallery/no-results-image.webp' %}" alt="No courses found">
+        <h3>No courses match your search</h3>
+        <p>Try adjusting your search or filters to find what you're looking for</p>
+        <a href="{% url 'course:courses-list' %}" class="primary-btn">Browse All Courses</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <!-- Empty Search State -->
+  <div class="empty-search">
+    <div class="empty-search-content">
+      <h2>What would you like to learn today?</h2>
+      <p>Discover thousands of courses in programming, design, business, and more</p>
+      <div class="popular-categories">
+        <h3>Popular Categories</h3>
+        <div class="categories-grid">
+          <a href="#" class="category-card">
+            <div class="category-icon">💻</div>
+            <span>Programming</span>
+          </a>
+          <a href="#" class="category-card">
+            <div class="category-icon">🎨</div>
+            <span>Web Design</span>
+          </a>
+          <a href="#" class="category-card">
+            <div class="category-icon">📊</div>
+            <span>Data Science</span>
+          </a>
+          <a href="#" class="category-card">
+            <div class="category-icon">💼</div>
+            <span>Business</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</main>
+
+<!-- Featured Courses Section -->
+<section class="featured-courses">
+  <div class="section-container">
+    <div class="section-header">
+      <h2>Featured Courses</h2>
+      <a href="#" class="view-all">View all</a>
+    </div>
+    <div class="courses-carousel">
+      <!-- Featured courses would be dynamically inserted here -->
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+  <div class="section-container">
+    <h2>What our learners say</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <span class="quote-icon">❝</span>
+          <p>"This platform transformed my career. The courses are top-notch and the instructors are incredibly
+            knowledgeable."</p>
+        </div>
+        <div class="testimonial-author">
+          <img src="{% static 'assets/img/gallery/team2.png' %}" alt="Sarah Johnson">
+          <div>
+            <h4>Sarah Johnson</h4>
+            <span>Software Developer</span>
+          </div>
+        </div>
+      </div>
+      <!-- More testimonials -->
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Modern Color Scheme */
+  :root {
+    --primary: #2563eb;
+    --primary-light: #3b82f6;
+    --primary-dark: #1d4ed8;
+    --secondary: #7c3aed;
+    --accent: #ec4899;
+    --dark: #1e293b;
+    --dark-gray: #334155;
+    --medium-gray: #64748b;
+    --light-gray: #e2e8f0;
+    --light: #f8fafc;
+    --white: #ffffff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --rating: #fbbf24;
+  }
+
+  /* Base Styles */
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--dark);
+    background-color: var(--light);
+    line-height: 1.5;
+  }
+
+  /* Hero Section */
+  .search-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    padding: 4rem 1rem;
+    color: var(--white);
+  }
+
+  .hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .hero-content {
+    flex: 1;
+  }
+
+  .hero-image {
+    flex: 1;
+    display: none;
+    /* Hidden on mobile */
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: auto;
+    max-width: 500px;
+  }
+
+  .search-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .search-hero .subtitle {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+  }
+
+  /* Search Form */
+  .search-form {
+    max-width: 700px;
+  }
+
+  .search-input-container {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: 49px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--medium-gray);
+    font-size: 1.25rem;
+    z-index: 1;
+  }
+
+  /* Style for the form input field */
+  .search-input-container .form-control {
+    flex: 1;
+    padding: 1rem 1rem 1rem 3rem;
+    border: none;
+    font-size: 1rem;
+    color: var(--dark);
+    background: transparent;
+    margin: 0;
+    height: 100%;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .search-input-container .form-control:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* Ensure crispy forms wrapper doesn't add unwanted styles */
+  .search-input-container .form-group {
+    margin: 0;
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .search-btn {
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    padding: 0 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 100%;
+    display: flex;
+    border-radius: 0 8px 8px 0;
+    align-items: center;
+    /* Center text vertically */
+    justify-content: center;
+    /* Center text horizontally */
+    border-radius: 0 8px 8px 0;
+    /* Match container's right corners */
+    flex-shrink: 0;
+    /* Prevent button from shrinking */
+  }
+
+  .search-btn:hover {
+    background: var(--dark-gray);
+  }
+
+  /* Popular Tags */
+  .popular-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+  }
+
+  .popular-tags span:first-child {
+    opacity: 0.8;
+  }
+
+  .popular-tags a {
+    color: var(--white);
+    opacity: 0.9;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .popular-tags a:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  /* Results Container */
+  .search-results-container {
+    max-width: 1400px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+
+  .results-header {
+    margin-bottom: 2rem;
+  }
+
+  .results-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .results-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .results-count {
+    color: var(--medium-gray);
+    font-size: 0.875rem;
+  }
+
+  /* Sort Dropdown */
+  .sort-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .sort-btn {
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+  }
+
+  .sort-btn:hover {
+    border-color: var(--medium-gray);
+  }
+
+  .dropdown-arrow {
+    font-size: 0.75rem;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: var(--white);
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1;
+    padding: 0.5rem 0;
+  }
+
+  .dropdown-content a {
+    color: var(--dark-gray);
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    display: block;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-content a:hover {
+    background: var(--light);
+    color: var(--primary);
+  }
+
+  .dropdown-content a.active {
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .sort-dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  /* Results Grid Layout */
+  .results-grid {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .filters-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    display: none;
+    /* Hidden on mobile */
+  }
+
+  .results-content {
+    flex: 1;
+  }
+
+  /* Filters */
+  .filter-section {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .filter-section h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-group h4 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+
+  .filter-option input {
+    accent-color: var(--primary);
+  }
+
+  .filter-option .count {
+    margin-left: auto;
+    color: var(--medium-gray);
+    font-size: 0.75rem;
+  }
+
+  /* Courses Grid */
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Course Card */
+  .course-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-image {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .course-card:hover .card-image img {
+    transform: scale(1.05);
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .difficulty-badge {
+    background: var(--white);
+    color: var(--dark);
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .wishlist-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--white);
+    backdrop-filter: blur(5px);
+    font-size: 1rem;
+  }
+
+  .wishlist-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+
+  .card-content {
+    padding: 1.25rem;
+  }
+
+  .course-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .instructor {
+    color: var(--medium-gray);
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .course-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .rating-container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .stars {
+    color: var(--rating);
+    letter-spacing: 2px;
+    position: relative;
+  }
+
+  .stars::before {
+    content: '★★★★★';
+    color: var(--light-gray);
+  }
+
+  .stars::after {
+    content: '★★★★★';
+    color: var(--rating);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(var(--rating, 4.8) * 20%);
+    overflow: hidden;
+  }
+
+  .rating-value {
+    color: var(--rating);
+    font-weight: 600;
+  }
+
+  .reviews {
+    color: var(--medium-gray);
+  }
+
+  .duration {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--medium-gray);
+  }
+
+  .clock-icon {
+    font-size: 0.875rem;
+  }
+
+  .price-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .price-discount {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: var(--medium-gray);
+    font-size: 0.875rem;
+  }
+
+  .current-price {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1.125rem;
+  }
+
+  .enroll-btn {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .enroll-btn:hover {
+    background: var(--primary-dark);
+  }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .page-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--dark);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .page-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .page-btn:hover:not(.disabled) {
+    border-color: var(--medium-gray);
+  }
+
+  .arrow {
+    font-size: 0.75rem;
+  }
+
+  .page-numbers {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .page-numbers a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--dark);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .page-numbers a:hover {
+    background: var(--light-gray);
+  }
+
+  .page-numbers a.active {
+    background: var(--primary);
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  /* Empty States */
+  .empty-state,
+  .empty-search {
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  .empty-state img,
+  .empty-search img {
+    max-width: 300px;
+    margin: 0 auto 2rem;
+  }
+
+  .empty-state h3,
+  .empty-search h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state p,
+  .empty-search p {
+    color: var(--medium-gray);
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--primary);
+    color: var(--white);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .primary-btn:hover {
+    background: var(--primary-dark);
+  }
+
+  /* Empty Search State */
+  .empty-search-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .empty-search h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .empty-search p {
+    font-size: 1.125rem;
+    margin-bottom: 3rem;
+  }
+
+  .popular-categories h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .category-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: var(--dark);
+  }
+
+  .category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .category-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 50%;
+    color: var(--primary);
+    font-size: 1.5rem;
+  }
+
+  .category-card span {
+    font-weight: 500;
+  }
+
+  /* Featured Courses */
+  .featured-courses {
+    background: var(--light);
+    padding: 4rem 0;
+    border-top: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  .section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+
+  .view-all {
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .view-all:hover {
+    text-decoration: underline;
+  }
+
+  .courses-carousel {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--light-gray) var(--white);
+  }
+
+  .courses-carousel::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .courses-carousel::-webkit-scrollbar-track {
+    background: var(--white);
+  }
+
+  .courses-carousel::-webkit-scrollbar-thumb {
+    background-color: var(--light-gray);
+    border-radius: 6px;
+  }
+
+  /* Testimonials */
+  .testimonials {
+    padding: 4rem 0;
+  }
+
+  .testimonials h2 {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .testimonial-content {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .quote-icon {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-size: 2rem;
+    opacity: 0.2;
+  }
+
+  .testimonial-content p {
+    font-style: italic;
+    color: var(--dark-gray);
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .testimonial-author img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .testimonial-author h4 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .testimonial-author span {
+    font-size: 0.875rem;
+    color: var(--medium-gray);
+  }
+
+  /* Responsive Adjustments */
+  @media (min-width: 768px) {
+    .hero-container {
+      padding: 2rem 0;
+    }
+
+    .hero-image {
+      display: block;
+    }
+
+    .filters-sidebar {
+      display: block;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-container {
+      flex-direction: column;
+    }
+
+    .search-hero h1 {
+      font-size: 2rem;
+    }
+
+    .results-grid {
+      flex-direction: column;
+    }
+
+    .courses-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .categories-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+{% endblock %}

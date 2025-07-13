@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="logout-body d-flex justify-content-center align-items-center">
+    <div class="logout-container">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5 text-center">
+                <!-- Logo -->
+                <div class="logo-logout mb-4">
+                    <a href="{% url 'course:index' %}">
+                        <img src="{% static 'assets/img/logo/loder.png' %}" alt="Logo" class="logo-img">
+                    </a>
+                </div>
+
+                <!-- Logout Message -->
+                <h2 class="card-title fw-bold text-dark">You've Been Logged Out</h2>
+                <p class="card-subtitle text-muted mb-4">Thank you for using our platform. We hope to see you again soon!</p>
+
+                <!-- Action Buttons -->
+                <div class="logout-actions">
+
+                    <!-- Logout Button -->
+                    <form method="post" action="{% url 'account_logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg w-100 mb-3">
+                            Log Out
+                        </button>
+                    </form>
+
+                    <!-- Return to Home Button -->
+                    <a href="{% url 'course:index' %}" class="btn btn-secondary btn-lg w-100">
+                        Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+/* Base Styles */
+.logout-body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0eaf7, #b5cbf3);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+}
+
+.logout-container {
+    width: 100%;
+    max-width: 500px; /* Consistent width with login/register pages */
+}
+
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.logo-img {
+    max-width: 90px;
+    height: auto;
+}
+
+.card-title {
+    font-size: 26px;
+    color: #333;
+}
+
+.card-subtitle {
+    font-size: 15px;
+    color: #666;
+}
+
+.btn {
+    padding: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+
+.btn-danger {
+  background: #6a11cb;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #2575fc;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 576px) {
+    .logout-container {
+        max-width: 90%;
+    }
+}
+</style>
+{% endblock %}

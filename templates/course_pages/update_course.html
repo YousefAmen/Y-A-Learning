@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="mx-auto" style="max-width: 900px;">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-gradient text-white text-center"
+        style="background: linear-gradient(to right, #4F46E5, #7C3AED);">
+        <h2 class="mb-1">Update Your Course</h2>
+        <p class="mb-0 text-light small">Craft an inspiring learning experience</p>
+      </div>
+
+      <div class="card-body p-4">
+        <form method="POST" enctype="multipart/form-data" id="course-update-form">
+          {% csrf_token %}
+
+          <!-- Course Fields -->
+          <div class="mb-4">
+            {% for field in form %}
+            {% if field.name != 'image' and field.name != 'promo_video' %}
+            {{ field|as_crispy_field }}
+            {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- Upload Section -->
+          <div class="row ">
+            <div class="col-md-6 mb-4" style="margin-top: 30px;">
+              <label class="form-label fw-semibold mb-2">
+                <i class="fa fa-image me-1 text-primary"></i> Course Image
+              </label>
+              <div class="p-3 text-center bg-light" style="min-height: 150px;">
+                <input type="file" name="image" id="id_image" accept="image/*" class="d-none">
+
+                <!-- Clickable Icon for Image Upload -->
+                <label for="id_image" class="upload-icon" title="Upload Image">
+                  <i class="fa fa-upload fa-2x text-primary"></i>
+                </label>
+
+                <p class="text-muted small mt-2">JPG/PNG, max 5MB</p>
+                <span id="image-filename" class="text-muted small"></span>
+                <div id="image-preview" class="mt-3">
+                  {% if form.instance.image %}
+                  <img src="{{ form.instance.image.url }}" alt="Course Image" class="img-fluid rounded">
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4" style="margin-top: 30px;">
+              <label class="form-label fw-semibold mb-2">
+                <i class="fa fa-video me-1 text-primary mr-2"></i>
+                Promo Video
+              </label>
+              <div class="p-3 text-center bg-light" style="min-height: 150px;">
+                <input type="file" name="promo_video" id="id_promo_video" accept="video/mp4" class="d-none">
+
+                <!-- Clickable Icon for Video Upload -->
+                <label for="id_promo_video" class="upload-icon" title="Upload Video">
+                  <i class="fa fa-upload fa-2x text-primary"></i>
+                </label>
+
+                <p class="text-muted small mt-2">MP4, under 2 min</p>
+                <span id="video-filename" class="text-muted small"></span>
+                <div id="video-preview" class="mt-3">
+                  {% if form.instance.promo_video %}
+                  <video controls class="w-100 rounded">
+                    <source src="{{ form.instance.promo_video.url }}" type="video/mp4">
+                  </video>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Submit Buttons -->
+          <div class="text-end mt-4">
+            <a href="#" class="btn-cancel">
+              <i class="fas fa-arrow-left me-2"></i> Cancel
+            </a>
+            <a href="{% url 'course:delete-course' course.slug course.token %}" class="btn-delete">
+              <i class="fas fa-trash me-2"></i> Delete
+            </a>
+
+            <a href="{% url 'course:create-module' course.slug course.token %}" class="btn-module">
+              <i class="fas fa-plus-circle me-2"></i> Create Module
+            </a>
+
+            <a href="{% url 'course:create-learning-objectives' course.slug course.token %}" class="btn-outcome">
+              <i class="fas fa-plus-circle me-2"></i> Define Learning Objectives
+            </a>
+
+            <button type="submit" class="btn-save">
+              <i class="fas fa-save me-2"></i> Save Changes
+            </button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .btn-save {
+    background-color: #2563eb;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    margin-left: 10px;
+  }
+
+  .btn-save:hover {
+    background-color: #1e40af;
+  }
+
+  .btn-module {
+    background: #4f46e5;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .btn-module:hover {
+    background: #3730a3;
+  }
+
+  .btn-outcome {
+    background-color: #7c3aed;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: 5px;
+  }
+
+  .btn-outcome:hover {
+    background-color: #5b21b6;
+  }
+
+  .btn-cancel {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    margin-right: 10px;
+  }
+
+  .btn-cancel:hover {
+    background-color: #d1d5db;
+
+  }
+
+
+  .btn-delete {
+    background-color: darkred;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-delete:hover {
+    background-color: #a30000;
+
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .upload-icon {
+    cursor: pointer;
+    transition: all 0.6s ease;
+    display: inline-block;
+  }
+
+  .upload-icon:hover {
+    color: #0d6efd;
+    transform: translateY(-1px);
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function setupFileUpload(inputId, filenameId, previewId, isImage) {
+      const input = document.getElementById(inputId);
+      const filename = document.getElementById(filenameId);
+      const preview = document.getElementById(previewId);
+
+      input.addEventListener('change', function () {
+        const file = input.files[0];
+        if (file) {
+          filename.textContent = file.name;
+          const url = URL.createObjectURL(file);
+          preview.innerHTML = isImage
+            ? `<img src="${url}" class="img-fluid rounded" />`
+            : `<video controls class="w-100 rounded"><source src="${url}" type="video/mp4"></video>`;
+        }
+      });
+    }
+
+    setupFileUpload('id_image', 'image-filename', 'image-preview', true);
+    setupFileUpload('id_promo_video', 'video-filename', 'video-preview', false);
+  });
+</script>
+{% endblock %}

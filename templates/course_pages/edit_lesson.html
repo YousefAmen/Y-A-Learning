@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="lesson-form-container" style="margin-top: 100px;">
+  <div class="form-header">
+    <h1><i class="fas fa-edit me-2"></i>Edit Lesson</h1>
+    <p class="text-muted">Module: {{ object.module.title }}</p>
+  </div>
+
+  <form action="" method="POST" class="lesson-form" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="{{ form.title.id_for_label }}">Lesson Title</label>
+      {{ form.title }}
+      <small class="form-help">Enter a clear and descriptive title for your lesson</small>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.description.id_for_label }}">Description</label>
+      {{ form.description }}
+      <small class="form-help">Brief overview of what this lesson covers</small>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.content.id_for_label }}">Content</label>
+      {{ form.content }}
+      <small class="form-help">Detailed lesson material and instructions</small>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="{{ form.thumbnail.id_for_label }}">Thumbnail</label>
+        {{ form.thumbnail }}
+        <small class="form-help">Recommended size: 800x450px</small>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="{{ form.video.id_for_label }}">Video</label>
+        {{ form.video }}
+        <small class="form-help">MP4 format recommended</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.order.id_for_label }}">Order</label>
+      {{ form.order }}
+      <small class="form-help">Sequence position in the module</small>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-save">
+        <i class="fas fa-save me-2"></i> Update Lesson
+      </button>
+      <a href="{% url 'course:create-module' object.module.course.slug object.module.course.token %}"
+        class="btn-cancel">
+        <i class="fas fa-times me-2"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+
+<style>
+  .lesson-form-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-header {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .form-header h1 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-header p.text-muted {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 0;
+  }
+
+  .lesson-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 20px;
+  }
+
+  .form-row .form-group {
+    flex: 1;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 15px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group textarea,
+  .form-group input[type="file"] {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border 0.3s ease;
+  }
+
+  .form-group input[type="file"] {
+    padding: 8px;
+  }
+
+  .form-group input[type="text"]:focus,
+  .form-group input[type="number"]:focus,
+  .form-group textarea:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  .form-group textarea {
+    min-height: 200px;
+    resize: vertical;
+  }
+
+  .form-help {
+    color: #7f8c8d;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .btn-save {
+    background-color: #3498db;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-save:hover {
+    background-color: #2980b9;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-cancel {
+    background-color: #b7babe;
+    color: #323b48;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-cancel:hover {
+    background-color: #d1d5db;
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+</style>
+{% endblock %}

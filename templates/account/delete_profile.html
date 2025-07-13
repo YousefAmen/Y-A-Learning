@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+    :root {
+        --danger: #ff4444;
+        --danger-hover: #cc0000;
+        --cancel: #757575;
+        --cancel-hover: #424242;
+        --text: #212121;
+        --light-bg: #f5f5f5;
+        --border: #e0e0e0;
+    }
+
+    .delete-container {
+        max-width: 520px;
+        margin: 4rem auto;
+        padding: 3rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border);
+    }
+    
+    .warning-icon {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .warning-icon svg {
+        width: 72px;
+        height: 72px;
+        color: var(--danger);
+    }
+    
+    .delete-header {
+        color: var(--text);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.75rem;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+    
+    .delete-message {
+        text-align: center;
+        color: var(--text);
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+    }
+    
+    .consequences {
+        background: var(--light-bg);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    
+    .consequence-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+    
+    .consequence-item svg {
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+        margin-top: 0.2rem;
+        color: var(--danger);
+        width: 18px;
+        height: 18px;
+    }
+    
+    .delete-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .btn-delete {
+        background-color: var(--danger);
+        color: white;
+        flex: 1;
+    }
+    
+    .btn-delete:hover {
+        background-color: var(--danger-hover);
+        transform: translateY(-1px);
+    }
+    
+    .btn-cancel {
+        background-color: white;
+        color: var(--cancel);
+        border: 1px solid var(--border);
+        flex: 1;
+        text-decoration: none;
+        text-align: center;
+    }
+    
+    .btn-cancel:hover {
+        background-color: var(--light-bg);
+        color: var(--cancel-hover);
+        border-color: var(--cancel);
+    }
+    
+    .confirmation-check {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+    
+    .confirmation-check input {
+        margin-right: 0.75rem;
+        margin-top: 0.3rem;
+    }
+    
+    @media (max-width: 640px) {
+        .delete-container {
+            padding: 2rem;
+            margin: 2rem 1rem;
+        }
+        
+        .delete-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="delete-container">
+    <div class="warning-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+    </div>
+    
+    <h2 class="delete-header">Delete Your Account Permanently</h2>
+    
+    <div class="delete-message">
+        This action will immediately and permanently remove all of your data from our systems.
+    </div>
+    
+    <div class="consequences">
+        <div class="consequence-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <div>All your profile information will be deleted</div>
+        </div>
+        
+        <div class="consequence-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <div>You'll lose access to all courses and progress</div>
+        </div>
+        
+        <div class="consequence-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <div>This action cannot be undone</div>
+        </div>
+    </div>
+
+    <form method="POST" id="deleteForm">
+        {% csrf_token %}
+        {{ form|crispy }}
+        
+        <div class="confirmation-check">
+            <input type="checkbox" id="confirmDelete" required>
+            <label for="confirmDelete">I understand that this action is permanent and all my data will be erased</label>
+        </div>
+        
+        <div class="delete-actions">
+            <a href="{{ profile.get_absolute_url }}" class="btn btn-cancel">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-delete" id="deleteButton">
+                Delete Account Permanently
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

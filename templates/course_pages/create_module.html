@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load course_tags %}
+{% block content %}
+
+<div class="module-container">
+  <!-- Create Module Form -->
+  <div class="form-wrapper">
+    <h2>Create a New Module</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.title.label_tag }}
+        {{ form.title }}
+      </div>
+      <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+      </div>
+      <div class="form-group checkbox-group">
+        {{ form.is_published }} <span style="margin-left:20px"> Published</span>
+      </div>
+      <div class="btn-group">
+        <button type="submit" class="custom-btn">Create Module</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Display Modules and Lessons -->
+
+  {% if course_modules %}
+  <div class="modules-list">
+    <h3>Your Modules</h3>
+    {% for module in course_modules %}
+    <div class="module-card">
+      <div class="module-header">
+        <h4>{{ module.title }}</h4>
+        {% if module.is_published %}
+        <span class="published">Published</span>
+        {% else %}
+        <span class="draft">Draft</span>
+        {% endif %}
+        <span><a href="{% url 'course:edit-module'  module.slug %}"><i class="fas fa-edit me-2"></i>Edit
+            Module</a></span>
+        <span><a href="{% url 'course:delete-module'  module.slug %}"><i class="fas fa-trash me-2"></i>Delete
+            Module</a></span>
+      </div>
+      <p>{{ module.description }}</p>
+
+
+
+      {% for lesson in module_lessons %}
+
+      {% endfor %}
+      <div class="lesson-list">
+
+        {% for lesson in module.lessons.all %}
+        <div class="lesson-card">
+          <div class="lesson-thumb">
+            <img src="{{ lesson.thumbnail.url }}" alt="{{ lesson.title }}">
+
+          </div>
+          <div class="lesson-info">
+            <h5 class="lesson-title">{{ lesson.title }}</h5>
+            <p class="lesson-meta">
+              Instructor: {{module.course.instructor.first_name }} {{module.course.instructor.last_name}}·
+              Added: {{ lesson.added_at|date:"M d, Y" }}
+              Duration: {{ lesson.duration|format_duration }}
+            </p>
+          </div>
+          <span class="edit-lesson"><a href="{% url 'course:edit-lesson'  lesson.slug lesson.token %}"><i
+                class="fas fa-edit me-2"></i>Edit
+              Lesson</a></span>
+          <span class="delete-lesson"><a href="{% url 'course:delete-lesson'  lesson.slug lesson.token %}"><i
+                class="fas fa-trash me-2"></i>Delete
+              Lesson</a></span>
+        </div>
+
+        {% empty %}
+        <p class="no-lessons">No lessons added yet.</p>
+        {% endfor %}
+      </div>
+      <a href="{% url 'course:create-lesson' module.slug %}" class="add-lesson-btn">+ Add Lesson</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+<style>
+  .module-container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+
+  .form-wrapper {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 50px;
+  }
+
+  .form-wrapper h2 {
+    margin-bottom: 25px;
+    font-size: 26px;
+    color: #333;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .form-group input[type="text"],
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .checkbox-group input {
+    margin-right: 10px;
+  }
+
+  .custom-btn {
+    background: #4f46e5;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .custom-btn:hover {
+    background: #3730a3;
+  }
+
+  /* Module Cards */
+  .modules-list h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .module-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.04);
+    margin-bottom: 20px;
+    transition: transform 0.2s ease;
+  }
+
+  .module-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .module-header h4 {
+    font-size: 18px;
+    margin: 0;
+    color: #222;
+  }
+
+  .published {
+    background: #16a34a;
+    color: white;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .draft {
+    background: #f97316;
+    color: white;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .add-lesson-btn {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+
+  .add-lesson-btn:hover {
+    text-decoration: underline;
+  }
+
+  .lesson-card {
+    display: flex;
+    gap: 15px;
+    background: #f1f5f9;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+    transition: background 0.3s ease;
+  }
+
+  .lesson-card:hover {
+    background: #e2e8f0;
+  }
+
+  .lesson-thumb img {
+    width: 120px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .lesson-info {
+    flex: 1;
+  }
+
+  .lesson-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #1e293b;
+  }
+
+  .lesson-meta {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 5px;
+  }
+
+  .module-header span a[href*="edit-module"] {
+    background-color: #3498db;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .module-header span a[href*="edit-module"]:hover {
+    background-color: #2980b9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Delete Module Button */
+  .module-header span a[href*="delete-module"] {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .module-header span a[href*="delete-module"]:hover {
+    background-color: #c0392b;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Optional: Add icons if you have Font Awesome */
+  .module-header span a[href*="edit-module"]::before {
+
+    font-weight: 900;
+    margin-right: 5px;
+    font-size: 0.8rem;
+  }
+
+  .module-header span a[href*="delete-module"]::before {
+
+    font-weight: 900;
+    margin-right: 5px;
+    font-size: 0.8rem;
+  }
+
+  .module-header span a i {
+    margin-right: 5px;
+  }
+
+  .edit-lesson {
+    background-color: #3498db;
+
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    margin-left: 10px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .edit-lesson a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .edit-lesson:hover {
+    background-color: #2980b9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .edit-lesson i {
+    margin-right: 5px;
+  }
+
+  .delete-lesson {
+    background-color: #e74c3c;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-left: 10px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .delete-lesson a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .delete-lesson i {
+    margin-right: 5px;
+  }
+
+  .delete-lesson:hover {
+    background-color: #c0392b;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+</style>
+{% endblock %}

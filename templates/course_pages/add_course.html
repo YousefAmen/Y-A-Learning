@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container course-create-container">
+  <div class="course-create-card">
+    <!-- Header Section -->
+    <div class="create-header">
+      <h1><i class="fas fa-plus-circle"></i> Create New Course</h1>
+      <p>Fill in the details to create your amazing course</p>
+    </div>
+
+    <form action="{% url 'course:create-course' %}" method='POST' enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- Form Errors -->
+
+
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-info-circle"></i> Course Information</h2>
+        <div class="row">
+          <div class="col-md-12">
+            {{ form.title|as_crispy_field }}
+          </div>
+          <div class="col-md-12">
+            {{ form.description|as_crispy_field }}
+          </div>
+          <div class="col-md-12">
+            {{ form.requirements|as_crispy_field }}
+          </div>
+          <div class="col-md-12">
+            {{ form.category|as_crispy_field }}
+          </div>
+          <div class="col-md-12 mt-4">
+            {{ form.level|as_crispy_field }}
+          </div>
+
+          <div class="col-md-12 mt-4">
+            {{ form.tags|as_crispy_field }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Upload Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-images"></i> Course Media</h2>
+
+        <!-- Image Upload Card -->
+        <div class="upload-card">
+          <div class="upload-header">
+            <i class="fas fa-image"></i>
+            <h3>Course Thumbnail</h3>
+          </div>
+          <div class="upload-body">
+            <label class="file-upload-label">
+              {{ form.image }}
+              <div class="file-upload-design">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Click to upload thumbnail image</p>
+                <span class="file-info">Recommended: 1200×800 pixels (JPG/PNG)</span>
+              </div>
+              {% if form.image.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.image.errors }}
+              </div>
+              {% endif %}
+              <div id="image-preview" class="preview-container">
+                {% if form.instance.image %}
+                <img src="{{ form.instance.image.url }}" alt="Current thumbnail">
+                {% endif %}
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Video Upload Card -->
+        <div class="upload-card">
+          <div class="upload-header">
+            <i class="fas fa-video"></i>
+            <h3>Promotional Video</h3>
+          </div>
+          <div class="upload-body">
+            <label class="file-upload-label">
+              {{ form.promo_video }}
+              <div class="file-upload-design">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Click to upload promo video</p>
+                <span class="file-info">Recommended: MP4 format, under 2 minutes</span>
+              </div>
+              {% if form.promo_video.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.promo_video.errors }}
+              </div>
+              {% endif %}
+              <div id="video-preview" class="preview-container">
+                {% if form.instance.promo_video %}
+                <video controls>
+                  <source src="{{ form.instance.promo_video.url }}" type="video/mp4">
+                </video>
+                {% endif %}
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-tag"></i> Pricing</h2>
+        <div class="row">
+          <div class="col-md-6">
+            {{ form.price|as_crispy_field }}
+          </div>
+          <div class="col-md-6">
+            {{ form.discount_price|as_crispy_field }}
+          </div>
+        </div>
+
+
+
+        <div class="form-check">
+          {{ form.is_free|as_crispy_field }}
+        </div>
+        <div class="form-check">
+
+          {{ form.is_puplished|as_crispy_field }}
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button type="submit" class="btn-save">
+          <i class="fas fa-save me-2"></i> Save Changes
+        </button>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  /* Base Styles */
+  .course-create-container {
+    padding: 2rem 0;
+    max-width: 900px;
+    margin-top: 60px;
+  }
+
+  .course-create-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    padding: 2.5rem;
+  }
+
+  /* Header Styles */
+  .create-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .create-header h1 {
+    font-size: 2.2rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+  }
+
+  .create-header p {
+    color: #718096;
+    font-size: 1.1rem;
+  }
+
+  .create-header i {
+    color: #4F46E5;
+    margin-right: 10px;
+  }
+
+  /* Form Sections */
+  .form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  .form-section:last-child {
+    border-bottom: none;
+  }
+
+  .form-section h2 {
+    font-size: 1.4rem;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-section h2 i {
+    color: #4F46E5;
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+
+  /* Upload Cards */
+  .upload-card {
+    background: #F8FAFC;
+    border-radius: 10px;
+    border: 1px solid #E2E8F0;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .upload-card:hover {
+    border-color: #4F46E5;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.1);
+  }
+
+  .upload-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #EDF2F7;
+    display: flex;
+    align-items: center;
+  }
+
+  .upload-header i {
+    font-size: 1.5rem;
+    color: #4F46E5;
+    margin-right: 12px;
+  }
+
+  .upload-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #2D3748;
+  }
+
+  .upload-body {
+    padding: 1.5rem;
+  }
+
+  /* File Upload Styling */
+  .file-upload-label {
+    display: block;
+    cursor: pointer;
+  }
+
+  .file-upload-design {
+    background: white;
+    border: 2px dashed #CBD5E0;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .file-upload-design:hover {
+    border-color: #4F46E5;
+    background: #F5F3FF;
+  }
+
+  .file-upload-design i {
+    font-size: 2.5rem;
+    color: #4F46E5;
+    margin-bottom: 1rem;
+  }
+
+  .file-upload-design p {
+    font-size: 1.1rem;
+    color: #4A5568;
+    margin-bottom: 0.5rem;
+  }
+
+  .file-info {
+    font-size: 0.9rem;
+    color: #718096;
+    display: block;
+  }
+
+  /* Preview Container */
+  .preview-container {
+    margin-top: 1.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .preview-container img {
+    max-width: 100%;
+    max-height: 200px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 6px;
+  }
+
+  .preview-container video {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+
+  /* Form Actions */
+  .form-actions {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  /* Crispy Forms Overrides */
+  .form-check-label {
+    margin-left: 0.5rem;
+  }
+
+  /* Error Styling */
+  .alert-danger {
+    background-color: #FEE2E2;
+    border-color: #FECACA;
+    color: #B91C1C;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .invalid-feedback {
+    display: block;
+    color: #DC2626;
+    margin-top: 0.5rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .course-create-container {
+      margin-top: 90px;
+    }
+
+    .course-create-card {
+      padding: 1.5rem;
+    }
+
+    .create-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .form-section h2 {
+      font-size: 1.2rem;
+    }
+
+    .file-upload-design {
+      padding: 1.5rem;
+    }
+  }
+
+  .btn-save {
+    background-color: #2563eb;
+    color: white;
+    padding: 1.6rem 1.8rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+  }
+
+  .btn-save:hover {
+    background-color: #1e40af;
+  }
+
+  .form-check-input {
+    margin-right: 0.5rem;
+    position: relative;
+    margin-left: 0;
+  }
+
+  .form-check-label {
+    margin-left: 0.25rem;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Image Preview
+    document.getElementById('id_image').addEventListener('change', function (e) {
+      const preview = document.getElementById('image-preview');
+      if (e.target.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          preview.innerHTML = '<img src="' + event.target.result + '" alt="Preview">';
+        }
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    // Video Preview
+    document.getElementById('id_promo_video').addEventListener('change', function (e) {
+      const preview = document.getElementById('video-preview');
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const videoURL = URL.createObjectURL(file);
+        preview.innerHTML = '<video controls><source src="' + videoURL + '" type="' + file.type + '"></video>';
+      }
+    });
+
+    // Free course toggle
+    const isFreeCheckbox = document.getElementById('id_is_free');
+    const priceField = document.getElementById('id_price');
+    const discountField = document.getElementById('id_discount_price');
+
+    function togglePriceFields() {
+      if (isFreeCheckbox.checked) {
+        priceField.disabled = true;
+        discountField.disabled = true;
+        priceField.value = '';
+        discountField.value = '';
+      } else {
+        priceField.disabled = false;
+        discountField.disabled = false;
+      }
+    }
+
+    // Initialize
+    togglePriceFields();
+    isFreeCheckbox.addEventListener('change', togglePriceFields);
+  });
+</script>
+{% endblock %}
