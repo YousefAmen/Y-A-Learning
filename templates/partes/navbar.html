@@ -57,21 +57,32 @@
                                             </li>
                                             {% endif %}
                                             <li><a href="contact.html">Contact</a></li>
-                                            <!-- Button -->
+
+                                            <!-- Cart Icon - Available for all users -->
+                                            <li class="cart-icon">
+                                                <a href="{% url 'cart:cart_detail' %}" class="cart-link">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                    <span class="cart-counter" id="cart-count">{{cart|length}}</span>
+                                                </a>
+                                            </li>
+
+                                            <!-- Authentication Buttons -->
                                             {% if user.is_authenticated %}
                                             {% if request.user.instructor %}
                                             <li class="button-header"><a
                                                     href="{{ request.user.instructor.get_absolute_url }}"
                                                     class="btn btn3">Profile</a></li>
                                             <li class="button-header margin-left">
-                                                {% else %}
+                                                <a href="{% url 'account_logout' %}" class="btn">Logout</a>
+                                            </li>
+                                            {% else %}
                                             <li class="button-header"><a
                                                     href="{{ request.user.student.get_absolute_url }}"
                                                     class="btn btn3">Profile</a></li>
-                                            {% endif %}
-                                            <a href="{% url 'account_logout' %}" class="btn">Logout</a>
+                                            <li class="button-header margin-left">
+                                                <a href="{% url 'account_logout' %}" class="btn">Logout</a>
                                             </li>
-
+                                            {% endif %}
                                             {% else %}
                                             <li class="button-header margin-left">
                                                 <a href="{% url 'account_signup' %}" class="btn">Join</a>
@@ -119,5 +130,108 @@
     #navigation li.active a {
         color: black !important;
         /* Active link color */
+    }
+
+    /* Ensure continuous navigation flow */
+    #navigation {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    #navigation li {
+        display: inline-block;
+        margin-right: 0;
+    }
+
+    #navigation li a {
+        padding: 10px 15px;
+        display: block;
+        transition: all 0.3s ease;
+    }
+
+    /* Cart Icon Styles */
+    .cart-icon {
+        position: relative;
+        margin-right: 15px;
+        margin-left: 15px;
+    }
+
+    .cart-link {
+        position: relative;
+        display: inline-block;
+        font-size: 20px;
+        color: black !important;
+        text-decoration: none;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .cart-link:hover {
+        color: #007bff !important;
+        transform: scale(1.1);
+    }
+
+    .cart-counter {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: linear-gradient(45deg, #ff6b6b, #ff5252);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        line-height: 1;
+        min-width: 20px;
+        border: 2px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        animation: pulse 2s infinite;
+    }
+
+    .cart-counter:empty {
+        display: none;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Improve button spacing and continuity */
+    .button-header {
+        margin-left: 8px;
+    }
+
+    .button-header:first-of-type {
+        margin-left: 0;
+    }
+
+    /* Enhance button styles */
+    .btn {
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 </style>
