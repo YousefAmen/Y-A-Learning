@@ -258,10 +258,12 @@
         <button class="buy-now-btn">
           <i class="bi bi-credit-card"></i> Buy now
         </button>
-        <button class="add-to-cart-btn">
-          <i class="bi bi-cart-plus"></i> Add to cart
-        </button>
-
+        <form action="" method="POST">
+          {% csrf_token %}
+          <button type="button" class="add-to-cart-btn" name="token" value="{{ course.token }}" id="add-cart">
+            <i class="bi bi-cart-plus"></i> Add to cart
+          </button>
+        </form>
         <div class="money-back-guarantee">
           <i class="bi bi-shield-check"></i> 30-Day Money-Back Guarantee
         </div>
@@ -958,6 +960,35 @@
   }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+<script>
+  $(document).on('click', '#add-cart', function (e) {
+    e.preventDefault();
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'cart:add-to-cart' %}",
+      data: {
+        token: $('#add-cart').val(),
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+        action: "post"
+      },
+      dataType: "json",
+
+      success: function (json) {
+        // ✅ Update cart icon in navbar
+        $('#cart-count').text(json.item_count);
+      },
+
+      error: function (xhr, errmsg, err) {
+        console.error("Error adding to cart:", errmsg);
+        alert("Something went wrong. Try again.");
+      }
+    });
+  });
+</script>
 <script>
   // Tab functionality
   document.querySelectorAll('.course-tabs .tab-button').forEach(button => {
