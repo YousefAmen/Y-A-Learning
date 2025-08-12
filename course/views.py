@@ -597,7 +597,7 @@ def remove_contact(request, token):
         messages.success(request, "The Message is Deleted Successfully.")
         return redirect("course:user-contact-messages", message.token)
     context = {"message": message}
-    return render(request, "course_pages/delete_contact.html", context)
+    return render(request, "course_pages/remove_contact_message.html", context)
 
 
 @login_required
