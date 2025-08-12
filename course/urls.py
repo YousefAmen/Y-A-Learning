@@ -17,12 +17,16 @@ from .views import (
     EditModule,
     Index,
     UpdateCourse,
+    create_contact,
     create_review,
     fetch_courses_by_category,
     fetch_courses_by_tag,
+    remove_contact,
     remove_review,
     search,
+    update_contact,
     update_review,
+    user_contact_messages,
 )
 
 app_name = "course"
@@ -98,7 +102,13 @@ urlpatterns = [
         name="fetch-courses-by-category",
     ),
     path("tags/<str:tag>/", fetch_courses_by_tag, name="fetch-courses-by-tag"),
+    # review paths
     path("create-review/<str:token>/", create_review, name="create-review"),
     path("update-review/<slug:slug>/", update_review, name="update-review"),
     path("remove-review/<slug:slug>/", remove_review, name="remove-review"),
+    # contact paths
+    path("user-contacts/", user_contact_messages, name="user-contact-messages"),
+    path("contact/", create_contact, name="contact"),
+    path("update-contact/<str:token>/", update_contact, name="update-contact"),
+    path("remove-contact/<str:token>/", remove_contact, name="update-contact"),
 ]

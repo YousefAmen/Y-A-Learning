@@ -265,6 +265,7 @@ class Lesson(models.Model):
 
 class Contact(models.Model):
     name = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     email = models.EmailField(unique=True)
     message = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)

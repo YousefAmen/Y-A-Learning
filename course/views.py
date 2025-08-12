@@ -36,6 +36,7 @@ from .models import (
     Review,
 )
 from taggit.models import Tag
+from django.contrib.auth.decorators import login_required
 
 
 class Index(TemplateView):
@@ -458,6 +459,7 @@ def search(request):
     return render(request, "course_pages/search.html", context)
 
 
+@login_required
 def create_review(request, token):
     try:
         course = Course.objects.get(token=token)
@@ -465,28 +467,26 @@ def create_review(request, token):
         return messages.error(
             request, "Something Happend,Please Try To Adding Review Agine."
         )
-    if request.user.is_authenticated:
-        form = ReviewForm()
-        if request.method == "POST":
-            form = ReviewForm(request.POST or None)
-            if form.is_valid():
-                presave_form = form.save(commit=False)
-                presave_form.course = course
-                presave_form.user = request.user
-                presave_form.save()
-                messages.success(request, "Your Review Adding Successfully.")
-                return redirect("course:course-detail", course.slug, course.token)
-            else:
-                return messages.error(
-                    request, "Something Wrong Please Try To Adding Agine"
-                )
+    form = ReviewForm()
+    if request.method == "POST":
+        form = ReviewForm(request.POST or None)
+        if form.is_valid():
+            presave_form = form.save(commit=False)
+            presave_form.course = course
+            presave_form.user = request.user
+            presave_form.save()
+            messages.success(request, "Your Review Adding Successfully.")
+            return redirect("course:course-detail", course.slug, course.token)
+        else:
+            return messages.error(request, "Something Wrong Please Try To Adding Agine")
     context = {"form": form, "course": course}
     return render(request, "course_pages/create_review.html", context)
 
 
+@login_required
 def update_review(request, slug):
     try:
-        review = Review.objects.get(slug=slug)
+        review = Review.objects.get(slug=slug, user=request.user)
     except Review.DoesNotExist:
         return messages.error(
             request, "Something Happend,Please Try To Update Review Agine."
@@ -508,9 +508,10 @@ def update_review(request, slug):
     return render(request, "course_pages/update_review.html", context)
 
 
+@login_required
 def remove_review(request, slug):
     try:
-        review = Review.objects.get(slug=slug)
+        review = Review.objects.get(slug=slug, user=request.user)
     except Review.DoesNotExist:
         return messages.error(
             request, "Something Happend,Please Try To Update Review Agine."
@@ -523,18 +524,22 @@ def remove_review(request, slug):
     return render(request, "course_pages/remove_review.html", context)
 
 
+@login_required
 def create_rating(request, token):
     pass
 
 
+@login_required
 def update_rating(request, token):
     pass
 
 
+@login_required
 def remove_rating(request, token):
     pass
 
 
+@login_required
 def create_contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
@@ -557,9 +562,10 @@ def create_contact(request):
     return render(request, "course_pages/contact.html", context)
 
 
+@login_required
 def update_contact(request, token):
     try:
-        message = Contact.objects.get(token=token)
+        message = Contact.objects.get(token=token, user=request.user)
     except Contact.DoesNotExist:
         message.error(request, "This Message Is Not Exist Anymore.")
     if request.method == "POST":
@@ -567,7 +573,7 @@ def update_contact(request, token):
         if form.is_valid():
             form.save()
             messages.success(request, "Message Updated Successfully.")
-            return redirect("course:user-contact-message", message.token)
+            return redirect("course:user-contact-messages", message.token)
         else:
             messages.info(
                 request,
@@ -580,18 +586,22 @@ def update_contact(request, token):
     return render(request, "course_pages/update_contact_message.html", context)
 
 
-def delete_contact(request, token):
+@login_required
+def remove_contact(request, token):
     try:
-        message = Contact.objects.get(token=token)
+        message = Contact.objects.get(token=token, user=request.user)
     except Contact.DoesNotExist:
         message.error(request, "This Message Is Not Exist Anymore.")
     if request.method == "POST":
         message.delete()
         messages.success(request, "The Message is Deleted Successfully.")
-        return redirect("course:user-contact-message", message.token)
+        return redirect("course:user-contact-messages", message.token)
     context = {"message": message}
     return render(request, "course_pages/delete_contact.html", context)
 
 
+@login_required
 def user_contact_messages(request):
-    pass
+    contact_messages = Contact.objects.filter(user=request.user)
+    context = {"contact_messages": contact_messages if contact_messages else None}
+    return render(request, "course_pages/user_contacts.html", context)
