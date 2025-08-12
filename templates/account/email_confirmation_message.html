@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<style>
+    .confirmation-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f0f4ff, #ffffff);
+        padding: 2rem;
+    }
+
+    .confirmation-box {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        max-width: 500px;
+        width: 100%;
+        padding: 2.5rem;
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .confirmation-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #e7f3ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2.5rem;
+        color: #0d6efd;
+    }
+
+    .btn-confirm {
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="confirmation-wrapper">
+    <div class="confirmation-box">
+        <!-- Icon -->
+        <div class="confirmation-icon">
+            <i class="bi bi-envelope-paper-heart-fill"></i>
+        </div>
+
+        <!-- Title -->
+        <h2 class="fw-bold mb-3">{% trans "Verify Your Email Address" %}</h2>
+
+        <!-- Message -->
+        <p class="text-muted mb-4">
+            {% blocktrans %}We’ve sent a confirmation email to <strong>{{ email }}</strong>.
+            Please click the link inside to complete your registration.{% endblocktrans %}
+        </p>
+
+        <!-- Confirm Button -->
+        <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-confirm">
+                {% trans "Confirm Email" %}
+            </button>
+        </form>
+
+        <!-- Hint -->
+        <p class="mt-4 small text-muted">
+            {% trans "Didn’t get the email?" %}
+            <a href="{% url 'account_email' %}" class="fw-semibold text-decoration-none">
+                {% trans "Resend" %}
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

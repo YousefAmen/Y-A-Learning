@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .delete-content-wrapper {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: white;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        margin-top: 70px;
+    }
+
+    .delete-review-container {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 500px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .delete-review-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
+    }
+
+    .warning-icon {
+        font-size: 4rem;
+        color: #dc2626;
+        margin-bottom: 20px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #dc2626;
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .review-info {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: left;
+    }
+
+    .review-info h4 {
+        color: #374151;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+
+    .review-text {
+        color: #6b7280;
+        font-style: italic;
+        line-height: 1.5;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #1e3a8a;
+    }
+
+    .delete-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+        min-width: 140px;
+    }
+
+    .delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+    }
+
+    .delete-btn:active {
+        transform: translateY(0);
+    }
+
+    .cancel-btn {
+        background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 140px;
+    }
+
+    .cancel-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(107, 114, 128, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .cancel-btn:active {
+        transform: translateY(0);
+    }
+
+    .warning-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .back-link {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: #1e3a8a;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #1e40af;
+        transform: translateX(-5px);
+    }
+
+    @media (max-width: 768px) {
+        .delete-content-wrapper {
+            padding: 20px 10px;
+        }
+
+        .delete-review-container {
+            padding: 30px 20px;
+            margin: 10px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .warning-icon {
+            font-size: 3rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .delete-btn,
+        .cancel-btn {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .back-link {
+            position: static;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+    }
+
+    /* Animation for container appearance */
+    .delete-review-container {
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .review-info {
+        animation: fadeIn 0.8s ease-out;
+        animation-delay: 0.2s;
+        opacity: 0;
+        animation-fill-mode: forwards;
+    }
+
+    .button-group {
+        animation: fadeIn 0.8s ease-out;
+        animation-delay: 0.4s;
+        opacity: 0;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="delete-content-wrapper">
+    <div class="delete-review-container">
+        <a href="#" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Course
+        </a>
+
+        <div class="warning-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+
+        <div class="page-header">
+            <h1 class="page-title">Delete Review</h1>
+            <p class="page-subtitle">
+                Are you sure you want to permanently delete this review?<br>
+                This action cannot be undone.
+            </p>
+        </div>
+
+        <div class="review-info">
+            <h4>Review to be deleted:</h4>
+            <div class="review-text">
+                "{{ review.body|default:"Your review content will appear here..." }}"
+            </div>
+        </div>
+
+        <div class="warning-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>This will permanently remove your review and cannot be recovered.</span>
+        </div>
+
+        <form class="delete-form" method="POST">
+            {% csrf_token %}
+            <div class="button-group">
+                <button type="submit" class="delete-btn">
+                    <i class="fas fa-trash"></i>
+                    Delete Review
+                </button>
+                <a href="#" class="cancel-btn">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add confirmation dialog
+        const deleteBtn = document.querySelector('.delete-btn');
+
+
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.delete-btn, .cancel-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.3);
+                    pointer-events: none;
+                    animation: ripple-animation 0.6s ease-out;
+                `;
+
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    });
+
+    // Add ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple-animation {
+            from {
+                transform: scale(0);
+                opacity: 1;
+            }
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+{% endblock %}

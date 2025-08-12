@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-
+{% load static %}
 
 <!-- Header End -->
 <main>
@@ -58,17 +58,15 @@
                         <div class="properties__card">
                             <div class="properties__img overlay1">
                                 {% if course.image %}
-                                <a href="{% url 'course:course-detail' course.slug course.token %}"><img
-                                        src="{{course.image.url}}" alt=""></a>
+                                <a href="{{course.get_absolute_url}}"><img src="{{course.image.url}}" alt=""></a>
                                 {% else %}
-                                <a href="{% url 'course:course-detail' course.slug course.token %}"><img
-                                        src="assets/img/gallery/featured1.png" alt=""></a>
+                                <a href="{{course.get_absolute_url}}"><img src="assets/img/gallery/featured1.png"
+                                        alt=""></a>
                                 {% endif %}
                             </div>
                             <div class="properties__caption">
                                 <p>User Experience</p>
-                                <h3><a
-                                        href="{% url 'course:course-detail' course.slug course.token %}">{{course.title|title}}</a>
+                                <h3><a href="{{course.get_absolute_url}}">{{course.title|title}}</a>
                                 </h3>
                                 <p>{{course.description}}
                                 </p>
@@ -91,8 +89,7 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <a href="{% url 'course:course-detail' course.slug course.token %}"
-                                    class="border-btn border-btn2">Find out more</a>
+                                <a href="{{course.get_absolute_url}}" class="border-btn border-btn2">Find out more</a>
                             </div>
                         </div>
                     </div>
@@ -101,13 +98,14 @@
                 {%endfor %}
             </div>
             {% endfor %}
-            <div class="row justify-content-center">
+            <!-- <div class="row justify-content-center">
                 <div class="col-xl-7 col-lg-8">
                     <div class="section-tittle text-center mt-40">
                         <a href="#" class="border-btn">Load More</a>
                     </div>
                 </div>
             </div>
+             -->
         </div>
     </div>
     <!-- Courses area End -->
@@ -122,110 +120,32 @@
                 </div>
             </div>
             <div class="row">
+                {% for category in categories %}
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="single-topic text-center mb-30">
                         <div class="topic-img">
-                            <img src="assets/img/gallery/topic1.png" alt="">
+                            {% if category.thumbnail %}
+                            <img src="{{ category.thumbnail.url }}" alt="">
+                            {% else %}
+                            <img src="{% static 'assets/img/gallery/topic1.png' %}" alt="">
+                            {% endif %}
                             <div class="topic-content-box">
                                 <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
+                                    <h3><a href="{{category.get_absolute_url}}">{{category.name}}</a></h3>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-topic text-center mb-30">
-                        <div class="topic-img">
-                            <img src="assets/img/gallery/topic2.png" alt="">
-                            <div class="topic-content-box">
-                                <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-topic text-center mb-30">
-                        <div class="topic-img">
-                            <img src="assets/img/gallery/topic3.png" alt="">
-                            <div class="topic-content-box">
-                                <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-topic text-center mb-30">
-                        <div class="topic-img">
-                            <img src="assets/img/gallery/topic4.png" alt="">
-                            <div class="topic-content-box">
-                                <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-topic text-center mb-30">
-                        <div class="topic-img">
-                            <img src="assets/img/gallery/topic5.png" alt="">
-                            <div class="topic-content-box">
-                                <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-topic text-center mb-30">
-                        <div class="topic-img">
-                            <img src="assets/img/gallery/topic6.png" alt="">
-                            <div class="topic-content-box">
-                                <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-topic text-center mb-30">
-                        <div class="topic-img">
-                            <img src="assets/img/gallery/topic7.png" alt="">
-                            <div class="topic-content-box">
-                                <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-topic text-center mb-30">
-                        <div class="topic-img">
-                            <img src="assets/img/gallery/topic8.png" alt="">
-                            <div class="topic-content-box">
-                                <div class="topic-content">
-                                    <h3><a href="#">Programing</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
-            <div class="row justify-content-center">
+            <!-- <div class="row justify-content-center">
                 <div class="col-xl-12">
                     <div class="section-tittle text-center mt-20">
-                        <a href="courses.html" class="border-btn">View More Subjects</a>
+                        <a href="#" class="border-btn">View More Subjects</a>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <!-- top subjects End -->

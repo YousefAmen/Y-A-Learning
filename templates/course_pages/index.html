@@ -5,7 +5,7 @@
 
 
 
-    
+
 <main>
     <!--? slider Area Start-->
     <section class="slider-area ">
@@ -20,11 +20,13 @@
                                 <p data-animation="fadeInLeft" data-delay="0.4s">Build skills with courses,
                                     certificates, and degrees online from world-class universities and companies</p>
                                 {% if user.is_authenticated %}
-                                <a href="#" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Exploar all Courses For
+                                <a href="{% url 'course:courses-list' %}" class="btn hero-btn"
+                                    data-animation="fadeInLeft" data-delay="0.7s">Exploar all Courses For
                                     Free</a>
                                 {% else %}
-                                    <a href="{% url 'account_signup' %}" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Join for
-                                        Free</a>
+                                <a href="{% url 'account_signup' %}" class="btn hero-btn" data-animation="fadeInLeft"
+                                    data-delay="0.7s">Join for
+                                    Free</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -78,7 +80,7 @@
     {% include 'partes/courses_area.html' %}
     <!-- Courses area End -->
     <!--? About Area-1 Start -->
-    
+
     {% include 'partes/about_area1.html' %}
     <!-- About Area End -->
     <!--? top subjects Area Start -->
@@ -90,7 +92,7 @@
             <div class="right-content3">
                 <!-- img -->
                 <div class="right-img">
-                    <img src="assets/img/gallery/about3.png" alt="">
+                    <img src="{% static 'assets/img/gallery/about3.png' %}" alt="">
                 </div>
             </div>
             <div class="left-content3">
@@ -102,7 +104,7 @@
                 </div>
                 <div class="single-features">
                     <div class="features-icon">
-                        <img src="assets/img/icon/right-icon.svg" alt="">
+                        <img src="{% static 'assets/img/icon/right-icon.svg' %}" alt="">
                     </div>
                     <div class="features-caption">
                         <p>Techniques to engage effectively with vulnerable children and young people.</p>
@@ -110,7 +112,7 @@
                 </div>
                 <div class="single-features">
                     <div class="features-icon">
-                        <img src="assets/img/icon/right-icon.svg" alt="">
+                        <img src="{% static 'assets/img/icon/right-icon.svg' %}" alt="">
                     </div>
                     <div class="features-caption">
                         <p>Join millions of people from around the world
@@ -119,7 +121,7 @@
                 </div>
                 <div class="single-features">
                     <div class="features-icon">
-                        <img src="assets/img/icon/right-icon.svg" alt="">
+                        <img src="{% static 'assets/img/icon/right-icon.svg' %}}" alt="">
                     </div>
                     <div class="features-caption">
                         <p>Join millions of people from around the world learning together.
@@ -139,7 +141,7 @@
             <div class="right-content2">
                 <!-- img -->
                 <div class="right-img">
-                    <img src="assets/img/gallery/about2.png" alt="">
+                    <img src="{% static 'assets/img/gallery/about2.png' %}" alt="">
                 </div>
             </div>
             <div class="left-content2">
@@ -152,7 +154,7 @@
                             with us.</h2>
                         <p>The automated process all your website tasks. Discover tools and techniques to engage
                             effectively with vulnerable children and young people.</p>
-                        <a href="#" class="btn">Join now for Free</a>
+                        <a href="{% url 'account_signup' %}" class="btn">Join now for Free</a>
                     </div>
                 </div>
             </div>

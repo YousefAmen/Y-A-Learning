@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+    /* Form container */
+    .custom-form-container {
+        max-width: 600px;
+        margin: 150px auto 40px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-left: 6px solid #1e3a8a;
+    }
+
+    /* Form elements (if crispy doesn't cover styling inputs) */
+    .custom-form input,
+    .custom-form textarea,
+    .custom-form select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    .custom-form input:focus,
+    .custom-form textarea:focus,
+    .custom-form select:focus {
+        border-color: #1e3a8a;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    }
+
+    /* Submit button */
+    .custom-submit-btn {
+        background-color: #1e3a8a;
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        font-size: 17px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: inline-block;
+    }
+
+    .custom-submit-btn:hover {
+        background-color: #192e6d;
+        transform: translateY(-2px);
+    }
+
+    .custom-submit-btn:active {
+        background-color: #142456;
+        transform: translateY(0);
+    }
+</style>
+<div class="custom-form-container">
+    <form method="POST" class="custom-form">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="custom-submit-btn">Add</button>
+    </form>
+</div>
+{% endblock %}

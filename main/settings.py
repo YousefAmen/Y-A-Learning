@@ -13,10 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
-from environ import Env
+from dotenv import load_dotenv
 
-env = Env()
-env.read_env('.env')
+load_dotenv(".env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s2@0+7696a7sx$auaii@eb=^gii_o=zxva8^zp1!)av+w3po-='
+SECRET_KEY = "django-insecure-s2@0+7696a7sx$auaii@eb=^gii_o=zxva8^zp1!)av+w3po-="
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,126 +36,122 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     # django allauth apps
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    # allauth social providers   
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.twitter',
-    'allauth.socialaccount.providers.openid_connect',
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    # allauth social providers
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.twitter",
+    "allauth.socialaccount.providers.openid_connect",
     # django contries app
-    'django_countries',
+    "django_countries",
     # crispy-forms
-    'crispy_forms',
-    'crispy_bootstrap4',
+    "crispy_forms",
+    "crispy_bootstrap4",
     # apps
-    'course',
-    'members',
-    'payment',
-    'taggit',
+    "course",
+    "members",
+    "payment",
+    "taggit",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # django allauth middleware
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-ROOT_URLCONF = 'main.urls'
+ROOT_URLCONF = "main.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'main.wsgi.application'
+WSGI_APPLICATION = "main.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
-ACCOUNT_FORMS ={
-    'signup': 'members.forms.SignUpForms'
-}
+ACCOUNT_FORMS = {"signup": "members.forms.SignUpForms"}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-            'client_id': env('OAUTH_GOOGLE_CLIENT_ID'),
-            'secret': env('OAUTH_GOOGLE_SECRET'),
-            'key': ''
+    "google": {
+        "APP": {
+            "client_id": os.getenv("OAUTH_GOOGLE_CLIENT_ID"),
+            "secret": os.getenv("OAUTH_GOOGLE_SECRET"),
+            "key": "",
         },
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-            'prompt':'consent',
-            },
-    },
-    'twitter':{
-        'APP' : {
-            'client_id': env('OAUTH_TWITTER_CLIENT_ID'),
-            'secret': env('OAUTH_TWITTER_SECRET'),
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+            "prompt": "consent",
         },
     },
-    
+    "twitter": {
+        "APP": {
+            "client_id": os.getenv("OAUTH_TWITTER_CLIENT_ID"),
+            "secret": os.getenv("OAUTH_TWITTER_SECRET"),
+        },
+    },
 }
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
@@ -166,9 +161,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -177,46 +172,47 @@ ACCOUNT_ADAPTER = "members.adapters.AccountAdapter"
 USE_TZ = True
 
 SITE_ID = 1
-# allauth authentication
-
+# ----social Login-----
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
+# ----end social Login-----
+
+ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_LOGIN_METHODS = ['email'] 
-ACCOUNT_USERNAME_REQUIRED  = False
-LOGOUT_REDIRECT_URL = '/Y-A-Education'
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+# ------Redirects-----
+LOGOUT_REDIRECT_URL = "/Y-A-Education"
 ACCOUNT_SIGNUP_REDIRECT_URL = "/Y-A-Education"
-LOGIN_REDIRECT_URL = '/Y-A-Education'
+LOGIN_REDIRECT_URL = "/Y-A-Education"
+# ------- end Redirects-------
+
+
+# -----Email Backend-----
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'ammenyoussef@gmail.com'
-EMAIL_HOST_PASSWORD = env('EMIAL_PASSWORD')
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "ammenyoussef@gmail.com"
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-
-
-
-
-
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# ------end Email Backend-----
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main/static')]
-STATIC_URL=  '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "main/static")]
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

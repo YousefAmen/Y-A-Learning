@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<style>
+    .confirm-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f9fbff, #ffffff);
+        padding: 2rem;
+    }
+
+    .confirm-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        max-width: 500px;
+        width: 100%;
+        padding: 2.5rem;
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .confirm-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #eaf4ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: #0d6efd;
+    }
+
+    .btn-primary {
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="confirm-wrapper">
+    <div class="confirm-card">
+        <!-- Icon -->
+        <div class="confirm-icon">
+            <i class="bi bi-envelope-check-fill"></i>
+        </div>
+
+        <!-- Title -->
+        <h2 class="fw-bold mb-3">{% trans "Confirm Email Address" %}</h2>
+
+        <!-- Message -->
+        <p class="text-muted mb-4">
+            {% blocktrans with email_address=confirmation.email_address.email user=confirmation.email_address.user %}
+            Please confirm that <strong>{{ email_address }}</strong> is an email address for user <strong>
+                {{ user}}</strong>.
+            {% endblocktrans %}
+        </p>
+
+        <!-- Confirm Button -->
+        <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                {% trans "Confirm" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -56,13 +56,16 @@
                                                 </ul>
                                             </li>
                                             {% endif %}
+                                            <li><a href="{% url 'course:search' %}">search</a></li>
+
                                             <li><a href="contact.html">Contact</a></li>
 
                                             <!-- Cart Icon - Available for all users -->
                                             <li class="cart-icon">
                                                 <a href="{% url 'cart:cart_detail' %}" class="cart-link">
                                                     <i class="fas fa-shopping-cart"></i>
-                                                    <span class="cart-counter" id="cart-count">{{cart|length}}</span>
+                                                    <span class="cart-counter"
+                                                        id="cart-count">{{request.session.cart|length}}</span>
                                                 </a>
                                             </li>
 

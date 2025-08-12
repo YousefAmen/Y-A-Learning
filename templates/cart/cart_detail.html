@@ -1,56 +1,182 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load course_tags %}
 {% block title %}Your Learning Cart{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 {% endblock %}
 
+
 {% block content %}
+<style>
+  .custom-cart-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .custom-btn {
+    text-decoration: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-btn.outline {
+    border: 2px solid #555;
+    color: #555;
+    background-color: transparent;
+  }
+
+  .custom-btn.outline:hover {
+    background-color: #555;
+    color: white;
+  }
+
+  .custom-btn.solid {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  }
+
+  .custom-btn.solid:hover {
+    background: linear-gradient(45deg, #0056b3, #003f7f);
+    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+  }
+
+  .custom-cart-table {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;
+  }
+
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+  }
+
+  .custom-table thead {
+    background-color: #f7f7f7;
+    color: #333;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+  }
+
+  .custom-table tbody tr:hover {
+    background-color: #f5faff;
+  }
+
+  .course-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .course-info img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .course-title a {
+    font-weight: 600;
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .course-title a:hover {
+    text-decoration: underline;
+  }
+
+  .custom-table td p {
+    margin: 0 0 6px;
+    font-size: 14px;
+  }
+
+  .custom-table small {
+    color: #888;
+    font-size: 12px;
+  }
+
+  .custom-table tfoot {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+
+  .custom-table tfoot .total-label {
+    text-align: right;
+  }
+
+  .custom-table button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #dc3545;
+    font-size: 18px;
+  }
+
+  .custom-table button:hover {
+    color: #a00;
+  }
+</style>
 <div class="container py-5" style="margin-top: 50px;">
   <h1 class="display-4 mb-4">Your Learning Cart</h1>
 
   {% if cart|length > 0 %}
-  <div class="card shadow-sm">
-    <div class="table-responsive">
-      <table class="table table-hover mb-0">
-        <thead class="thead-light">
+  <div class="custom-cart-table">
+    <div class="custom-table-wrapper">
+      <table class="custom-table">
+        <thead>
           <tr>
-            <th scope="col" class="pl-4">Course</th>
-            <th scope="col">Details</th>
-            <th scope="col">Price</th>
-            <th scope="col">Action</th>
+            <th>Course</th>
+            <th>Details</th>
+            <th>Price</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {% for course in courses %}
           <tr>
-            <td class="pl-4 align-middle">
-              <div class="d-flex align-items-center">
-                <a href="{% url 'course:course-detail' course.slug course.token %}">
+            <td>
+              <div class="course-info">
+                <a href="{{ course.get_absolute_url }}">
                   <img
                     src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
-                    alt="{{ course.title }}" class="img-fluid rounded"
-                    style="width: 100px; height: 100px; object-fit: cover;">
+                    alt="{{ course.title }}">
                 </a>
-                <div class="ml-3">
-                  <a href="{% url 'course:course-detail' course.slug course.token %}"
-                    class="text-primary font-weight-bold">{{course.title }}</a>
+                <div class="course-title">
+                  <a href="{{ course.get_absolute_url }}">
+                    {{ course.title }}
+                  </a>
                 </div>
               </div>
             </td>
-            <td class="align-middle">
-              <p class="mb-1">{{ course.description|truncatewords:20 }}</p>
-              <small class="text-muted">Duration: {{ course.duration|default:"N/A" }}</small><br>
-              <small class="text-muted">Level: {{ course.level|default:"Intermediate" }}</small>
+            <td>
+              <p>{{ course.description|truncatewords:20 }}</p>
+              <small>Duration: {{ course.total_course_duration|format_duration }}</small><br>
+              <small>Level: {{ course.level|default:"Intermediate" }}</small>
             </td>
-            <td class="align-middle font-weight-bold">${{ course.price }}</td>
-            <td class="align-middle">
+            <td><strong>${{ course.price }}</strong></td>
+            <td>
               <form action="" method="POST">
                 {% csrf_token %}
-                <button type="button" name="token" id="remove-item-{{course.token}}" value="{{ course.token }}"
-                  style="border: none; background: none; padding: 0; cursor: pointer;">
+                <button type="button" name="token" id="remove-item-{{course.token}}" value="{{ course.token }}">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -59,20 +185,20 @@
           {% endfor %}
         </tbody>
         <tfoot>
-          <tr class="bg-light">
-            <td colspan="2" class="pl-4 text-right font-weight-bold">Total Courses: {{ cart|length }}</td>
-            <td class="font-weight-bold">${{ cart.total_amount }}</td>
+          <tr>
+            <td colspan="2" class="total-label">Total Courses: {{ cart|length }}</td>
+            <td><strong>${{ cart.total_amount }}</strong></td>
             <td></td>
           </tr>
         </tfoot>
       </table>
     </div>
   </div>
-
-  <div class="mt-4 d-flex justify-content-end">
-    <a href="{% url 'course:courses-list' %}" class="btn btn-outline-secondary mr-2">Continue Exploring Courses</a>
-    <a href="#" class="btn btn-primary">Proceed to Checkout</a>
+  <div class="custom-cart-buttons">
+    <a href="{% url 'course:courses-list' %}" class="custom-btn outline">← Continue Exploring</a>
+    <a href="#" class="custom-btn solid">Proceed to Checkout →</a>
   </div>
+
   {% else %}
   <div class="text-center py-5">
     <p class="lead text-muted">Your cart is empty.</p>

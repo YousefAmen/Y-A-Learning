@@ -35,7 +35,7 @@
         </div>
 
         <div class="course-actions">
-          <a href="{% url 'course:course-detail' course.slug course.token %}" class="course-btn btn-view">
+          <a href="{{ course.get_absolute_url }}" class="course-btn btn-view">
             <i class="fas fa-eye" aria-hidden="true"></i> View Course
           </a>
           {% if course.instructor == request.user.instructor %}
@@ -64,6 +64,7 @@
 
     <div class="categories-grid">
       {% for category in popular_categories %}
+      {% if category.course_set.all %}
       <div class="category-card-container">
         <div class="category-header">
           <h3 class="category-name">{{ category.name }}</h3>
@@ -87,7 +88,7 @@
         <div class="category-courses-grid">
           {% for course in category.course_set.all|slice:":3" %}
           <div class="popular-course-card">
-            <a href="{% url 'course:course-detail' course.slug course.token %}" class="course-link">
+            <a href="{{ course.get_absolute_url }}" class="course-link">
               <div class="course-image-container">
                 {% if course.image %}
                 <img src="{{ course.image.url }}" class="course-image" alt="{{ course.title }}">
@@ -112,14 +113,10 @@
               </div>
             </a>
           </div>
-          {% empty %}
-          <div class="no-courses-message">
-            <i class="fas fa-book-open"></i>
-            <p>No courses available in this category yet</p>
-          </div>
           {% endfor %}
         </div>
       </div>
+      {% endif %}
       {% empty %}
       <div class="no-categories-message">
         <i class="fas fa-folder-open"></i>

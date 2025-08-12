@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<style>
+    .verify-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f9fbff, #ffffff);
+        padding: 2rem;
+    }
+
+    .verify-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        max-width: 500px;
+        width: 100%;
+        padding: 2.5rem;
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .verify-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #eaf4ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: #0d6efd;
+    }
+
+    .btn-primary {
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="verify-wrapper">
+    <div class="verify-card">
+        <!-- Icon -->
+        <div class="verify-icon">
+            <i class="bi bi-envelope-fill"></i>
+        </div>
+
+        <!-- Title -->
+        <h2 class="fw-bold mb-3">{% trans "Verify Your Email Address" %}</h2>
+
+        <!-- Message -->
+        <p class="text-muted mb-4">
+            {% blocktrans %}We have sent an email to <strong>{{ email }}</strong> for verification.
+            Please follow the link in the email to complete your signup process.
+            If you don’t see it, check your spam folder.{% endblocktrans %}
+        </p>
+
+        <!-- Hint -->
+        <p class="small text-muted mb-4">
+            {% trans "Didn’t receive the email?" %}
+            <a href="{% url 'account_email' %}" class="fw-semibold text-decoration-none text-primary">
+                {% trans "Resend confirmation" %}
+            </a>
+        </p>
+
+        <!-- Sign In -->
+        <a href="{% url 'account_login' %}" class="btn btn-primary">
+            {% trans "Go to Sign In" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

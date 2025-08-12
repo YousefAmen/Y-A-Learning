@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+    .review-content-wrapper {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: white;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        margin: 70px;
+    }
+
+    .update-review-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+        overflow: hidden;
+        margin: 0 auto;
+    }
+
+    .update-review-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #1e3a8a, #1e40af, #1d4ed8);
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #1e3a8a, #1e40af);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .review-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .review-form .form-group {
+        position: relative;
+    }
+
+    .review-form .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    .review-form .form-control {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #fff;
+        font-family: inherit;
+    }
+
+    .review-form .form-control:focus {
+        outline: none;
+        border-color: #1e3a8a;
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .review-form textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .update-btn {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .update-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(30, 58, 138, 0.3);
+    }
+
+    .update-btn:active {
+        transform: translateY(0);
+    }
+
+    .update-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .update-btn:hover::before {
+        left: 100%;
+    }
+
+    .back-link {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: #1e3a8a;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #1e40af;
+        transform: translateX(-5px);
+    }
+
+    .form-help-text {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+        .review-content-wrapper {
+            padding: 20px 10px;
+        }
+
+        .update-review-container {
+            padding: 30px 20px;
+            margin: 10px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .back-link {
+            position: static;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+    }
+
+    /* Animation for form appearance */
+    .update-review-container {
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .review-form .form-group {
+        animation: fadeInLeft 0.6s ease-out forwards;
+        opacity: 0;
+    }
+
+    .review-form .form-group:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .update-btn {
+        animation: fadeInLeft 0.6s ease-out forwards;
+        animation-delay: 0.2s;
+        opacity: 0;
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<div class="review-content-wrapper">
+    <div class="update-review-container">
+        <a href="{% url 'course:course-detail' course.slug course.token %}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Course
+        </a>
+
+        <div class="page-header">
+            <h1 class="page-title">Update Review</h1>
+            <p class="page-subtitle">
+                <i class="fas fa-star"></i>
+                Share your updated thoughts about this course
+            </p>
+        </div>
+
+        <form class="review-form" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_body">Your Review</label>
+                {{ form|crispy }}
+                <div class="form-help-text">Tell others about your experience to help them make informed decisions</div>
+            </div>
+
+            <button type="submit" class="update-btn">
+                <i class="fas fa-save"></i>
+                Update Review
+            </button>
+        </form>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add smooth transitions to form elements
+        const formControls = document.querySelectorAll('.review-form .form-control');
+        formControls.forEach(control => {
+            control.addEventListener('focus', function () {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            control.addEventListener('blur', function () {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add ripple effect to button
+        const button = document.querySelector('.update-btn');
+        if (button) {
+            button.addEventListener('click', function (e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        }
+    });
+</script>
+
+{% endblock %}
