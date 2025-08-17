@@ -75,7 +75,9 @@ class Course(models.Model):
     token = models.CharField(max_length=20, unique=True, blank=True)
 
     is_puplished = models.BooleanField(default=False)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, related_name="instructor_courses"
+    )
     loves = models.ManyToManyField(User, blank=True)
 
     def save(self, *args, **kwargs):
@@ -83,7 +85,7 @@ class Course(models.Model):
             self.slug = slugify(self.title)
         if not self.token:
             self.token = uuid.uuid4().hex[:16].upper()
-        if self.discount_price > 0:
+        if self.discount_price and self.discount_price > 0:
             self.price = self.price - self.discount_price
 
         super().save(*args, **kwargs)
@@ -156,9 +158,7 @@ class Enrollment(models.Model):
     enrollment_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return (
-            f"{self.student.first_name} {self.student.last_name} enroll {self.course}"
-        )
+        return f"{self.user.first_name} {self.user.last_name} enroll {self.course}"
 
 
 class Rating(models.Model):

@@ -9,24 +9,27 @@
             </div>
         </div>
         <div class="row">
+            {% for category in categories %}
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="single-topic text-center mb-30">
                     <div class="topic-img">
                         <img src="{% static 'assets/img/gallery/topic1.png' %}" alt="">
                         <div class="topic-content-box">
                             <div class="topic-content">
-                                <h3><a href="#">Programing</a></h3>
+                                <h3><a
+                                        href="{% url 'course:fetch-courses-by-category' category.slug %}">{{category.name}}</a>
+                                </h3>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
+            {% endfor %}
         </div>
         <div class="row justify-content-center">
             <div class="col-xl-12">
                 <div class="section-tittle text-center mt-20">
-                    <a href="courses.html" class="border-btn">View More Subjects</a>
+                    <a href="{% url 'course:courses-list' %}" class="border-btn">View More Subjects</a>
                 </div>
             </div>
         </div>

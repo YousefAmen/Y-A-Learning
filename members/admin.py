@@ -1,5 +1,16 @@
 from django.contrib import admin
-from .models import Instructor,Student
+from .models import Instructor, SocialLinks, Student
 
-admin.site.register(Instructor)
-admin.site.register(Student)
+
+class StudentAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("first_name", "last_name")}
+
+
+class InstructorAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("first_name", "last_name")}
+
+
+admin.site.register(Student, StudentAdmin)
+
+admin.site.register(Instructor, InstructorAdmin)
+admin.site.register(SocialLinks)

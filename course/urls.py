@@ -17,6 +17,7 @@ from .views import (
     EditModule,
     Index,
     UpdateCourse,
+    best_seller,
     create_contact,
     create_review,
     fetch_courses_by_category,
@@ -24,6 +25,8 @@ from .views import (
     remove_contact,
     remove_review,
     search,
+    top_courses,
+    top_instructors,
     update_contact,
     update_review,
     user_contact_messages,
@@ -111,4 +114,8 @@ urlpatterns = [
     path("contact/", create_contact, name="contact"),
     path("update-contact/<str:token>/", update_contact, name="update-contact"),
     path("remove-contact/<str:token>/", remove_contact, name="update-contact"),
+    # trending now paths
+    path("top-courses/", top_courses, name="top-courses"),
+    path("best-seller/", best_seller, name="best-seller"),
+    path("top-instructors/", top_instructors, name="top-instructors"),
 ]

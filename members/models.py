@@ -70,9 +70,7 @@ class Instructor(Profile):
     """
 
     about = models.TextField(max_length=500, blank=True, null=True)
-    facebook_url = models.CharField(max_length=500, blank=True, null=True)
-    website_url = models.CharField(max_length=500, blank=True, null=True)
-    linkedIn_url = models.CharField(max_length=500, blank=True, null=True)
+
     teaching_exe = models.PositiveSmallIntegerField(
         choices=TEACHING_EXPERIENCE_CHOICES,
         default=TEACHING_EXPERIENCE_CHOICES[0][0],
@@ -98,22 +96,35 @@ class Instructor(Profile):
 
     @property
     def get_students_count(self):
-        instructor_students = self.course_set.aggregate(
+        instructor_students = self.instructor_courses.aggregate(
             total_students=Count("course_enrollments")
         )["total_students"]
         return instructor_students or 0
 
     @property
     def get_total_reviews(self):
-        total_reviews = self.course_set.aggregate(total=Count("course_reviews"))[
-            "total"
-        ]
+        total_reviews = self.instructor_courses.aggregate(
+            total=Count("course_reviews")
+        )["total"]
         return total_reviews or 0
 
     @property
     def get_avg_instructor_rating(self):
-        total_rate = self.course_set.aggregate(total=Avg("course_ratings"))["total"]
+        total_rate = self.instructor_courses.aggregate(total=Avg("course_ratings"))[
+            "total"
+        ]
         return total_rate or 0
+
+
+class SocialLinks(models.Model):
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, related_name="instructor_links"
+    )
+    link_name = models.CharField(max_length=250)
+    link = models.URLField(max_length=250)
+
+    def __str__(self):
+        return f"{self.link_name}"
 
 
 class Student(Profile):

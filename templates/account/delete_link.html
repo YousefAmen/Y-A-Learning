@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="delete-container">
+    <div class="delete-card">
+        <h2 class="delete-title">Delete Link</h2>
+        <p class="delete-message">
+            Are you sure you want to delete the link
+            <span class="delete-item">"{{ object.link_name }}"</span>?
+        </p>
+        <p class="delete-warning">⚠️ This action cannot be undone.</p>
+
+        <form method="POST" class="delete-actions" action="{% url 'members:delete_link' object.link_name %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">Yes, Delete</button>
+            <a href="{% url 'members:user_profile' request.user.instructor.slug request.user.instructor.token %}"
+                class="btn-cancel">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Centering container */
+    .delete-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+        background: #f8f9fb;
+    }
+
+    /* Card style */
+    .delete-card {
+        background: #fff;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        max-width: 500px;
+        text-align: center;
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+    /* Title */
+    .delete-title {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #d9534f;
+        margin-bottom: 1rem;
+    }
+
+    /* Message */
+    .delete-message {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .delete-item {
+        font-weight: bold;
+        color: #000;
+    }
+
+    /* Warning text */
+    .delete-warning {
+        font-size: 0.95rem;
+        color: #d9534f;
+        margin-bottom: 2rem;
+    }
+
+    /* Actions */
+    .delete-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    /* Buttons */
+    .btn-delete {
+        background: #d9534f;
+        color: #fff;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-delete:hover {
+        background: #c9302c;
+    }
+
+    .btn-cancel {
+        background: #f0f0f0;
+        color: #333;
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .btn-cancel:hover {
+        background: #ddd;
+    }
+
+    /* Smooth animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

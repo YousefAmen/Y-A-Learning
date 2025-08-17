@@ -287,6 +287,26 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
+    .btn-edit {
+        background-color: #1e3a8a;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #0f286a;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-delete {
+        background-color: #b91c1c;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
     .btn-browse {
         background-color: #e74c3c;
         color: white;
@@ -378,6 +398,26 @@
     .create-course-wrapper:hover .tooltip {
         opacity: 1;
     }
+
+    .rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .stars {
+        font-size: 12px;
+        color: #f5c518;
+        letter-spacing: 2px;
+    }
+
+    .star {
+        color: #ccc;
+    }
+
+    .star.filled {
+        color: gold;
+    }
 </style>
 
 <div class="profile-container">
@@ -405,7 +445,7 @@
                 <div class="stat-value">{{ instructor_courses.count|default:"0" }}</div>
                 <div class="stat-label">Courses</div>
                 {% else %}
-                <div class="stat-value">{{ student_enrollments.count|default:"0" }}</div>
+                <div class="stat-value">{{ profile.get_students_count|default:"0" }}</div>
                 <div class="stat-label">Ernollment Courses</div>
                 {% endif %}
             </div>
@@ -447,22 +487,36 @@
                 </div>
             </div>
 
-            {% if request.user.profile.role == 'instructor' %}
+            {% if request.user.instructor %}
             <div class="sidebar-card">
                 <h3 class="sidebar-title">Social Links</h3>
+                <a href="{% url 'members:add_link' %}" title="Add Link">
+                    <i class="fas fa-plus"></i>
+                </a>
                 <div class="social-links">
-                    {% if profile.linkedin %}
-                    <a href="{{ profile.linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    {% endif %}
-                    {% if profile.twitter %}
-                    <a href="{{ profile.twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
-                    {% endif %}
-                    {% if profile.github %}
-                    <a href="{{ profile.github }}" target="_blank"><i class="fab fa-github"></i></a>
-                    {% endif %}
+                    {% for link in request.user.instructor.instructor_links.all %}
+                    <div class="link-item">
+                        <a href="{{ link.link }}" target="_blank" class="profile-link">
+                            {{ link.link_name }}
+                        </a>
+                        <span class="link-actions">
+                            <!-- Update link -->
+
+                            <a href="{% url 'members:update_link' link.link_name %}" title="Edit Link">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- Delete link -->
+                            <a href="{% url 'members:delete_link' link.link_name %}" title="Delete Link">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </span>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endif %}
+
+
         </div>
 
         <!-- Main Content -->
@@ -478,11 +532,22 @@
                     {% endif %}
                 </h2>
 
-                {% if instructor_courses %}
+                {% if request.user.instructor %}
                 <a href="{% url 'course:create-course' %}" class="course-btn btn-create"
                     style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-plus-circle"></i>
                     Create New Course
+                </a>
+
+                <a href="{% url 'members:edit_profile' request.user.instructor.slug request.user.instructor.role request.user.instructor.token %}"
+                    class="course-btn btn-edit" style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-edit"></i>
+                    Edit Your Profile
+                </a>
+                <a href="{% url 'members:delete_profile' request.user.instructor.slug request.user.instructor.role request.user.instructor.token %}"
+                    class="course-btn btn-delete" style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-trash"></i>
+                    Delete Your Profile
                 </a>
                 {% endif %}
             </div>
@@ -505,10 +570,21 @@
                         <p class="course-instructor">By {{ course.instructor.first_name }}
                             {{course.instructor.last_name}}</p>
                         <div class="course-meta">
-                            <span class="course-rating">
-                                <i class="fas fa-star"></i> {{ course.rating|default:"4.5" }}
-                            </span>
-                            <span>{{ course.enrollments.count|default:"0" }} students</span>
+
+                            <span class="stars">
+                                {% for i in "12345" %}
+                                {% with star_num=forloop.counter %}
+                                {% if course.avg_rating >= star_num %}
+                                <span class="star filled">★</span>
+                                {% elif course.avg_rating >= star_num|add:-0.5 %}
+                                <span class="star half">⯨</span>
+                                {% else %}
+                                <span class="star empty">☆</span>
+                                {% endif %}
+                                {% endwith %}
+                                {% endfor %}
+                                <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+                            </span> <span>{{ course.course_enrollments.count|default:"0" }} students</span>
                         </div>
                         <div class="course-actions">
                             <a href="{{ course.get_absolute_url }}" class="course-btn btn-view">
@@ -551,8 +627,20 @@
                         <p class="course-instructor">By {{ enroll.course.instructor.first_name }}
                             {{enroll.course.instructor.last_name}}</p>
                         <div class="course-meta">
-                            <span class="course-rating">
-                                <i class="fas fa-star"></i> {{ enroll.course.avg_rating|default:"4.5" }}
+
+                            <span class="stars">
+                                {% for i in "12345" %}
+                                {% with star_num=forloop.counter %}
+                                {% if course.avg_rating >= star_num %}
+                                <span class="star filled">★</span>
+                                {% elif course.avg_rating >= star_num|add:-0.5 %}
+                                <span class="star half">⯨</span>
+                                {% else %}
+                                <span class="star empty">☆</span>
+                                {% endif %}
+                                {% endwith %}
+                                {% endfor %}
+                                <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
                             </span>
                             <span>{{ enroll.course.course_enrollments.count }} students</span>
                         </div>

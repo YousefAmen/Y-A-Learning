@@ -42,6 +42,24 @@ from django.contrib.auth.decorators import login_required
 class Index(TemplateView):
     template_name = "course_pages/index.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        top_categories = Category.objects.all().order_by("-views")
+        top_enrollments_courses = Course.objects.annotate(
+            rating=Avg("course_ratings"),
+            enrollments_count=Count("course_enrollments"),
+        ).order_by("-rating", "-enrollments_count")[:5]
+        top_instructors = (
+            Instructor.objects.all()
+            .annotate(students=Count("instructor_courses__course_enrollments"))
+            .order_by("-students")
+        )
+        context["categories"] = top_categories
+        context["courses"] = top_enrollments_courses
+        context["instructors"] = top_instructors
+
+        return context
+
 
 class About(TemplateView):
     template_name = "about.html"
@@ -605,3 +623,44 @@ def user_contact_messages(request):
     contact_messages = Contact.objects.filter(user=request.user)
     context = {"contact_messages": contact_messages if contact_messages else None}
     return render(request, "course_pages/user_contacts.html", context)
+
+
+# return annotation on views and enrollments
+def top_courses(request):
+    courses = (
+        Course.objects.filter(is_puplished=True)
+        .annotate(
+            rating=Avg("course_ratings__rate", distinct=True),
+            enroll=Count("course_enrollments", distinct=True),
+        )
+        .order_by("-rating", "-enroll")
+    )
+
+    context = {"top_courses": courses}
+    return render(request, "course_pages/trending_now/top_courses.html", context)
+
+
+# return top enrollments
+def best_seller(request):
+    courses = (
+        Course.objects.filter(is_puplished=True)
+        .annotate(enroll=Count("course_enrollments"))
+        .order_by("-enroll")[:10]
+    )
+    context = {"best_courses": courses}
+    return render(request, "course_pages/trending_now/best_seller.html", context)
+
+
+# return top instructors depened on all enrollments in all courses
+def top_instructors(request):
+    top_instructors = (
+        Instructor.objects.all()
+        .annotate(
+            students=Count("instructor_courses__course_enrollments"),
+            courses=Count("instructor_courses"),
+        )
+        .order_by("-students", "-courses")[:8]
+    )
+
+    context = {"top_instructors": top_instructors}
+    return render(request, "course_pages/trending_now/top_instructors.html", context)

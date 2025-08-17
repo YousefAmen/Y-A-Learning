@@ -154,7 +154,9 @@
                             with us.</h2>
                         <p>The automated process all your website tasks. Discover tools and techniques to engage
                             effectively with vulnerable children and young people.</p>
+                        {% if not user.is_authenticated %}
                         <a href="{% url 'account_signup' %}" class="btn">Join now for Free</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

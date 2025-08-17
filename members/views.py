@@ -3,13 +3,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, reverse
 from django.urls import reverse_lazy
-from django.views.generic import DeleteView, DetailView, ListView, UpdateView
-
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from course.models import Course, Enrollment
 
-from .forms import RoleSelectionForm, UpdateUserProfile
-from .models import Instructor, Profile, Student
+from .forms import RoleSelectionForm, SocialLinksForm, UpdateUserProfile
+from .models import Instructor, Profile, SocialLinks, Student
 from .signals import user_signed_up
+from django.db.models import Count
 
 
 @login_required
@@ -70,11 +70,16 @@ def user_profile(request, slug, token):
         messages.info(request, "This Profile Is Not Exsits!.")
         return redirect("course:index")
     instructor_courses = None
+    student_enrollments_courses = None
+
     if profile.role == "instructor":
-        instructor_courses = Course.objects.filter(instructor=profile)
+        instructor_courses = (
+            Course.objects.filter(instructor=profile)
+            .annotate(enroll=Count("course_enrollments", distinct=True))
+            .order_by("-enroll")
+        )
     if profile.role == "student":
-        student_enrollments_courses = Enrollment.objects.filter(student=profile)
-        print(student_enrollments_courses)
+        student_enrollments_courses = Enrollment.objects.filter(user=profile.user)
 
     context = {
         "profile": profile,
@@ -156,3 +161,81 @@ def follow_instructor(request, slug, token):
 
 def love_course(request):
     pass
+
+
+@login_required
+def instructor_top_courses(request):
+    top_courses = None
+    if request.user.instructor:
+        top_courses = (
+            Course.objects.filter(instructor=request.user.instructor, is_puplished=True)
+            .annotate(enroll=Count("course_enrollments"))
+            .order_by("-enroll")[:5]
+        )
+    context = {"top_courses": top_courses}
+    return render(request, "course_pages/instructor_top_courses.html", context)
+
+
+def instructor_courses(request):
+    courses = Course.objects.filter(instructor=request.user.instructor)
+    context = {"courses": courses}
+    return render(request, "course_pages/instructor_courses.html", context)
+
+
+class CreateLink(CreateView):
+    model = SocialLinks
+    template_name = "account/create_link.html"
+    form_class = SocialLinksForm
+
+    def form_valid(self, form):
+
+        instructor = self.request.user.instructor
+        if instructor:
+            form.instance.instructor = instructor
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "members:user_profile",
+            args=[
+                self.object.instructor.slug,
+                self.object.instructor.token,
+            ],
+        )
+
+
+class UpdateLink(UpdateView):
+    model = SocialLinks
+    template_name = "account/update_link.html"
+    form_class = SocialLinksForm
+
+    slug_field = "link_name"
+    slug_url_kwarg = "name"
+
+    def get_success_url(self):
+
+        return reverse_lazy(
+            "members:user_profile",
+            args=[
+                self.object.instructor.slug,
+                self.object.instructor.token,
+            ],
+        )
+
+
+class DeleteLink(DeleteView):
+    model = SocialLinks
+    template_name = "account/delete_link.html"
+    slug_field = "link_name"
+    slug_url_kwarg = "name"
+
+    def get_success_url(self):
+        instructor = self.object.instructor
+
+        return reverse_lazy(
+            "members:user_profile",
+            args=[
+                instructor.slug,
+                instructor.token,
+            ],
+        )

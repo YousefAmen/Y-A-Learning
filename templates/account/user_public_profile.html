@@ -30,7 +30,8 @@
             <span style="color: #5a6a7f;">Courses</span>
           </div>
           <div>
-            <span style="font-weight: 600; color: #2a3f5f;">{{ total_students|default:"0" }}</span>
+            <span style="font-weight: 600; color: #2a3f5f;">
+              {{ instructor.get_students_count|default:"0"}}</span>
             <span style="color: #5a6a7f;">Students</span>
           </div>
           <div>
@@ -87,17 +88,29 @@
         <p class="course-instructor">By {{ course.instructor.first_name }}
           {{course.instructor.last_name}}</p>
         <div class="course-meta">
-          <span class="course-rating">
-            <i class="fas fa-star" style="color: #d4af37;"></i> {{ course.rating|default:"4.5" }}
+
+          <span class="stars">
+            {% for i in "12345" %}
+            {% with star_num=forloop.counter %}
+            {% if course.avg_rating >= star_num %}
+            <span class="star filled">★</span>
+            {% elif course.avg_rating >= star_num|add:-0.5 %}
+            <span class="star half">⯨</span>
+            {% else %}
+            <span class="star empty">☆</span>
+            {% endif %}
+            {% endwith %}
+            {% endfor %}
+            <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
           </span>
-          <span>{{ course.enrollments.count|default:"0" }} students</span>
+          <span>{{ course.course_enrollments.count|default:"0" }} students</span>
         </div>
         <div class="course-actions">
           <a href="{{ course.get_absolute_url }}" class="course-btn btn-view">
             <i class="fas fa-eye"></i> View Course
           </a>
 
-          {% if request.user.instructor and request.user.is_authenticated %}
+          {% if request.user.instructor == instructor and request.user.is_authenticated %}
           <a href="{% url 'course:update-course' course.slug course.token %}" class="course-btn btn-edit">
             <i class="fas fa-edit"></i> Edit
           </a>
@@ -329,6 +342,26 @@
 
   .follow-container:hover .follow-icon {
     animation: none;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stars {
+    font-size: 12px;
+    color: #f5c518;
+    letter-spacing: 2px;
+  }
+
+  .star {
+    color: #ccc;
+  }
+
+  .star.filled {
+    color: gold;
   }
 </style>
 {% endblock %}

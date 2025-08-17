@@ -1,4 +1,116 @@
 {% load static %}
+<style>
+    /* Course Cards */
+    .course-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .course-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .course-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .badge-bestseller {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: white;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .course-content {
+        padding: 20px;
+    }
+
+    .course-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .course-title a {
+        color: #1e293b;
+        text-decoration: none;
+    }
+
+    .course-title a:hover {
+        color: #667eea;
+    }
+
+    .course-desc {
+        font-size: 0.95rem;
+        color: #6b7280;
+        min-height: 48px;
+    }
+
+    .price {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #059669;
+    }
+
+    .free {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .btn-view {
+        display: block;
+        text-align: center;
+        padding: 10px 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .btn-view:hover {
+        opacity: 0.9;
+        color: white;
+    }
+
+    .rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .stars {
+        font-size: 12px;
+        color: #f5c518;
+        letter-spacing: 2px;
+    }
+
+    .star {
+        color: #ccc;
+    }
+
+    .star.filled {
+        color: gold;
+    }
+</style>
 <div class="courses-area section-padding40 fix">
     <div class="container">
         <div class="row justify-content-center">
@@ -9,140 +121,56 @@
             </div>
         </div>
         <div class="courses-actives">
+            {% for course in courses %}
             <!-- Single -->
-            <div class="properties pb-20">
-                <div class="properties__card">
-                    <div class="properties__img overlay1">
-                        <a href="#"><img src="{% static 'assets/img/gallery/featured1.png' %}" alt=""></a>
+            <div class="col-lg-4 col-md-6">
+                <div class="course-card">
+                    <div class="course-image">
+                        {% if course.image %}
+                        <img src="{{course.image.url}}" alt="{{course.title}}">
+                        {% else %}
+                        <img src="{% static 'assets/img/gallery/megamenu.png' %}" alt="Course">
+                        {% endif %}
+                        <span class="badge-bestseller">Best Seller</span>
                     </div>
-                    <div class="properties__caption">
-                        <p>User Experience</p>
-                        <h3><a href="#">Fundamental of UX for Application design</a></h3>
-                        <p>The automated process all your website tasks. Discover tools and techniques to engage
-                            effectively with vulnerable children and young people.
+                    <div class="course-content">
+                        <h3 class="course-title">
+                            <a href="{{course.get_absolute_url}}">{{course.title|title}}</a>
+                        </h3>
+                        <p class="course-desc">{{course.description|truncatechars:100}}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
 
-                        </p>
-                        <div class="properties__footer d-flex justify-content-between align-items-center">
-                            <div class="restaurant-name">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half"></i>
-                                </div>
-                                <p><span>(4.5)</span> based on 120</p>
+                            <div class="rating ">
+                                <span class="stars">
+                                    {% for i in "12345" %}
+                                    {% with star_num=forloop.counter %}
+                                    {% if course.avg_rating >= star_num %}
+                                    <span class="star filled">★</span>
+                                    {% elif course.avg_rating >= star_num|add:-0.5 %}
+                                    <span class="star half">⯨</span>
+                                    {% else %}
+                                    <span class="star empty">☆</span>
+                                    {% endif %}
+                                    {% endwith %}
+                                    {% endfor %}
+                                    <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+                                </span>
                             </div>
                             <div class="price">
-                                <span>$135</span>
+                                {% if course.price %}
+                                ${{course.price}}
+                                {% else %}
+                                <span class="free">Free</span>
+                                {% endif %}
                             </div>
                         </div>
-                        <a href="#" class="border-btn border-btn2">Find out more</a>
-                    </div>
-
-                </div>
-            </div>
-            <!-- Single -->
-            <!-- Single -->
-            <div class="properties pb-20">
-                <div class="properties__card">
-                    <div class="properties__img overlay1">
-                        <a href="#"><img src="{% static 'assets/img/gallery/featured2.png' %}" alt=""></a>
-                    </div>
-                    <div class="properties__caption">
-                        <p>User Experience</p>
-                        <h3><a href="#">Fundamental of UX for Application design</a></h3>
-                        <p>The automated process all your website tasks. Discover tools and techniques to engage
-                            effectively with vulnerable children and young people.
-                        </p>
-                        <div class="properties__footer d-flex justify-content-between align-items-center">
-                            <div class="restaurant-name">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half"></i>
-                                </div>
-                                <p><span>(4.5)</span> based on 120</p>
-                            </div>
-                            <div class="price">
-                                <span>$135</span>
-                            </div>
-                        </div>
-                        <a href="#" class="border-btn border-btn2">Find out more</a>
+                        <a href="{{course.get_absolute_url}}" class="btn-view mt-3">View Details</a>
                     </div>
                 </div>
             </div>
-            <!-- Single -->
-            <!-- Single -->
-            <div class="properties pb-20">
-                <div class="properties__card">
-                    <div class="properties__img overlay1">
-                        <a href="#"><img src="{% static 'assets/img/gallery/featured3.png' %}" alt=""></a>
-                    </div>
-                    <div class="properties__caption">
-                        <p>User Experience</p>
-                        <h3><a href="#">Fundamental of UX for Application design</a></h3>
-                        <p>The automated process all your website tasks. Discover tools and techniques to engage
-                            effectively with vulnerable children and young people.
 
-                        </p>
-                        <div class="properties__footer d-flex justify-content-between align-items-center">
-                            <div class="restaurant-name">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half"></i>
-                                </div>
-                                <p><span>(4.5)</span> based on 120</p>
-                            </div>
-                            <div class="price">
-                                <span>$135</span>
-                            </div>
-                        </div>
-                        <a href="#" class="border-btn border-btn2">Find out more</a>
-                    </div>
-
-                </div>
-            </div>
             <!-- Single -->
-            <!-- Single -->
-            <div class="properties pb-20">
-                <div class="properties__card">
-                    <div class="properties__img overlay1">
-                        <a href="#"><img src="{% static 'assets/img/gallery/featured2.png' %}" alt=""></a>
-                    </div>
-                    <div class="properties__caption">
-                        <p>User Experience</p>
-                        <h3><a href="#">Fundamental of UX for Application design</a></h3>
-                        <p>The automated process all your website tasks. Discover tools and techniques to engage
-                            effectively with vulnerable children and young people.
-
-                        </p>
-                        <div class="properties__footer d-flex justify-content-between align-items-center">
-                            <div class="restaurant-name">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half"></i>
-                                </div>
-                                <p><span>(4.5)</span> based on 120</p>
-                            </div>
-                            <div class="price">
-                                <span>$135</span>
-                            </div>
-                        </div>
-                        <a href="#" class="border-btn border-btn2">Find out more</a>
-                    </div>
-
-                </div>
-            </div>
-            <!-- Single -->
+            {% endfor %}
         </div>
     </div>
 </div>

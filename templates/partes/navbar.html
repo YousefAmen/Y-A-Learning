@@ -35,24 +35,31 @@
                                             <li class="active"><a href="{% url 'course:index' %}">Home</a></li>
                                             <li><a href="{% url 'course:courses-list' %}">Courses</a></li>
                                             <li><a href="{% url 'course:about' %}">About</a></li>
-                                            {% if request.user.instructor %}
-                                            <li><a href="#">Courses</a>
-                                                <ul class="submenu">
-                                                    <li><a href="{% url 'course:create-course' %}">Create Course</a>
-                                                    </li>
 
+                                            {% if request.user.instructor %}
+
+                                            <li><a href="{% url 'members:instructor_courses' %}">Academy</a>
+                                                <ul class="submenu">
+                                                    <li><a href="{% url 'course:create-course' %}">Create a Course</a>
+                                                    </li>
                                                     <li><a
-                                                            href="{% url 'members:user_public_profile' request.user.instructor.slug request.user.instructor.token  %}">All
-                                                            My Public Profile</a></li>
-                                                    <li><a href="#">My Top Courses</a></li>
+                                                            href="{% url 'members:user_public_profile' request.user.instructor.slug request.user.instructor.token  %}">Public
+                                                            Profile</a></li>
+                                                    <li><a href="{% url 'members:instructor_top_courses' %}">My Best
+                                                            Courses</a></li>
+                                                    <li><a href="{% url 'course:top-courses' %}">Top Rated</a></li>
+                                                    <li><a href="{% url 'course:best-seller' %}">Best Sellers</a></li>
+                                                    <li><a href="{% url 'course:top-instructors' %}">Top Instructors</a>
+                                                    </li>
                                                 </ul>
                                             </li>
                                             {% else %}
-                                            <li><a href="#">Trending now 🔥</a>
+                                            <li><a>Trending now 🔥</a>
                                                 <ul class="submenu">
-                                                    <li><a href="#">Top Courses</a></li>
-                                                    <li><a href="#">Beset Seller</a></li>
-                                                    <li><a href="#">Top Instructor</a></li>
+                                                    <li><a href="{% url 'course:top-courses' %}">Top Courses</a></li>
+                                                    <li><a href="{% url 'course:best-seller' %}">Beset Seller</a></li>
+                                                    <li><a href="{% url 'course:top-instructors' %}">Top Instructor</a>
+                                                    </li>
                                                 </ul>
                                             </li>
                                             {% endif %}

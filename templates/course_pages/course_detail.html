@@ -1170,6 +1170,16 @@
     background-color: #163074;
     transform: translateY(-2px);
   }
+
+  .preview-span {
+    background-color: #1e40af;
+    font-weight: bold;
+    border: 1px solid #1e40af;
+    border-radius: 5px;
+    padding: 2px 4px;
+    color: white;
+
+  }
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -1189,17 +1199,19 @@
         <div class="course-meta">
           <div class="rating meta-item">
             <span class="stars">
-              {% for i in 5|make_list %}
-              {% with i=forloop.counter %}
-              {% if course.avg_rating >= i %}
+              {% for i in "12345" %}
+              {% with star_num=forloop.counter %}
+              {% if course.avg_rating >= star_num %}
               <span class="star filled">★</span>
+              {% elif course.avg_rating >= star_num|add:-0.5 %}
+              <span class="star half">⯨</span>
               {% else %}
-              <span class="star">☆</span>
+              <span class="star empty">☆</span>
               {% endif %}
               {% endwith %}
               {% endfor %}
+              <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
             </span>
-            <span>{{course.course_ratings.count}}</span>
             <span>Rating</span>
           </div>
           <div class="meta-item">
@@ -1371,6 +1383,17 @@
                 data-lesson-description="{{lesson.description|default:'No description available'}}"
                 onclick="openLessonVideoLightbox(this)">
                 <i class="fas fa-play-circle lesson-icon"></i>
+                <div class="lesson-title">{{lesson.title}} {% if lesson.is_preview %}<span
+                    class="preview-span">Preview</span>{% endif %}
+                </div>
+                <div class="lesson-duration">{{lesson.duration|format_duration}}</div>
+              </div>
+              {% else %}
+              <div class="lesson-item" data-lesson-id="{{lesson.id}}" data-lesson-title="{{lesson.title}}"
+                data-lesson-duration="{{lesson.duration}}"
+                data-lesson-video="{% if lesson.video %}{{lesson.video.url}}{% endif %}"
+                data-lesson-description="{{lesson.description|default:'No description available'}}" onclick="none">
+                <i class="fas fa-play-circle lesson-icon"></i>
                 <div class="lesson-title">{{lesson.title}}</div>
                 <div class="lesson-duration">{{lesson.duration|format_duration}}</div>
               </div>
@@ -1386,14 +1409,18 @@
       <div class="tab-content" id="instructor">
         <div class="instructor-card">
           {% if course.instructor.profile_pic %}
-          <img src="{{course.instructor.profile_pic.url}}"
-            alt="{{course.instructor.first_name}} {{course.instructor.last_name}}" class="instructor-avatar">
+          <a href="{% url 'members:user_public_profile' course.instructor.slug course.instructor.token %}"><img
+              src="{{course.instructor.profile_pic.url}}"
+              alt="{{course.instructor.first_name}} {{course.instructor.last_name}}" class="instructor-avatar"></a>
           {% else %}
-          <img src="{% static 'assets/img/gallery/team1.png' %}"
-            alt="{{course.instructor.first_name}} {{course.instructor.last_name}}" class="instructor-avatar">
+          <a href="{% url 'members:user_public_profile' course.instructor.slug course.instructor.token %}"><img
+              src="{% static 'assets/img/gallery/team1.png' %}"
+              alt="{{course.instructor.first_name}} {{course.instructor.last_name}}" class="instructor-avatar"></a>
           {% endif %}
           <div class="instructor-info">
-            <h4>{{course.instructor.first_name}} {{course.instructor.last_name}}</h4>
+            <h4><a
+                href="{% url 'members:user_public_profile' course.instructor.slug course.instructor.token %}">{{course.instructor.first_name}}
+                {{course.instructor.last_name}}</a></h4>
             <p class="instructor-title">{{course.instructor.bio}}</p>
             <div class="instructor-stats">
               <div class="instructor-stat">
@@ -1410,7 +1437,7 @@
               </div>
               <div class="instructor-stat">
                 <i class="fas fa-play-circle"></i>
-                <span>{{course.instructor.course_set.count}} Courses</span>
+                <span>{{course.instructor.instructor_courses.count}} Courses</span>
               </div>
             </div>
             <p>{{course.instructor.about}}</p>
@@ -1446,15 +1473,18 @@
               <h5>{{review.user.first_name}} {{review.user.last_name}} </h5>
               <div class="rating ">
                 <span class="stars">
-                  {% for i in 5|make_list %}
-                  {% with i=forloop.counter %}
-                  {% if course.avg_rating >= i %}
+                  {% for i in "12345" %}
+                  {% with star_num=forloop.counter %}
+                  {% if course.avg_rating >= star_num %}
                   <span class="star filled">★</span>
+                  {% elif course.avg_rating >= star_num|add:-0.5 %}
+                  <span class="star half">⯨</span>
                   {% else %}
-                  <span class="star">☆</span>
+                  <span class="star empty">☆</span>
                   {% endif %}
                   {% endwith %}
                   {% endfor %}
+                  <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
                 </span>
                 <span>Rating</span>
               </div>

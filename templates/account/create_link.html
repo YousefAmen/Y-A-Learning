@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    .create-link-container {
+        max-width: 600px;
+        margin: 120px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .create-link-title {
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+    }
+
+    .create-link-form button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        background: #4f46e5;
+        /* Indigo */
+        color: white;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .create-link-form button:hover {
+        background: #4338ca;
+    }
+</style>
+
+<div class="create-link-container">
+    <h2 class="create-link-title">Add Social Link</h2>
+    <form action="" method="POST" class="create-link-form">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit">Save Link</button>
+    </form>
+</div>
+{% endblock %}
