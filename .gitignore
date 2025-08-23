@@ -2,3 +2,4 @@
 media/
 venv/
 .env
+*.mp4
