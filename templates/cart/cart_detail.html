@@ -196,7 +196,9 @@
   </div>
   <div class="custom-cart-buttons">
     <a href="{% url 'course:courses-list' %}" class="custom-btn outline">← Continue Exploring</a>
-    <a href="#" class="custom-btn solid">Proceed to Checkout →</a>
+    {% if cart|length >= 1 %}
+    <a href="{% url 'payment:checkout' %}" class="custom-btn solid">Proceed to Checkout →</a>
+    {% endif %}
   </div>
 
   {% else %}

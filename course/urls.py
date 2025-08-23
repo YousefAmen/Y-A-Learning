@@ -113,7 +113,7 @@ urlpatterns = [
     path("user-contacts/", user_contact_messages, name="user-contact-messages"),
     path("contact/", create_contact, name="contact"),
     path("update-contact/<str:token>/", update_contact, name="update-contact"),
-    path("remove-contact/<str:token>/", remove_contact, name="update-contact"),
+    path("remove-contact/<str:token>/", remove_contact, name="remove-contact"),
     # trending now paths
     path("top-courses/", top_courses, name="top-courses"),
     path("best-seller/", best_seller, name="best-seller"),

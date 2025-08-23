@@ -418,11 +418,46 @@
     .star.filled {
         color: gold;
     }
+
+    .profile-btn {
+        font-size: 16px;
+        /* size of the icon */
+        margin: 0 10px;
+        /* spacing between icons */
+        color: #555;
+        /* default color (grayish) */
+        transition: color 0.3s ease;
+        text-decoration: none;
+    }
+
+    /* Edit icon color */
+    .btn-profile-edit {
+        color: #31458d;
+        /* green */
+    }
+
+    .btn-profile-edit:hover {
+        color: #273569;
+        /* darker green on hover */
+    }
+
+    /* Delete icon color */
+    .btn-profile-delete {
+        color: #f44336;
+        /* red */
+    }
+
+    .btn-profile-delete:hover {
+        color: #b71c1c;
+        /* darker red on hover */
+    }
 </style>
 
 <div class="profile-container">
     <!-- Profile Header -->
+
     <div class="profile-header text-center">
+
         <div class="profile-avatar">
             {% if profile.profile_pic %}
             <img src="{{ profile.profile_pic.url }}" alt="{{ profile.first_name }} {{ profile.last_name }}">
@@ -438,10 +473,21 @@
             {% if profile.role == 'instructor' %}Instructor{% else %}Learner{% endif %}
             {% endif %}
         </p>
-
+        <div style="display: flex; justify-content:center;">
+            {% if profile.role == "student" %}
+            <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
+                class="profile-btn btn-profile-edit">
+                <i class=" fas fa-edit"></i>
+            </a>
+            <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
+                class="profile-btn btn-profile-delete">
+                <i class="fas fa-trash"></i>
+            </a>
+            {% endif %}
+        </div>
         <div class="profile-stats">
             <div class="stat-item">
-                {% if request.user.profile.role == 'instructor' %}
+                {% if profile.role == 'instructor' %}
                 <div class="stat-value">{{ instructor_courses.count|default:"0" }}</div>
                 <div class="stat-label">Courses</div>
                 {% else %}
@@ -450,7 +496,7 @@
                 {% endif %}
             </div>
             <div class="stat-item">
-                {% if request.user.profile.role == 'instructor' %}
+                {% if profile.role == 'instructor' %}
                 <div class="stat-value">{{ profile.followers.count|default:"0" }}</div>
                 <div class="stat-label">Followers</div>
                 {% endif %}
@@ -459,6 +505,9 @@
                 <div class="stat-value">{{ profile.create_at|date:"Y" }}</div>
                 <div class="stat-label">Member since</div>
             </div>
+
+
+
         </div>
     </div>
 
@@ -487,7 +536,7 @@
                 </div>
             </div>
 
-            {% if request.user.instructor %}
+            {% if profile.instructor %}
             <div class="sidebar-card">
                 <h3 class="sidebar-title">Social Links</h3>
                 <a href="{% url 'members:add_link' %}" title="Add Link">
@@ -525,30 +574,31 @@
             <div class="section-header"
                 style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                 <h2 class="section-title" style="margin: 0;">
-                    {% if request.user.instructor %}
+                    {% if profile.role == "instructor" %}
                     My Courses
                     {% else %}
                     Learning Journey
                     {% endif %}
                 </h2>
 
-                {% if request.user.instructor %}
+                {% if profile.role == "instructor" %}
                 <a href="{% url 'course:create-course' %}" class="course-btn btn-create"
                     style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-plus-circle"></i>
                     Create New Course
                 </a>
 
-                <a href="{% url 'members:edit_profile' request.user.instructor.slug request.user.instructor.role request.user.instructor.token %}"
+                <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
                     class="course-btn btn-edit" style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-edit"></i>
                     Edit Your Profile
                 </a>
-                <a href="{% url 'members:delete_profile' request.user.instructor.slug request.user.instructor.role request.user.instructor.token %}"
+                <a href="{% url 'members:delete_profile' profile.slug profile.role profile.token %}"
                     class="course-btn btn-delete" style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-trash"></i>
                     Delete Your Profile
                 </a>
+
                 {% endif %}
             </div>
             {% endif %}
@@ -604,14 +654,17 @@
                 </div>
                 {% endfor %}
             </div>
-            {% if request.user.instructor %}
+            <br>
+            <br>
+            <br>
+            {% if profile.role == "instructor" %}
             <a href="{% url 'members:user_public_profile' profile.slug profile.token %}"
                 class="course-btn btn-browse d-flex justify-content-center">
                 <i class="fas fa-search"></i> Public Profile
             </a>
             {% endif %}
             {% else %}
-            {% if request.user.student %}
+            {% if profile.role == "student" %}
             <div class="courses-grid">
                 {% for enroll in student_enrollments %}
                 <div class="course-card">
@@ -631,16 +684,16 @@
                             <span class="stars">
                                 {% for i in "12345" %}
                                 {% with star_num=forloop.counter %}
-                                {% if course.avg_rating >= star_num %}
+                                {% if enroll.course.avg_rating >= star_num %}
                                 <span class="star filled">★</span>
-                                {% elif course.avg_rating >= star_num|add:-0.5 %}
+                                {% elif enroll.course.avg_rating >= star_num|add:-0.5 %}
                                 <span class="star half">⯨</span>
                                 {% else %}
                                 <span class="star empty">☆</span>
                                 {% endif %}
                                 {% endwith %}
                                 {% endfor %}
-                                <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+                                <span class="rating-text">({{ enroll.course.avg_rating|floatformat:1 }})</span>
                             </span>
                             <span>{{ enroll.course.course_enrollments.count }} students</span>
                         </div>
@@ -660,7 +713,7 @@
             <div class="empty-state">
                 <p>No courses found</p>
 
-                {% if request.user.profile.role == 'instructor' %}
+                {% if profile.role == 'instructor' %}
                 <a href="{% url 'course:create-course' %}" class="course-btn btn-create">
                     <i class="fas fa-plus-circle"></i> Create Your First Course
                 </a>

@@ -1537,10 +1537,10 @@
             Add to Cart
           </button>
         </form>
-        <button class="btn btn-primary">
-          <i class="fas fa-credit-card"></i>
-          Buy Now
-        </button>
+
+        <a href="{% url 'payment:checkout' %}?token={{ course.token }}/" class="btn btn-primary">
+          <i class="fas fa-credit-card"></i> Buy Now
+        </a>
       </div>
 
       <div class="course-includes">

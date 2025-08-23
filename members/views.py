@@ -80,7 +80,7 @@ def user_profile(request, slug, token):
         )
     if profile.role == "student":
         student_enrollments_courses = Enrollment.objects.filter(user=profile.user)
-
+    print(profile.role)
     context = {
         "profile": profile,
         "instructor_courses": instructor_courses,

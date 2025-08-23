@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .user-messages-container {
+        display: flex;
+        justify-content: center;
+        padding: 30px;
+        background: #f9f9f9;
+        min-height: 80vh;
+        margin-top: 70px;
+    }
+
+    .user-messages-card {
+        background: #fff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .messages-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .messages-subtitle {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .messages-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .message-item {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #fafafa;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .message-item:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
+
+    .message-info {
+        flex: 1;
+        margin-right: 15px;
+    }
+
+    .message-subject {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #222;
+    }
+
+    .message-text {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    .message-date {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .message-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .action-btn {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn.edit {
+        background: #e3f2fd;
+        color: #1976D2;
+    }
+
+    .action-btn.edit:hover {
+        background: #1976D2;
+        color: #fff;
+    }
+
+    .action-btn.delete {
+        background: #ffebee;
+        color: #D32F2F;
+    }
+
+    .action-btn.delete:hover {
+        background: #D32F2F;
+        color: #fff;
+    }
+
+    .no-messages {
+        text-align: center;
+        color: #777;
+        margin-top: 30px;
+    }
+</style>
+<div class="user-messages-container">
+    <div class="user-messages-card">
+        <h2 class="messages-title">📩 My Contact Messages</h2>
+        <p class="messages-subtitle">
+            Here are the messages you have sent. You can update or delete them.
+        </p>
+
+        {% if contact_messages %}
+        <ul class="messages-list">
+            {% for msg in contact_messages %}
+            <li class="message-item">
+                <div class="message-info">
+                    <h4 class="message-subject">{{ msg.subject }}</h4>
+                    <p class="message-text">{{ msg.message }}</p>
+                    <small class="message-date">Sent on {{ msg.created_at|date:"M d, Y H:i" }}</small>
+                </div>
+                <div class="message-actions">
+                    <a href="{% url 'course:update-contact' msg.token %}" class="action-btn edit"><i
+                            class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'course:remove-contact' msg.token %}" class="action-btn delete"><i
+                            class="fas fa-trash"></i></a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="no-messages">You haven’t sent any messages yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

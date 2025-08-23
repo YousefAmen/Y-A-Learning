@@ -115,7 +115,7 @@ class Course(models.Model):
 
     @property
     def avg_rating(self):
-        avg_course_rating = self.course_ratings.aggregate(avg_rating=Avg("rate"))[
+        avg_course_rating = self.course_reviews.aggregate(avg_rating=Avg("rate"))[
             "avg_rating"
         ]
         return avg_course_rating or 0
@@ -161,7 +161,31 @@ class Enrollment(models.Model):
         return f"{self.user.first_name} {self.user.last_name} enroll {self.course}"
 
 
-class Rating(models.Model):
+# class Rating(models.Model):
+#     RATING_CHOICES = (
+#         (1, "1 - Poor"),
+#         (2, "2 - Fair"),
+#         (3, "3 - Good"),
+#         (4, "4 - Vary Good"),
+#         (5, "5 - Excellent"),
+#     )
+
+#     rate = models.PositiveSmallIntegerField(
+#         choices=RATING_CHOICES, null=True, blank=True
+#     )
+#     user = models.ForeignKey(
+#         Student, on_delete=models.CASCADE, related_name="user_ratings"
+#     )
+#     course = models.ForeignKey(
+#         Course, on_delete=models.CASCADE, related_name="course_ratings"
+#     )
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"Rating by {self.user.first_name} {self.user.last_name} for {self.course} ({self.rate}/5)"
+
+
+class Review(models.Model):
     RATING_CHOICES = (
         (1, "1 - Poor"),
         (2, "2 - Fair"),
@@ -169,28 +193,15 @@ class Rating(models.Model):
         (4, "4 - Vary Good"),
         (5, "5 - Excellent"),
     )
-
-    rate = models.PositiveSmallIntegerField(
-        choices=RATING_CHOICES, null=True, blank=True
-    )
-    user = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name="user_ratings"
-    )
-    course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name="course_ratings"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Rating by {self.user.first_name} {self.user.last_name} for {self.course} ({self.rate}/5)"
-
-
-class Review(models.Model):
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name="course_reviews"
     )
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="user_reviews"
+    )
+
+    rate = models.PositiveSmallIntegerField(
+        choices=RATING_CHOICES, null=True, blank=True
     )
     body = models.TextField(max_length=300)
     slug = models.SlugField(default="")
@@ -237,7 +248,6 @@ class Lesson(models.Model):
     video = models.FileField(upload_to="courses/videos/lesson_videos/")
     is_preview = models.BooleanField(default=False)
     duration = models.DurationField(blank=True, null=True)
-    views = models.PositiveBigIntegerField(default=0)
     added_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(default="", unique=True)
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -267,6 +277,7 @@ class Contact(models.Model):
     name = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     email = models.EmailField(unique=True)
+    subject = models.CharField(max_length=250)
     message = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)

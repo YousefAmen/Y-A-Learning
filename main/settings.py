@@ -31,7 +31,7 @@ SECRET_KEY = "django-insecure-s2@0+7696a7sx$auaii@eb=^gii_o=zxva8^zp1!)av+w3po-=
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+CSRFCSRF_TRUSTED_ORIGINS = []
 
 # Application definition
 
@@ -61,6 +61,9 @@ INSTALLED_APPS = [
     "members",
     "payment",
     "taggit",
+    # paypal app
+    "paypal.standard.ipn",
+    "whitenoise.runserver_nostatic",
 ]
 
 MIDDLEWARE = [
@@ -73,6 +76,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # django allauth middleware
     "allauth.account.middleware.AccountMiddleware",
+    # whitenoise package
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "main.urls"
@@ -101,8 +106,14 @@ WSGI_APPLICATION = "main.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        # "ENGINE": "django.db.backends.sqlite3",
+        # "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "railway",
+        "USER": "postgres",
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": "switchback.proxy.rlwy.net",
+        "PORT": "14628",
     }
 }
 
@@ -205,7 +216,11 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "main/static")]
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+STATIC_ROOT = BASE_DIR / "static"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 MEDIA_URL = "/media/"
@@ -216,3 +231,13 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+PAYPAL_CLIENT_ID = (
+    "AcHgH09W-_qjP0biXl2nxNvqBU9_tJLbqhjffNPZu16hHT5w2i2GStfMxLtF2qih_cZKrVYaDRI5N5V6"
+)
+PAYPAL_SECRET = (
+    "EPO88sDlV-xd0gqTQKkurkuDPVXfE3UTS6KUqEnS9FAa6ccAejwYir-oVrjbvAgGBtLQiDDh09dTDize"
+)
+PAYPAL_RECEIVER_EMAIL = "yousefbusiness@gmail.com"
+PAYPAL_TEST = True

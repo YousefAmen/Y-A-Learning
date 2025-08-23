@@ -7,13 +7,18 @@ from django.urls import include, path
 from members.views import CustomPasswordChangeView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('Y-A-Education/', include('course.urls')),
-    path('members/', include('members.urls')),
-    path('payment/', include('payment.urls')),
-    path('cart/', include('cart.urls')),
-    path('accounts/password/change/', CustomPasswordChangeView.as_view(), name='account_change_password'),
-    path('accounts/', include('allauth.urls')),
+    path("admin/", admin.site.urls),
+    path("Y-A-Education/", include("course.urls")),
+    path("members/", include("members.urls")),
+    path("payment/", include("payment.urls")),
+    path("cart/", include("cart.urls")),
+    path(
+        "accounts/password/change/",
+        CustomPasswordChangeView.as_view(),
+        name="account_change_password",
+    ),
+    path("accounts/", include("allauth.urls")),
+    path("paypal/", include("paypal.standard.ipn.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

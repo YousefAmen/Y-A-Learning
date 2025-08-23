@@ -3,67 +3,148 @@
 
 {% block content %}
 <style>
-    /* Form container */
-    .custom-form-container {
-        max-width: 600px;
-        margin: 150px auto 40px auto;
-        padding: 40px;
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        border-left: 6px solid #1e3a8a;
+    body {
+        font-family: 'Inter', sans-serif;
     }
 
-    /* Form elements (if crispy doesn't cover styling inputs) */
-    .custom-form input,
-    .custom-form textarea,
-    .custom-form select {
+    /* Centered wrapper */
+    .review-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 80px 20px;
+    }
+
+    /* Card */
+    .review-card {
+        width: 100%;
+        max-width: 640px;
+        border-radius: 20px;
+        padding: 36px 40px;
+        animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header */
+    .review-header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .review-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .review-header p {
+        color: #6b7280;
+        font-size: 15px;
+        margin: 0;
+    }
+
+    /* Fake rating stars (optional) */
+    .rating-stars {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .rating-stars span {
+        font-size: 22px;
+        color: #fbbf24;
+        /* amber */
+    }
+
+    /* Inputs */
+    .review-form input,
+    .review-form textarea,
+    .review-form select {
         width: 100%;
         padding: 12px 14px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
         margin-bottom: 20px;
-        font-size: 16px;
-        transition: border-color 0.3s ease;
+        font-size: 15px;
+        background: #f9fafb;
+        transition: all 0.25s ease;
     }
 
-    .custom-form input:focus,
-    .custom-form textarea:focus,
-    .custom-form select:focus {
-        border-color: #1e3a8a;
+    .review-form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .review-form input:focus,
+    .review-form textarea:focus,
+    .review-form select:focus {
+        border-color: #2563eb;
+        background: #fff;
         outline: none;
-        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
     }
 
-    /* Submit button */
-    .custom-submit-btn {
-        background-color: #1e3a8a;
-        color: white;
+    /* Button */
+    .review-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        color: #fff;
         border: none;
-        padding: 12px 28px;
-        font-size: 17px;
-        font-weight: bold;
-        border-radius: 6px;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 10px;
         cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        display: inline-block;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
     }
 
-    .custom-submit-btn:hover {
-        background-color: #192e6d;
+    .review-btn:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
         transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
     }
 
-    .custom-submit-btn:active {
-        background-color: #142456;
+    .review-btn:active {
         transform: translateY(0);
+        box-shadow: none;
     }
 </style>
-<div class="custom-form-container">
-    <form method="POST" class="custom-form">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="custom-submit-btn">Add</button>
-    </form>
+
+<div class="review-wrapper">
+    <div class="review-card">
+        <div class="review-header">
+            <div class="rating-stars">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span>
+            </div>
+            <h2>Write a Review</h2>
+            <p>Share your experience and help others decide</p>
+        </div>
+
+        <form method="POST" class="review-form">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <br>
+            <br>
+            <br>
+            <button type="submit" class="review-btn">💬 Submit Review</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

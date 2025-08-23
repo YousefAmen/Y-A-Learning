@@ -148,7 +148,7 @@ class SearchForm(forms.Form):
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ["body"]
+        fields = ["body", "rate"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -159,12 +159,13 @@ class ReviewForm(forms.ModelForm):
                 "rows": 4,
             }
         )
+        self.fields["rate"].widget.attrs.update({"class": "form-select"})
 
 
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
-        fields = ["name", "email", "message"]
+        fields = ["name", "email", "subject", "message"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -180,6 +181,13 @@ class ContactForm(forms.ModelForm):
                 "palceholder": "Enter Your Email",
             }
         )
+        self.fields["subject"].widget.attrs.update(
+            {
+                "class": "form-control",
+                "palceholder": "Write The Subject",
+            }
+        )
+
         self.fields["message"].widget.attrs.update(
             {
                 "class": "form-control",

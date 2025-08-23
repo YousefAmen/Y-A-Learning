@@ -110,9 +110,9 @@ class Instructor(Profile):
 
     @property
     def get_avg_instructor_rating(self):
-        total_rate = self.instructor_courses.aggregate(total=Avg("course_ratings"))[
-            "total"
-        ]
+        total_rate = self.instructor_courses.aggregate(
+            total=Avg("course_reviews__rate")
+        )["total"]
         return total_rate or 0
 
 

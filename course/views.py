@@ -46,7 +46,7 @@ class Index(TemplateView):
         context = super().get_context_data(**kwargs)
         top_categories = Category.objects.all().order_by("-views")
         top_enrollments_courses = Course.objects.annotate(
-            rating=Avg("course_ratings"),
+            rating=Avg("course_reviews"),
             enrollments_count=Count("course_enrollments"),
         ).order_by("-rating", "-enrollments_count")[:5]
         top_instructors = (
@@ -63,6 +63,20 @@ class Index(TemplateView):
 
 class About(TemplateView):
     template_name = "about.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        top_categories = Category.objects.all().order_by("-views")
+
+        top_instructors = (
+            Instructor.objects.all()
+            .annotate(students=Count("instructor_courses__course_enrollments"))
+            .order_by("-students")
+        )
+        context["categories"] = top_categories
+        context["instructors"] = top_instructors
+
+        return context
 
 
 class CreateCourse(PermissionRequiredMixin, CreateView):
@@ -176,10 +190,6 @@ class DeleteLearningObjectives(DeleteView):
                 objective.course.token,
             ],
         )
-
-
-def most_viewed_courses(request):
-    pass
 
 
 class CreateModule(PermissionRequiredMixin, CreateView):
@@ -342,39 +352,6 @@ class CourseDetail(DetailView):
             else:
                 context["is_enrolled"] = False
         return context
-
-
-class LessonDetail(DetailView):
-    model = Lesson
-    template_name = "course/lesson_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["add_views"] = self.add_views()
-        return context
-
-    def add_views(self):
-
-        course = self.get_object()
-        if self.request.user.is_authenticated:
-            if not course.is_free:
-                if (
-                    self.request.user.student
-                    and course.course_enrollments.filter(
-                        student=self.request.user.student
-                    ).exists()
-                ):
-
-                    course.views += 1
-                    course.save()
-                else:
-
-                    return redirect(
-                        "course:course_detail", kwargs=[course.slug, course.token]
-                    )
-            else:
-                course.views += 1
-                course.save()
 
 
 def fetch_courses_by_tag(request, tag):
@@ -562,7 +539,9 @@ def create_contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            save_form = form.save(commit=False)
+            save_form.user = request.user
+            save_form.save()
             messages.success(
                 request,
                 "Your Message Is Sent Successfully And You Get the Response Soon.",
@@ -591,7 +570,7 @@ def update_contact(request, token):
         if form.is_valid():
             form.save()
             messages.success(request, "Message Updated Successfully.")
-            return redirect("course:user-contact-messages", message.token)
+            return redirect("course:user-contact-messages")
         else:
             messages.info(
                 request,
@@ -613,7 +592,7 @@ def remove_contact(request, token):
     if request.method == "POST":
         message.delete()
         messages.success(request, "The Message is Deleted Successfully.")
-        return redirect("course:user-contact-messages", message.token)
+        return redirect("course:user-contact-messages")
     context = {"message": message}
     return render(request, "course_pages/remove_contact_message.html", context)
 
@@ -630,7 +609,7 @@ def top_courses(request):
     courses = (
         Course.objects.filter(is_puplished=True)
         .annotate(
-            rating=Avg("course_ratings__rate", distinct=True),
+            rating=Avg("course_reviews", distinct=True),
             enroll=Count("course_enrollments", distinct=True),
         )
         .order_by("-rating", "-enroll")

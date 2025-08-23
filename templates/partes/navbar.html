@@ -65,7 +65,12 @@
                                             {% endif %}
                                             <li><a href="{% url 'course:search' %}">search</a></li>
 
-                                            <li><a href="contact.html">Contact</a></li>
+                                            <li><a href="{% url 'course:contact' %}">Contact</a>
+                                                <ul class="submenu">
+                                                    <li><a href="{% url 'course:user-contact-messages' %}">Your Contact
+                                                            📩</a></li>
+                                                </ul>
+                                            </li>
 
                                             <!-- Cart Icon - Available for all users -->
                                             <li class="cart-icon">
