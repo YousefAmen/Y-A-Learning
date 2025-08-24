@@ -28,11 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-s2@0+7696a7sx$auaii@eb=^gii_o=zxva8^zp1!)av+w3po-="
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "y-a-learning-production.up.railway.app",
     "https://y-a-learning-production.up.railway.app",
+    "127.0.0.1",
 ]
 CSRFCSRF_TRUSTED_ORIGINS = [
     "https://y-a-learning-production.up.railway.app",
