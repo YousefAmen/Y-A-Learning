@@ -35,9 +35,7 @@ ALLOWED_HOSTS = [
     "https://y-a-learning-production.up.railway.app",
 ]
 CSRFCSRF_TRUSTED_ORIGINS = [
-    "y-a-learning-production.up.railway.app",
     "https://y-a-learning-production.up.railway.app",
-    "localhos:8000",
 ]
 
 # Application definition
