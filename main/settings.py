@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
 CSRFCSRF_TRUSTED_ORIGINS = [
     "y-a-learning-production.up.railway.app",
     "https://y-a-learning-production.up.railway.app",
+    "localhos:8000",
 ]
 
 # Application definition
@@ -117,7 +118,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "railway",
         "USER": "postgres",
-        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "PASSWORD": os.getenv["DB_PASSWORD"],
         "HOST": "switchback.proxy.rlwy.net",
         "PORT": "14628",
     }
