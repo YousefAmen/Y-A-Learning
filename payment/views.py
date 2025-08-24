@@ -135,8 +135,6 @@ def payment_success(request):
                 Enrollment.objects.create(
                     user=request.user,
                     course=course,
-                    payment_method="paypal",
-                    transaction_id=order_id,
                 )
                 enrolled_course_titles.append(course.title)
                 total_enrolled += 1
