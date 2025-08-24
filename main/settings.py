@@ -32,13 +32,12 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     "y-a-learning-production.up.railway.app",
-    "https://y-a-learning-production.up.railway.app",
     "127.0.0.1",
+    "localhost",
 ]
-CSRFCSRF_TRUSTED_ORIGINS = [
+CSRF_TRUSTED_ORIGINS = [
     "https://y-a-learning-production.up.railway.app",
 ]
-
 # Application definition
 
 INSTALLED_APPS = [
