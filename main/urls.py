@@ -8,7 +8,7 @@ from members.views import CustomPasswordChangeView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("Y-A-Education/", include("course.urls")),
+    path("", include("course.urls")),
     path("members/", include("members.urls")),
     path("payment/", include("payment.urls")),
     path("cart/", include("cart.urls")),
