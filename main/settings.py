@@ -194,9 +194,9 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 # ------Redirects-----
-LOGOUT_REDIRECT_URL = "/Y-A-Education"
-ACCOUNT_SIGNUP_REDIRECT_URL = "/Y-A-Education"
-LOGIN_REDIRECT_URL = "/Y-A-Education"
+LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/"
 # ------- end Redirects-------
 
 
