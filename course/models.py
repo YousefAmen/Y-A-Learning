@@ -10,6 +10,42 @@ from moviepy import VideoFileClip
 from taggit.managers import TaggableManager
 from members.models import Instructor, Student
 
+
+CHOICES_CATEGORIES = [
+    ("Development & Programming", "Development & Programming"),
+    ("Business & Management", "Business & Management"),
+    ("Finance & Accounting", "Finance & Accounting"),
+    ("IT & Software", "IT & Software"),
+    ("Design", "Design"),
+    ("Marketing", "Marketing"),
+    ("Personal Development", "Personal Development"),
+    ("Photography & Video", "Photography & Video"),
+    ("Music & Audio", "Music & Audio"),
+    ("Health & Fitness", "Health & Fitness"),
+    ("Teaching & Academics", "Teaching & Academics"),
+    ("Language Learning", "Language Learning"),
+    ("Data Science & Analytics", "Data Science & Analytics"),
+    (
+        "Artificial Intelligence & Machine Learning",
+        "Artificial Intelligence & Machine Learning",
+    ),
+    ("Cloud Computing & DevOps", "Cloud Computing & DevOps"),
+    ("Cybersecurity", "Cybersecurity"),
+    ("Engineering", "Engineering"),
+    ("Science & Mathematics", "Science & Mathematics"),
+    ("Social Sciences", "Social Sciences"),
+    ("Humanities", "Humanities"),
+    ("Lifestyle", "Lifestyle"),
+    ("Cooking & Culinary Arts", "Cooking & Culinary Arts"),
+    ("Arts & Crafts", "Arts & Crafts"),
+    ("Beauty & Makeup", "Beauty & Makeup"),
+    ("Sports", "Sports"),
+    ("Travel & Adventure", "Travel & Adventure"),
+    ("Test Preparation", "Test Preparation"),
+    ("Career Development", "Career Development"),
+    ("Parenting & Relationships", "Parenting & Relationships"),
+]
+
 CHOICES_LEVEL = [
     ("Beginner", "Beginner"),
     ("Intermediate", "Intermediate"),
@@ -18,11 +54,12 @@ CHOICES_LEVEL = [
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=250)
-    views = models.PositiveIntegerField()
-    thumbnail = models.ImageField(
-        upload_to="images/category_images/", blank=True, null=True
+    name = models.CharField(
+        max_length=100,
+        choices=CHOICES_CATEGORIES,
+        default="Development & Programming",
     )
+
     slug = models.SlugField(default="", unique=True)
 
     def __str__(self):

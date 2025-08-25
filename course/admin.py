@@ -27,6 +27,10 @@ class CourseAdmin(admin.ModelAdmin):
     # exclude = ['token']
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+
+
 class EnrollmentAdmin(admin.ModelAdmin):
     list_filter = ["enrollment_date"]
 
@@ -65,6 +69,6 @@ admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Module, ModuleAdmin)
 admin.site.register(Enrollment, EnrollmentAdmin)
-admin.site.register(Category)
 admin.site.register(LearningOutcomes)
 admin.site.register(Contact, ContactAdmin)
+admin.site.register(Category, CategoryAdmin)
