@@ -7,6 +7,7 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from django_countries.fields import CountryField
 from django.db.models import Count, Avg
+from django.contrib.auth.models import Group
 
 GENDER_CHOICES = (
     ("male", "Male"),
@@ -57,6 +58,7 @@ class Profile(models.Model):
         self.slug = slugify(f"{self.first_name}-{self.last_name}")
         if not self.token:
             self.token = uuid.uuid4().hex[:16].upper()
+
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -80,6 +82,12 @@ class Instructor(Profile):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} (Instructor)"
+        # def save(self, *args, **kwargs):
+        #     if self.role == "instructor" and self.user not in Group.objects.filter(user =user):
+        #     instructors_group = Group.objects.get(name="Instructors")
+        #     self.user.groups.add(instructors_group)
+
+        return super().save(*args, **kwargs)
 
     @property
     def get_students_count(self):
