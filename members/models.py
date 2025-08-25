@@ -78,19 +78,6 @@ class Instructor(Profile):
     )
     followers = models.ManyToManyField(User, blank=True, related_name="followers")
 
-    class Meta:
-        permissions = [
-            ("add_course", "Can add course"),
-            ("change_course", "Can change course"),
-            ("delete_course", "Can delete course"),
-            ("add_module", "Can add module"),
-            ("change_module", "Can update module"),
-            ("delete_module", "Can delete course"),
-            ("add_lesson", "Can add lesson"),
-            ("change_lesson", "Can update lesson"),
-            ("delete_lesson", "Can delete lesson"),
-        ]
-
     def __str__(self):
         return f"{self.first_name} {self.last_name} (Instructor)"
 
