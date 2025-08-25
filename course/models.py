@@ -80,19 +80,6 @@ class Course(models.Model):
     )
     loves = models.ManyToManyField(User, blank=True)
 
-    class Meta:
-        permissions = [
-            ("add_course", "Can add course"),
-            ("change_course", "Can change course"),
-            ("delete_course", "Can delete course"),
-            ("add_module", "Can add module"),
-            ("change_module", "Can update module"),
-            ("delete_module", "Can delete course"),
-            ("add_lesson", "Can add lesson"),
-            ("change_lesson", "Can update lesson"),
-            ("delete_lesson", "Can delete lesson"),
-        ]
-
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
