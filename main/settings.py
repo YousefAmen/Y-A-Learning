@@ -175,11 +175,18 @@ SOCIALACCOUNT_PROVIDERS = {
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-print("Twitter ID:", os.getenv("OAUTH_TWITTER_CLIENT_ID"))
-print(
+google_id = "Google ID:", os.getenv("OAUTH_GOOGLE_CLIENT_ID")
+google_secret = (
+    "Twitter Secret:",
+    (os.getenv("OAUTH_GOOGLE_SECRET") if os.getenv("OAUTH_GOOGLE_SECRET") else "None"),
+)
+
+twitter_id = "Twitter ID:", os.getenv("OAUTH_TWITTER_CLIENT_ID")
+
+twitter_secret = (
     "Twitter Secret:",
     (
-        os.getenv("OAUTH_TWITTER_SECRET")[:10] + "..."
+        os.getenv("OAUTH_TWITTER_SECRET")
         if os.getenv("OAUTH_TWITTER_SECRET")
         else "None"
     ),
