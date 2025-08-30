@@ -37,7 +37,6 @@ ALLOWED_HOSTS = [
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://y-a-learning-production.up.railway.app",
-    "http://y-a-learning-production.up.railway.app",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
 ]
@@ -176,7 +175,15 @@ SOCIALACCOUNT_PROVIDERS = {
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-
+print("Twitter ID:", os.getenv("OAUTH_TWITTER_CLIENT_ID"))
+print(
+    "Twitter Secret:",
+    (
+        os.getenv("OAUTH_TWITTER_SECRET")[:10] + "..."
+        if os.getenv("OAUTH_TWITTER_SECRET")
+        else "None"
+    ),
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
