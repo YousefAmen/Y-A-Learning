@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     # allauth social providers
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.twitter",
+    "allauth.socialaccount.providers.twitter_oauth2",
     "allauth.socialaccount.providers.openid_connect",
     # django contries app
     "django_countries",
@@ -163,7 +163,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         "OAUTH_PKCE_ENABLED": True,
     },
-    "twitter": {
+    "twitter_oauth2": {
         "APP": {
             "client_id": os.getenv("OAUTH_TWITTER_CLIENT_ID"),
             "secret": os.getenv("OAUTH_TWITTER_SECRET"),
@@ -190,7 +190,11 @@ ACCOUNT_ADAPTER = "members.adapters.AccountAdapter"
 
 USE_TZ = True
 
-SITE_ID = 1
+if not DEBUG:
+    SITE_ID = 1
+else:
+    SITE_ID = 1
+
 # ----social Login-----
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
