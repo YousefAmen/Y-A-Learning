@@ -4,13 +4,14 @@ from .views import (
     CreateLink,
     DeleteLink,
     UpdateLink,
-    UserPublicProfile,
+    public_instructor_profile,
     delete_profile,
     edit_profile,
     instructor_courses,
     select_role,
     user_profile,
     instructor_top_courses,
+    follow_instructor,
 )
 
 app_name = "members"
@@ -30,7 +31,7 @@ urlpatterns = [
     ),
     path(
         "user-public-profile/<slug:slug>/<str:token>/",
-        UserPublicProfile.as_view(),
+        public_instructor_profile,
         name="user_public_profile",
     ),
     path("my-top-courses/", instructor_top_courses, name="instructor_top_courses"),
@@ -38,4 +39,5 @@ urlpatterns = [
     path("add-link/", CreateLink.as_view(), name="add_link"),
     path("update-link/<str:name>/", UpdateLink.as_view(), name="update_link"),
     path("delete-link/<str:name>/", DeleteLink.as_view(), name="delete_link"),
+    path("follow/", follow_instructor, name="follow_instructor"),
 ]

@@ -71,7 +71,7 @@ class Instructor(Profile):
     - it will have the his owen Fields
     """
 
-    about = models.TextField(max_length=500, blank=True, null=True)
+    about = models.TextField(max_length=500)
 
     teaching_exe = models.PositiveSmallIntegerField(
         choices=TEACHING_EXPERIENCE_CHOICES,
@@ -82,10 +82,11 @@ class Instructor(Profile):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} (Instructor)"
-        # def save(self, *args, **kwargs):
-        #     if self.role == "instructor" and self.user not in Group.objects.filter(user =user):
-        #     instructors_group = Group.objects.get(name="Instructors")
-        #     self.user.groups.add(instructors_group)
+
+    def save(self, *args, **kwargs):
+        if self.user not in Group.objects.filter(user=self.user):
+            instructors_group = Group.objects.get_or_create(name="Instructors")
+            self.user.groups.add(instructors_group[0])
 
         return super().save(*args, **kwargs)
 

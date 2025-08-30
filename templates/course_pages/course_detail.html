@@ -24,8 +24,15 @@
 
   /* Header Section */
   .course-header {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
-    color: white;
+
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url('{% if course.image %}{{ course.image.url }}{% else %}{% static "assets/img/gallery/course-thumbnail.webp" %}{% endif %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 500px;
+    position: relative;
     padding: 40px 0;
   }
 
@@ -1183,18 +1190,18 @@
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-<!-- Course Header -->
 <div class="course-header">
   <div class="container">
     <div class="header-content">
       <div class="course-info">
         <div class="breadcrumb">
           {% for tag in course.tags.all %}
-          <a href="">{{tag}}</a><span style="color: #000;"><strong>></strong></span>
+          <a href="">{{tag}}</a><span style="color: #fff;"><strong>></strong></span>
           {% endfor %}
         </div>
-        <h1>{{course.title}}</h1>
-        <p class="course-subtitle">{{course.subtitle}}</p>
+        <h1 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">{{course.title}}</h1>
+        <p class="course-subtitle" style="color: #f0f0f0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">{{course.subtitle}}
+        </p>
 
         <div class="course-meta">
           <div class="rating meta-item">
@@ -1210,32 +1217,32 @@
               {% endif %}
               {% endwith %}
               {% endfor %}
-              <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+              <span class="rating-text" style="color: white;">({{ course.avg_rating|floatformat:1 }})</span>
             </span>
-            <span>Rating</span>
+            <span style="color: white;">Rating</span>
           </div>
           <div class="meta-item">
-            <i class="fas fa-users"></i>
-            <span>{{course.course_enrollments.count}} students</span>
+            <i class="fas fa-users" style="color: white;"></i>
+            <span style="color: white;">{{course.course_enrollments.count}} students</span>
           </div>
           <div class="meta-item">
-            <i class="fas fa-clock"></i>
-            <span>{{course.total_course_duration|format_duration}} hours total</span>
+            <i class="fas fa-clock" style="color: white;"></i>
+            <span style="color: white;">{{course.total_course_duration|format_duration}} hours total</span>
           </div>
           <div class="meta-item">
-            <i class="fas fa-calendar"></i>
-            <span>Last updated {{course.updated_at}}</span>
+            <i class="fas fa-calendar" style="color: white;"></i>
+            <span style="color: white;">Created At {{ course.created_at|date:"F j, Y" }}</span>
           </div>
         </div>
 
         <div class="meta-item">
-          <span>Created by <strong>{{course.instructor}}</strong></span>
+          <span style="color: white;">Created by <strong>{{course.instructor}}</strong></span>
         </div>
         <br>
         <div class="meta-item">
-          <i class="fas fa-tags"></i>
-          <span>Category: <a href="{{ course.category.get_absolute_url }}"
-              style="text-decoration: none; color:white;">{{course.category}}</a></span>
+          <i class="fas fa-tags" style="color: white;"></i>
+          <span style="color: white;">Category: <a href="{{ course.category.get_absolute_url }}"
+              style="text-decoration: none; color: #ffd700; font-weight: bold;">{{course.category}}</a></span>
         </div>
       </div>
 
@@ -1251,41 +1258,80 @@
             {% endif %}
             Your browser does not support the video tag.
           </video>
-          <div class="video-placeholder" id="video-placeholder" onclick="playVideoInModal()">
-            {% if course.thumbnail %}
-            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="video-thumbnail">
+          <div class="video-placeholder" id="video-placeholder" onclick="playVideoInModal()" style="
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+          ">
+            {% if course.image %}
+            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="video-thumbnail">
             {% endif %}
             <div class="video-overlay">
-              <div class="play-button">
+              <div class="play-button" style="
+                background: rgba(255, 255, 255, 0.9);
+                color: #333;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+              ">
                 <i class="fas fa-play"></i>
               </div>
-              <span class="preview-text">Preview this course</span>
+              <span class="preview-text" style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Preview this
+                course</span>
             </div>
           </div>
         </div>
         {% elif course.promo_video_url %}
         <div class="video-container">
           <div class="video-placeholder" id="video-placeholder"
-            onclick="playExternalVideoInModal('{{ course.promo_video_url }}')">
+            onclick="playExternalVideoInModal('{{ course.promo_video_url }}')" style="
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+          ">
             {% if course.thumbnail %}
             <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="video-thumbnail">
             {% endif %}
             <div class="video-overlay">
-              <div class="play-button">
+              <div class="play-button" style="
+                background: rgba(255, 255, 255, 0.9);
+                color: #333;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+              ">
                 <i class="fas fa-play"></i>
               </div>
-              <span class="preview-text">Preview this course</span>
+              <span class="preview-text" style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Preview this
+                course</span>
             </div>
           </div>
         </div>
         {% else %}
-        <div class="video-placeholder no-video">
+        <div class="video-placeholder no-video" style="
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border-radius: 15px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        ">
           {% if course.thumbnail %}
           <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="video-thumbnail">
           {% else %}
           <div class="default-thumbnail">
-            <i class="fas fa-play-circle"></i>
-            <p>No preview available</p>
+            <i class="fas fa-play-circle" style="color: white;"></i>
+            <p style="color: white;">No preview available</p>
           </div>
           {% endif %}
         </div>
@@ -1375,6 +1421,19 @@
               <i class="fas fa-chevron-down"></i>
             </div>
             <div class="lesson-list">
+              {% if course.is_free %}
+              {% for lesson in module.lessons.all %}
+              <div class="lesson-item" data-lesson-id="{{lesson.id}}" data-lesson-title="{{lesson.title}}"
+                data-lesson-duration="{{lesson.duration}}"
+                data-lesson-video="{% if lesson.video %}{{lesson.video.url}}{% endif %}"
+                data-lesson-description="{{lesson.description|default:'No description available'}}"
+                onclick="openLessonVideoLightbox(this)">
+                <i class="fas fa-play-circle lesson-icon"></i>
+                <div class="lesson-title">{{lesson.title}}</div>
+                <div class="lesson-duration">{{lesson.duration|format_duration}}</div>
+              </div>
+              {% endfor %}
+              {% else %}
               {% for lesson in module.lessons.all %}
               {% if lesson.is_preview or is_enrolled %}
               <div class="lesson-item" data-lesson-id="{{lesson.id}}" data-lesson-title="{{lesson.title}}"
@@ -1399,6 +1458,8 @@
               </div>
               {% endif %}
               {% endfor %}
+              {% endif %}
+
             </div>
           </div>
           {% endfor %}
@@ -1503,7 +1564,8 @@
           <p>{{ review.body }}</p>
         </div>
         {% endfor %}
-        {% if request.user.is_authenticated %}
+        {% if request.user.is_authenticated and request.user in course.course_enrollments.all %}
+
         <div class="review-link-wrapper">
           <a href="{% url 'course:create-review' course.token %}" class="review-link-btn">
             Add Your Review
@@ -1517,6 +1579,7 @@
 
     <!-- Pricing Sidebar -->
     <div class="pricing-card">
+      {% if not course.is_free %}
       <div class="price-section">
         {% if course.discount_price %}
         <div class="current-price">${{ course.price }}</div>
@@ -1542,7 +1605,14 @@
           <i class="fas fa-credit-card"></i> Buy Now
         </a>
       </div>
+      {% else %}
+      <div class="price-section">
+        <div class="current-price">
 
+          <i class="fa-solid fa-circle-check"></i> Free
+        </div>
+        <div>Enroll for Free</div>
+      </div>
       <div class="course-includes">
         <h4>This course includes:</h4>
         <ul class="includes-list">
@@ -1572,6 +1642,8 @@
           </li>
         </ul>
       </div>
+      {% endif %}
+
     </div>
   </div>
 </div>

@@ -3,13 +3,21 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, reverse
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    DetailView,
+)
 from course.models import Course, Enrollment
 
 from .forms import RoleSelectionForm, SocialLinksForm, UpdateUserProfile
 from .models import Instructor, Profile, SocialLinks, Student
 from .signals import user_signed_up
 from django.db.models import Count
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 
 @login_required
@@ -123,44 +131,31 @@ def delete_profile(request, slug, role, token):
     return render(request, "account/delete_profile.html")
 
 
-class UserPublicProfile(ListView):
-    model = Course
-    template_name = "account/user_public_profile.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            self.instructor = Instructor.objects.get(
-                slug=self.kwargs["slug"], token=self.kwargs["token"]
-            )
-            return super().dispatch(request, *args, **kwargs)
-        except Instructor.DoesNotExist:
-            messages.info(self.request, "This instructor profile does not exist.")
-            return reverse_lazy(
-                "members:user_public_profile",
-                args=[
-                    self.kwargs["slug"],
-                    self.kwargs["token"],
-                ],
-            )
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        instructor_courses = Course.objects.filter(instructor=self.instructor)
-        context["instructor"] = self.instructor
-        context["instructor_courses"] = instructor_courses
-        return context
+def public_instructor_profile(request, slug, token):
+    try:
+        instructor = Instructor.objects.get(slug=slug, token=token)
+    except Instructor.DoesNotExist:
+        return redirect("course:home")
+    instructor_courses = Course.objects.filter(instructor=instructor).order_by(
+        "-created_at"
+    )
+    context = {"instructor": instructor, "instructor_courses": instructor_courses}
+    return render(request, "account/user_public_profile.html", context)
 
 
-def follow_instructor(request, slug, token):
-    instructor = Instructor.objects.get(slug=slug, token=token)
-    if instructor.followers.filter(id=request.user.id):
-        instructor.followers.remove(request.user)
-    else:
+@require_POST
+def follow_instructor(request):
+    token = request.POST.get("token")
+    if not request.user.is_authenticated:
+        messages.info(request, "You must be logged in to follow an instructor.")
+        return redirect("account_login")
+    instructor = Instructor.objects.get(token=token)
+    if not instructor.followers.filter(id=request.user.id).exists():
         instructor.followers.add(request.user)
-
-
-def love_course(request):
-    pass
+        return JsonResponse({"action": "added"})
+    else:
+        instructor.followers.remove(request.user)
+        return JsonResponse({"action": "removed"})
 
 
 @login_required

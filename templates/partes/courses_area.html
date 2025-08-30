@@ -7,6 +7,9 @@
         overflow: hidden;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .course-card:hover {
@@ -40,6 +43,9 @@
 
     .course-content {
         padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
 
     .course-title {
@@ -60,7 +66,8 @@
     .course-desc {
         font-size: 0.95rem;
         color: #6b7280;
-        min-height: 48px;
+        margin-bottom: 15px;
+        flex: 1;
     }
 
     .price {
@@ -84,6 +91,7 @@
         border-radius: 8px;
         font-weight: 600;
         text-decoration: none;
+        margin-top: auto;
     }
 
     .btn-view:hover {
@@ -95,6 +103,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        margin-bottom: 15px;
     }
 
     .stars {
@@ -110,7 +119,27 @@
     .star.filled {
         color: gold;
     }
+
+    /* Equal height fix */
+    .row.courses-grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .courses-grid .col-lg-4,
+    .courses-grid .col-md-6 {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .course-card {
+            margin-bottom: 20px;
+        }
+    }
 </style>
+
 <div class="courses-area section-padding40 fix">
     <div class="container">
         <div class="row justify-content-center">
@@ -120,10 +149,10 @@
                 </div>
             </div>
         </div>
-        <div class="courses-actives">
+
+        <div class="row courses-grid">
             {% for course in courses %}
-            <!-- Single -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="course-card">
                     <div class="course-image">
                         {% if course.image %}
@@ -138,9 +167,9 @@
                             <a href="{{course.get_absolute_url}}">{{course.title|title}}</a>
                         </h3>
                         <p class="course-desc">{{course.description|truncatechars:100}}</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
 
-                            <div class="rating ">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="rating">
                                 <span class="stars">
                                     {% for i in "12345" %}
                                     {% with star_num=forloop.counter %}
@@ -164,12 +193,11 @@
                                 {% endif %}
                             </div>
                         </div>
+
                         <a href="{{course.get_absolute_url}}" class="btn-view mt-3">View Details</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Single -->
             {% endfor %}
         </div>
     </div>

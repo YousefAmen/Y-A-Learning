@@ -1,5 +1,166 @@
 {% load static %}
 
+<style>
+    .team-area {
+        background: #f8f9fa;
+    }
+
+    .team-active {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        padding: 20px 0;
+    }
+
+    .single-cat {
+        background: white;
+        border-radius: 12px;
+        padding: 25px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.2s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        border: 1px solid #f1f5f9;
+    }
+
+    .single-cat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border-color: #e2e8f0;
+    }
+
+    .cat-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto 20px auto;
+        border: 2px solid #e5e7eb;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f9fafb;
+    }
+
+    .cat-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        display: block;
+    }
+
+    .cat-cap {
+        text-align: center;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .cat-cap h5 {
+        margin-bottom: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2a3f5f;
+        line-height: 1.3;
+    }
+
+    .cat-cap h5 a {
+        text-decoration: none;
+        color: inherit;
+        transition: color 0.2s ease;
+    }
+
+    .cat-cap h5 a:hover {
+        color: #3b82f6;
+    }
+
+    .cat-cap p {
+        color: #6b7280;
+        line-height: 1.6;
+        font-size: 0.9rem;
+        margin: 0;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    /* Enhanced responsive design */
+    @media (max-width: 992px) {
+        .team-active {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .cat-icon {
+            width: 80px;
+            height: 80px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .team-active {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .single-cat {
+            padding: 25px 15px;
+        }
+
+        .cat-icon {
+            width: 75px;
+            height: 75px;
+            margin-bottom: 15px;
+        }
+
+        .cat-cap h5 {
+            font-size: 1.1rem;
+        }
+
+        .cat-cap p {
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .team-active {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .single-cat {
+            padding: 20px 15px;
+        }
+
+        .cat-icon {
+            width: 70px;
+            height: 70px;
+        }
+
+        .cat-cap h5 {
+            font-size: 1rem;
+        }
+    }
+
+    /* Additional centering utilities */
+    .text-center {
+        text-align: center !important;
+    }
+
+    .d-flex-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
 <section class="team-area section-padding40 fix">
     <div class="container">
         <div class="row justify-content-center">
@@ -11,17 +172,21 @@
         </div>
         <div class="team-active">
             {% for instructor in instructors %}
-            <div class="single-cat text-center">
+            <div class="single-cat">
                 <div class="cat-icon">
-                    <img src="{% static 'assets/img/gallery/team1.png' %}" alt="">
+                    {% if instructor.profile_pic %}
+                    <img src="{{instructor.profile_pic.url}}" alt="{{instructor.first_name}} {{instructor.last_name}}">
+                    {% else %}
+                    <img src="{% static 'assets/img/gallery/team1.png' %}" alt="Default Avatar">
+                    {% endif %}
                 </div>
                 <div class="cat-cap">
-                    <h5><a href="#">Mr.{{instructor.first_name}}
-                            {{instructor.last_name}}</a></h5>
+                    <h5><a href="{% url 'members:user_public_profile' instructor.slug instructor.token %}">Mr.
+                            {{instructor.first_name}} {{instructor.last_name}}</a></h5>
                     {% if instructor.about %}
-                    <p>{{instructor.about}}.</p>
+                    <p>{{instructor.about|truncatechars:120}}</p>
                     {% else %}
-                    <p>{{instructor.bio}}.</p>
+                    <p>{{instructor.bio|truncatechars:120}}</p>
                     {% endif %}
                 </div>
             </div>

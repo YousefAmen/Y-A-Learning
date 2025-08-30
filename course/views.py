@@ -44,7 +44,10 @@ class Index(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        top_categories = Category.objects.all().order_by("-views")
+        top_categories = Category.objects.annotate(count=Count("course")).order_by(
+            "-count"
+        )[:5]
+
         top_enrollments_courses = Course.objects.annotate(
             rating=Avg("course_reviews"),
             enrollments_count=Count("course_enrollments"),
@@ -66,7 +69,9 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        top_categories = Category.objects.all().order_by("-views")
+        top_categories = Category.objects.annotate(count=Count("course")).order_by(
+            "-count"
+        )[:5]
 
         top_instructors = (
             Instructor.objects.all()
@@ -196,7 +201,7 @@ class CreateModule(PermissionRequiredMixin, CreateView):
     model = Module
     template_name = "course_pages/create_module.html"
     form_class = CreateModuleForm
-    permission_required = "module.add_module"
+    permission_required = "course.add_module"
 
     def get_course(self):
         return Course.objects.get(slug=self.kwargs["slug"], token=self.kwargs["token"])
@@ -235,7 +240,7 @@ class EditModule(PermissionRequiredMixin, UpdateView):
     model = Module
     template_name = "course_pages/edit_module.html"
     form_class = CreateModuleForm
-    permission_required = "module.change_module"
+    permission_required = "course.change_module"
 
     def get_success_url(self):
         course = self.object.course
@@ -251,7 +256,7 @@ class EditModule(PermissionRequiredMixin, UpdateView):
 class DeleteModule(PermissionRequiredMixin, DeleteView):
     model = Module
     template_name = "course_pages/delete_module.html"
-    permission_required = "module.delete_module"
+    permission_required = "course.delete_module"
 
     def get_success_url(self):
         course = self.object.course
@@ -293,7 +298,7 @@ class EditLesson(PermissionRequiredMixin, UpdateView):
     model = Lesson
     template_name = "course_pages/edit_lesson.html"
     form_class = AddLessonForm
-    permission_required = "lesson.add_lesson"
+    permission_required = "course.add_lesson"
 
     def get_success_url(self):
         lesson = self.object
@@ -309,7 +314,7 @@ class EditLesson(PermissionRequiredMixin, UpdateView):
 class DeleteLesson(PermissionRequiredMixin, DeleteView):
     model = Lesson
     template_name = "course_pages/delete_lesson.html"
-    permission_required = "lesson.delete_lesson"
+    permission_required = "course.delete_lesson"
 
     def get_success_url(self):
         lesson = self.object
@@ -365,14 +370,11 @@ def fetch_courses_by_category(request, slug):
 
     courses = Course.objects.filter(category__slug=slug).order_by("-created_at")
     category = Category.objects.get(slug=slug)
-    if "category_views" not in request.session:
-        request.session["category_views"] = []
-    if request.user.id not in request.session["category_views"]:
-        category.views += 1
-        category.save()
-        request.session["category_views"].append(request.user.id)
-        request.session.modified = True
-    popular_categories = Category.objects.all().order_by("-views")[:5]
+
+    popular_categories = Category.objects.annotate(count=Count("course")).order_by(
+        "-count"
+    )[:5]
+
     context = {
         "courses": courses,
         "category": category,

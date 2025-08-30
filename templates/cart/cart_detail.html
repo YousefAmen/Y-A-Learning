@@ -7,137 +7,416 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 {% endblock %}
 
-
 {% block content %}
 <style>
+  .cart-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 20vh;
+    padding: 60px 0 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+  }
+
+  .cart-header {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+  .cart-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .cart-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+
+  .cart-content {
+    margin-top: -60px;
+    position: relative;
+    z-index: 3;
+  }
+
   .custom-cart-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
-    margin-top: 30px;
+    margin-top: 40px;
+    flex-wrap: wrap;
   }
 
   .custom-btn {
     text-decoration: none;
-    padding: 12px 24px;
+    padding: 14px 28px;
     font-size: 16px;
     font-weight: 600;
-    border-radius: 8px;
-    transition: 0.3s ease;
+    border-radius: 12px;
+    transition: all 0.3s ease;
     cursor: pointer;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    min-width: 180px;
+    text-align: center;
+  }
+
+  .custom-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .custom-btn:hover::before {
+    left: 100%;
   }
 
   .custom-btn.outline {
-    border: 2px solid #555;
-    color: #555;
-    background-color: transparent;
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
 
   .custom-btn.outline:hover {
-    background-color: #555;
+    background: linear-gradient(135deg, #6c757d, #495057);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
   }
 
   .custom-btn.solid {
-    background: linear-gradient(45deg, #007bff, #0056b3);
+    background: linear-gradient(135deg, #28a745, #20c997);
     color: white;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
   }
 
   .custom-btn.solid:hover {
-    background: linear-gradient(45deg, #0056b3, #003f7f);
-    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+    background: linear-gradient(135deg, #20c997, #17a2b8);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+    color: white;
   }
 
   .custom-cart-table {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .custom-cart-table::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+  }
+
+  .custom-table-wrapper {
     overflow-x: auto;
+    border-radius: 12px;
   }
 
   .custom-table {
     width: 100%;
     border-collapse: collapse;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: white;
   }
 
   .custom-table thead {
-    background-color: #f7f7f7;
-    color: #333;
+    background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+    color: #495057;
   }
 
-  .custom-table th,
-  .custom-table td {
-    padding: 16px;
+  .custom-table th {
+    padding: 20px 16px;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+
+  .custom-table th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    opacity: 0.3;
+  }
+
+  .custom-table td {
+    padding: 20px 16px;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #f1f3f4;
     vertical-align: middle;
   }
 
+  .custom-table tbody tr {
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .custom-table tbody tr::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
+    opacity: 0.1;
+  }
+
+  .custom-table tbody tr:hover::before {
+    width: 4px;
+  }
+
   .custom-table tbody tr:hover {
-    background-color: #f5faff;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    transform: translateX(2px);
   }
 
   .course-info {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
   }
 
   .course-info img {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .course-info img:hover {
+    transform: scale(1.05);
+  }
+
+  .course-title {
+    flex: 1;
   }
 
   .course-title a {
     font-weight: 600;
-    color: #007bff;
+    color: #2d3748;
     text-decoration: none;
+    font-size: 16px;
+    line-height: 1.4;
+    transition: color 0.3s ease;
   }
 
   .course-title a:hover {
-    text-decoration: underline;
+    color: #667eea;
+    text-decoration: none;
   }
 
   .custom-table td p {
-    margin: 0 0 6px;
+    margin: 0 0 8px;
     font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5;
   }
 
   .custom-table small {
-    color: #888;
+    color: #9ca3af;
     font-size: 12px;
+    display: block;
+    margin: 2px 0;
+    padding: 2px 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .price-cell {
+    font-weight: 700;
+    font-size: 18px;
+    color: #059669;
+    position: relative;
+  }
+
+  .price-cell::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background: #059669;
+    border-radius: 50%;
   }
 
   .custom-table tfoot {
-    background-color: #f0f0f0;
-    font-weight: bold;
+    background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+    font-weight: 700;
+  }
+
+  .custom-table tfoot td {
+    padding: 24px 16px;
+    border-top: 2px solid #e2e8f0;
+    font-size: 16px;
   }
 
   .custom-table tfoot .total-label {
     text-align: right;
+    color: #4a5568;
   }
 
-  .custom-table button {
-    background: none;
+  .custom-table tfoot .total-amount {
+    color: #059669;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .remove-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     border: none;
     cursor: pointer;
-    color: #dc3545;
-    font-size: 18px;
+    color: white;
+    font-size: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
   }
 
-  .custom-table button:hover {
-    color: #a00;
+  .remove-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+  }
+
+  .empty-cart {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .empty-cart::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+  }
+
+  .empty-cart .lead {
+    font-size: 1.5rem;
+    color: #6b7280;
+    margin-bottom: 30px;
+  }
+
+  .empty-cart .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .empty-cart .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .cart-header h1 {
+      font-size: 2rem;
+    }
+
+    .custom-cart-buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .custom-btn {
+      margin-bottom: 10px;
+    }
+
+    .course-info {
+      flex-direction: column;
+      text-align: center;
+      gap: 15px;
+    }
+
+    .course-info img {
+      width: 80px;
+      height: 80px;
+    }
+
+    .custom-table th,
+    .custom-table td {
+      padding: 12px 8px;
+    }
+
+    .custom-cart-table {
+      padding: 20px 15px;
+    }
   }
 </style>
-<div class="container py-5" style="margin-top: 50px;">
-  <h1 class="display-4 mb-4">Your Learning Cart</h1>
 
+<div class="cart-container">
+  <div class="container">
+    <div class="cart-header">
+      <h1>Your Learning Cart</h1>
+      <p>Review your selected courses before checkout</p>
+    </div>
+  </div>
+</div>
+
+<div class="container cart-content py-5">
   {% if cart|length > 0 %}
   <div class="custom-cart-table">
     <div class="custom-table-wrapper">
@@ -169,14 +448,15 @@
             </td>
             <td>
               <p>{{ course.description|truncatewords:20 }}</p>
-              <small>Duration: {{ course.total_course_duration|format_duration }}</small><br>
+              <small>Duration: {{ course.total_course_duration|format_duration }}</small>
               <small>Level: {{ course.level|default:"Intermediate" }}</small>
             </td>
-            <td><strong>${{ course.price }}</strong></td>
+            <td class="price-cell"><strong>${{ course.price }}</strong></td>
             <td>
               <form action="" method="POST">
                 {% csrf_token %}
-                <button type="button" name="token" id="remove-item-{{course.token}}" value="{{ course.token }}">
+                <button type="button" name="token" id="remove-item-{{course.token}}" value="{{ course.token }}"
+                  class="remove-btn">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -187,7 +467,7 @@
         <tfoot>
           <tr>
             <td colspan="2" class="total-label">Total Courses: {{ cart|length }}</td>
-            <td><strong>${{ cart.total_amount }}</strong></td>
+            <td class="total-amount"><strong>${{ cart.total_amount }}</strong></td>
             <td></td>
           </tr>
         </tfoot>
@@ -202,21 +482,17 @@
   </div>
 
   {% else %}
-  <div class="text-center py-5">
+  <div class="empty-cart">
     <p class="lead text-muted">Your cart is empty.</p>
     <a href="{% url 'course:courses-list' %}" class="btn btn-primary">Browse Courses</a>
   </div>
   {% endif %}
 </div>
 
-<!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 <script>
-
   $(document).ready(function () {
     $('[id^="remove-item-"]').on('click', function (e) {
       e.preventDefault();
@@ -236,17 +512,18 @@
         dataType: 'json',
         success: function (json) {
           if (json.success) {
-            button.closest('tr').remove(); // Remove course row
-            $('#total-amount').text(json.total_amount); // Update total
-            $('#total-courses').text(json.item_count); // Update item count
+            button.closest('tr').remove();
+            $('#total-amount').text(json.total_amount);
+            $('#total-courses').text(json.item_count);
             $('#cart-count').text(json.item_count);
             if (json.item_count === 0) {
-              $('.card.shadow-sm').replaceWith(
-                '<div class="text-center py-5">' +
+              $('.custom-cart-table').replaceWith(
+                '<div class="empty-cart">' +
                 '<p class="lead text-muted">Your cart is empty.</p>' +
                 '<a href="{% url "course:courses-list" %}" class="btn btn-primary">Browse Courses</a>' +
                 '</div>'
               );
+              $('.custom-cart-buttons').hide();
             }
           } else {
             alert('Error: ' + json.error);

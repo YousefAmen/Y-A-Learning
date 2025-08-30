@@ -107,13 +107,14 @@ class CreateModuleForm(forms.ModelForm):
 class AddLessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = ["title", "thumbnail", "video"]
+        fields = ["title", "is_preview", "thumbnail", "video"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["title"].widget.attrs.update(
-            {"class": "form-control form-control-lg", "placeholder": "Course Title"}
+            {"class": "form-control form-control-lg", "placeholder": "Lesson Title"}
         )
+        self.fields["is_preview"].widget.attrs.update({"class": "form-check-input"})
 
         self.fields["video"].widget.attrs.update({"class": "form-control-file d-none"})
 

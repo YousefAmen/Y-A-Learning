@@ -60,7 +60,7 @@ class Category(models.Model):
         default="Development & Programming",
     )
 
-    slug = models.SlugField(default="", unique=True)
+    slug = models.SlugField(default="", unique=True, max_length=500)
 
     def __str__(self):
         return self.name
@@ -106,7 +106,7 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(blank=True, null=True)
-    slug = models.SlugField(default="", unique=True)
+    slug = models.SlugField(default="", unique=True, max_length=500)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tags = TaggableManager()
     token = models.CharField(max_length=20, unique=True, blank=True)
@@ -169,7 +169,7 @@ class LearningOutcomes(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    slug = models.SlugField(default="", unique=True)
+    slug = models.SlugField(default="", unique=True, max_length=500)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -262,7 +262,7 @@ class Module(models.Model):
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    slug = models.SlugField(default="", unique=True)
+    slug = models.SlugField(default="", max_length=500)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -286,7 +286,7 @@ class Lesson(models.Model):
     is_preview = models.BooleanField(default=False)
     duration = models.DurationField(blank=True, null=True)
     added_at = models.DateTimeField(auto_now_add=True)
-    slug = models.SlugField(default="", unique=True)
+    slug = models.SlugField(default="", max_length=500)
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
 
     def save(self, *args, **kwargs):
