@@ -57,12 +57,7 @@ class Index(TemplateView):
             .annotate(students=Count("instructor_courses__course_enrollments"))
             .order_by("-students")
         )
-        from main.settings import twitter_id, twitter_secret, google_secret, google_id
 
-        context["google_secret"] = google_secret
-        context["google_id"] = google_id
-        context["twitter_id"] = twitter_id
-        context["twitter_secret"] = twitter_secret
         context["categories"] = top_categories
         context["courses"] = top_enrollments_courses
         context["instructors"] = top_instructors

@@ -175,22 +175,7 @@ SOCIALACCOUNT_PROVIDERS = {
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-google_id = "Google ID:", os.getenv("OAUTH_GOOGLE_CLIENT_ID")
-google_secret = (
-    "Twitter Secret:",
-    (os.getenv("OAUTH_GOOGLE_SECRET") if os.getenv("OAUTH_GOOGLE_SECRET") else "None"),
-)
 
-twitter_id = "Twitter ID:", os.getenv("OAUTH_TWITTER_CLIENT_ID")
-
-twitter_secret = (
-    "Twitter Secret:",
-    (
-        os.getenv("OAUTH_TWITTER_SECRET")
-        if os.getenv("OAUTH_TWITTER_SECRET")
-        else "None"
-    ),
-)
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
