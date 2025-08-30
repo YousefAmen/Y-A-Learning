@@ -162,14 +162,17 @@ SOCIALACCOUNT_PROVIDERS = {
             "access_type": "online",
             "prompt": "consent",
         },
+        "OAUTH_PKCE_ENABLED": True,
     },
     "twitter": {
         "APP": {
             "client_id": os.getenv("OAUTH_TWITTER_CLIENT_ID"),
             "secret": os.getenv("OAUTH_TWITTER_SECRET"),
         },
+        "SCOPE": ["tweet.read", "users.read"],
     },
 }
+
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
