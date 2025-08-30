@@ -158,10 +158,10 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {
-            "access_type": "online",
+            "access_type": "offline",
             "prompt": "consent",
         },
-        "OAUTH_PKCE_ENABLED": True,
+        "OAUTH_PKCE_ENABLED": False,
     },
     "twitter_oauth2": {
         "APP": {
