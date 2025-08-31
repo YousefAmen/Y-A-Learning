@@ -9,6 +9,7 @@ class AddCourseForms(forms.ModelForm):
         model = Course
         fields = [
             "title",
+            "subtitle",
             "description",
             "requirements",
             "image",
@@ -27,6 +28,9 @@ class AddCourseForms(forms.ModelForm):
 
         self.fields["title"].widget.attrs.update(
             {"class": "form-control form-control-lg", "placeholder": "Course Title"}
+        )
+        self.fields["subtitle"].widget.attrs.update(
+            {"class": "form-control form-control-lg", "placeholder": "Course Subtitle."}
         )
 
         self.fields["description"].widget.attrs.update(

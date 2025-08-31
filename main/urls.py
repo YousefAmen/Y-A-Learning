@@ -7,7 +7,7 @@ from django.urls import include, path
 from members.views import CustomPasswordChangeView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    # path("admin/", admin.site.urls),
     path("", include("course.urls")),
     path("members/", include("members.urls")),
     path("payment/", include("payment.urls")),
@@ -20,5 +20,6 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("paypal/", include("paypal.standard.ipn.urls")),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns.append(path("admin/", admin.site.urls))
