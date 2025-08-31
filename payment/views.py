@@ -88,7 +88,6 @@ def checkout(
         "paypal_form": paypal_form,
         "amount": str(total),
         "items": courses,
-        "PAYPAL_CLIENT_ID": settings.PAYPAL_CLIENT_ID,
     }
     return render(request, "payment/checkout.html", context)
 

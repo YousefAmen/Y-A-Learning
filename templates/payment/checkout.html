@@ -401,7 +401,7 @@
                     <h2>Payment Method</h2>
                 </div>
                 <div class="payment-content">
-                    <div class="payment-methods">
+                    <!-- <div class="payment-methods">
                         <div class="payment-method">
                             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwIDRINEMyLjg5NTQzIDQgMiA0Ljg5NTQzIDIgNlYxOEMyIDMuMTA0NTcgMi44OTU0MyAyMCA0IDIwSDIwQzIxLjEwNDYgMjAgMjIgMTkuMTA0NiAyMiAxOFY2QzIyIDQuODk1NDMgMjEuMTA0NiA0IDIwIDRaIiBzdHJva2U9IiMzNzQxNTEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0yIDEwSDIyIiBzdHJva2U9IiMzNzQxNTEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo="
                                 alt="Credit Card" />
@@ -412,7 +412,7 @@
                                 alt="PayPal" />
                             <span>PayPal</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="payment-methods">
                         {{paypal_form.render}}
                     </div>
@@ -450,7 +450,7 @@
     </div>
 </div>
 
-<!-- Load PayPal SDK -->
+<!-- Load PayPal SDK
 <script
     src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&intent=capture&disable-funding=credit,card"></script>
 
@@ -639,6 +639,6 @@
         document.getElementById('paypal-button-container').innerHTML =
             '<p style="color: #ef4444; text-align: center; padding: 20px;">Unable to load PayPal payment options. Please refresh the page.</p>';
     });
-</script>
+</script> -->
 
 {% endblock %}
