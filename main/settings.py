@@ -190,10 +190,8 @@ ACCOUNT_ADAPTER = "members.adapters.AccountAdapter"
 
 USE_TZ = True
 
-if not DEBUG:
-    SITE_ID = 1
-else:
-    SITE_ID = 1
+SITE_ID = 1
+
 
 # ----social Login-----
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -236,7 +234,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Default primary key field type
