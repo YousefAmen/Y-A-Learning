@@ -243,11 +243,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-PAYPAL_CLIENT_ID = (
-    "AcHgH09W-_qjP0biXl2nxNvqBU9_tJLbqhjffNPZu16hHT5w2i2GStfMxLtF2qih_cZKrVYaDRI5N5V6"
-)
-PAYPAL_SECRET = (
-    "EPO88sDlV-xd0gqTQKkurkuDPVXfE3UTS6KUqEnS9FAa6ccAejwYir-oVrjbvAgGBtLQiDDh09dTDize"
-)
+# PAYPAL_CLIENT_ID = (
+#     "AcHgH09W-_qjP0biXl2nxNvqBU9_tJLbqhjffNPZu16hHT5w2i2GStfMxLtF2qih_cZKrVYaDRI5N5V6"
+# )
+# PAYPAL_SECRET = (
+#     "EPO88sDlV-xd0gqTQKkurkuDPVXfE3UTS6KUqEnS9FAa6ccAejwYir-oVrjbvAgGBtLQiDDh09dTDize"
+# )
 PAYPAL_RECEIVER_EMAIL = "yousefbusiness@gmail.com"
 PAYPAL_TEST = True

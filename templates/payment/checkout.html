@@ -373,7 +373,11 @@
                         <div class="course-title">{{ course.title }}</div>
                         <div class="course-instructor">by {{ course.instructor|default:"Instructor" }}</div>
                     </div>
+                    {% if course.discount %}
+                    <div class="course-price">${{ course.discount }}</div>
+                    {% else %}
                     <div class="course-price">${{ course.price }}</div>
+                    {% endif %}
                 </div>
                 {% endfor %}
 
@@ -408,6 +412,9 @@
                                 alt="PayPal" />
                             <span>PayPal</span>
                         </div>
+                    </div>
+                    <div class="payment-methods">
+                        {{paypal_form.render}}
                     </div>
 
                     <!-- PayPal Buttons -->

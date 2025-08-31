@@ -185,6 +185,11 @@
                                     <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
                                 </span>
                             </div>
+                            {% if course.discount %}
+                            <div class="price">
+                                ${{course.discount}}
+                            </div>
+                            {% else %}
                             <div class="price">
                                 {% if course.price %}
                                 ${{course.price}}
@@ -192,6 +197,7 @@
                                 <span class="free">Free</span>
                                 {% endif %}
                             </div>
+                            {% endif %}
                         </div>
 
                         <a href="{{course.get_absolute_url}}" class="btn-view mt-3">View Details</a>

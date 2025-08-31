@@ -1501,7 +1501,7 @@
                 <span>{{course.instructor.instructor_courses.count}} Courses</span>
               </div>
             </div>
-            <p>{{course.instructor.about}}</p>
+            <p>{{course.instructor.about|truncatewords:5}}</p>
           </div>
         </div>
       </div>
@@ -1582,7 +1582,7 @@
       {% if not course.is_free %}
       <div class="price-section">
         {% if course.discount_price %}
-        <div class="current-price">${{ course.price }}</div>
+        <div class="current-price">${{ course.discount }}</div>
         <div>
           <span class="original-price">${{course.discount_price}}</span>
           <span class="discount">{{course.discount_percentage}}% off</span>

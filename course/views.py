@@ -523,21 +523,6 @@ def remove_review(request, slug):
 
 
 @login_required
-def create_rating(request, token):
-    pass
-
-
-@login_required
-def update_rating(request, token):
-    pass
-
-
-@login_required
-def remove_rating(request, token):
-    pass
-
-
-@login_required
 def create_contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)

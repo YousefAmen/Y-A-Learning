@@ -122,8 +122,6 @@ class Course(models.Model):
             self.slug = slugify(self.title)
         if not self.token:
             self.token = uuid.uuid4().hex[:16].upper()
-        if self.discount_price and self.discount_price > 0:
-            self.price = self.price - self.discount_price
 
         super().save(*args, **kwargs)
 
@@ -138,6 +136,11 @@ class Course(models.Model):
                 self.token,
             ],
         )
+
+    @property
+    def discount(self):
+        if self.discount_price and self.discount_price > 0:
+            return max(0, self.price - self.discount_price)
 
     @property
     def total_course_duration(self):
