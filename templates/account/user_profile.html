@@ -485,28 +485,24 @@
             </a>
             {% endif %}
         </div>
+        {% if profile.role == 'instructor' %}
         <div class="profile-stats">
             <div class="stat-item">
-                {% if profile.role == 'instructor' %}
                 <div class="stat-value">{{ instructor_courses.count|default:"0" }}</div>
                 <div class="stat-label">Courses</div>
-                {% else %}
-                <div class="stat-value">{{ profile.get_students_count|default:"0" }}</div>
-                <div class="stat-label">Ernollment Courses</div>
-                {% endif %}
             </div>
             <div class="stat-item">
-                {% if profile.role == 'instructor' %}
                 <div class="stat-value">{{ profile.followers.count|default:"0" }}</div>
                 <div class="stat-label">Followers</div>
-                {% endif %}
             </div>
+            {% else %}
+            <div class="stat-value">{{ profile.course_enrollments.count|default:"0" }}</div>
+            <div class="stat-label">Ernollment Courses</div>
+            {% endif %}
             <div class="stat-item">
                 <div class="stat-value">{{ profile.create_at|date:"Y" }}</div>
                 <div class="stat-label">Member since</div>
             </div>
-
-
 
         </div>
     </div>
