@@ -1,32 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #e0f7e9, #d7efff);
+    .success-wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
+        padding: 60px 20px;
+        background: #fff;
     }
 
     .container {
         background: #fff;
         border-radius: 20px;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        max-width: 700px;
-        width: 90%;
+        max-width: 750px;
+        width: 100%;
         padding: 40px;
         text-align: center;
         position: relative;
-        overflow: hidden;
     }
 
     /* Success Icon */
     .success-icon {
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
         border-radius: 50%;
         background: #d1fae5;
         display: flex;
@@ -37,8 +34,8 @@
     }
 
     .success-icon svg {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         stroke: #10b981;
     }
 
@@ -146,47 +143,53 @@
     }
 </style>
 
-<div class="container">
-    <!-- Success Icon -->
-    <div class="success-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-    </div>
+<div class="success-wrapper">
+    <div class="container">
+        <!-- Success Icon -->
+        <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
 
-    <!-- Title -->
-    <h1>Enrollment Successful 🎉</h1>
-    <p class="subtitle">You are now enrolled in your course. Start learning today and achieve your goals!</p>
+        <!-- Title -->
+        <h1>Enrollment Successful 🎉</h1>
+        <p class="subtitle">You are now enrolled in your course. Start learning today and achieve your goals!</p>
 
-    <!-- Course Card -->
-    {% for course in courses %}
-    <div class="course-card">
-        <img src="https://via.placeholder.com/130x90" alt="Course Thumbnail">
-        <div class="course-info">
-            <h2>Python for Beginners</h2>
-            <p>Instructor: <span>{{course.instructor}}</span></p>
-            {% if course.discount %}
-            <p>Amount Paid: <span>${{course.discount}}</span></p>
+        <!-- Course Card -->
+        {% for course in courses %}
+        <div class="course-card">
+            <img src="{{ course.image.url }}" alt="Course Thumbnail">
+            <div class="course-info">
+                <h2>{{ course.title }}</h2>
+                <p>Instructor: <span>{{ course.instructor }}</span></p>
+                {% if course.discount %}
+                <p>Amount Paid: <span>${{ course.discount }}</span></p>
+                {% else %}
+                <p>Amount Paid: <span>${{ course.price }}</span></p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Buttons -->
+        <div class="actions">
+            {% if request.user.instructor %}
+            <a href="{% url 'members:user_profile' request.user.instructor.slug request.user.instructor.token %}"
+                class="btn btn-secondary">
+                Go to My Courses
+            </a>
             {% else %}
-            <p>Amount Paid: <span>${{course.price}}</span></p>
+            <a href="{% url 'members:user_profile' request.user.student.slug request.user.student.token %}"
+                class="btn btn-secondary">
+                Go to My Courses
+            </a>
             {% endif %}
         </div>
-    </div>
-    {% endfor %}
 
-    <!-- Buttons -->
-    <div class="actions">
-        {% if request.user.instructor %}
-        <a href="{% url 'members:user_profile' request.user.instructor.slug request.user.instructor.token %}"
-            class="btn btn-secondary">Go to My Courses</a>
-        {% else %}
-        <a href="{% url 'members:user_profile' request.user.student.slug request.user.student.token %}"
-            class="btn btn-secondary">Go to My Courses</a>
-        {% endif %}
+        <!-- Footer -->
+        <p class="footer-note">✨ Every lesson brings you closer to mastery. Keep going!</p>
     </div>
-
-    <!-- Footer -->
-    <p class="footer-note">✨ Every lesson brings you closer to mastery. Keep going!</p>
 </div>
-
 {% endblock %}
