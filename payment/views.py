@@ -68,7 +68,7 @@ def checkout(
         return redirect("courses:course-list")
     paypal_dict = {
         "business": settings.PAYPAL_RECEIVER_EMAIL,
-        "amount": str(total),
+        "amount": f"{total:.2f}",
         "item_name": ", ".join([course.title for course in courses]),
         "invoice": str(uuid.uuid4()),
         "currency_code": "USD",
@@ -113,9 +113,11 @@ def payment_success(request):
                 )
                 if created:
                     enrollments_created.append(enrollment.course.title)
+
+            # clear the cart
             for token in courses_tokens:
                 cart.remove_item(token)
-
+            # delete the session after success payment
             if "pending_purchase" in request.session:
                 del request.session["pending_purchase"]
             messages.success(
