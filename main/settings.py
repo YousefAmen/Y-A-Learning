@@ -249,7 +249,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # PAYPAL_SECRET = (
 #     "EPO88sDlV-xd0gqTQKkurkuDPVXfE3UTS6KUqEnS9FAa6ccAejwYir-oVrjbvAgGBtLQiDDh09dTDize"
 # )
-PAYPAL_RECEIVER_EMAIL = "sb-m3l5n34528558@business.example.com"
+PAYPAL_RECEIVER_EMAIL = "yousefAmenbusiness@business.example.com"
 PAYPAL_TEST = True
 # Ppd*96%_
 # EG98NAC2X3S4CGZ3
