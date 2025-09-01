@@ -105,7 +105,7 @@ def payment_success(request):
             pending_purchase = request.session.get("pending_purchase")
             if not pending_purchase:
                 messages.error(request, "No pending purchase found.")
-                return redirect("course:courses-list")
+                return redirect("courses:courses-list")
 
             courses_tokens = pending_purchase.get("courses_tokens")
             if not courses_tokens:
