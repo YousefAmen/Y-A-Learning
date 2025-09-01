@@ -80,11 +80,7 @@ def checkout(
     }
 
     paypal_form = PayPalPaymentsForm(initial=paypal_dict)
-    # In checkout function:
-    messages.info(
-        request,
-        f"Debug: Email={settings.PAYPAL_RECEIVER_EMAIL}, Host={request.get_host()}",
-    )
+
     request.session["pending_purchase"] = {
         "course_tokens": items,
         "total": str(total),

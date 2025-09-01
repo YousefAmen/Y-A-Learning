@@ -5,6 +5,6 @@ app_name = "payment"
 
 urlpatterns = [
     path("checkout/", checkout, name="checkout"),
-    path("checkout/success-payment/", payment_success, name="payment-success"),
-    path("checkout/payment-failed/", payment_failed, name="payment-failed"),
+    path("success-payment/", payment_success, name="payment-success"),
+    path("payment-failed/", payment_failed, name="payment-failed"),
 ]
