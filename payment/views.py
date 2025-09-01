@@ -65,7 +65,7 @@ def checkout(
 
     if total == 0:
         messages.info(request, "No items to purchase.")
-        return redirect("courses:course-list")
+        return redirect("course:course-list")
 
     paypal_dict = {
         "business": settings.PAYPAL_RECEIVER_EMAIL,
@@ -84,7 +84,7 @@ def checkout(
     paypal_form = PayPalPaymentsForm(initial=paypal_dict)
 
     request.session["pending_purchase"] = {
-        "course_tokens": items,
+        "courses_tokens": items,
         "total": str(total),
     }
 
@@ -105,12 +105,12 @@ def payment_success(request):
             pending_purchase = request.session.get("pending_purchase")
             if not pending_purchase:
                 messages.error(request, "No pending purchase found.")
-                return redirect("courses:courses-list")
+                return redirect("course:courses-list")
 
             courses_tokens = pending_purchase.get("courses_tokens")
             if not courses_tokens:
                 messages.error(request, "No courses found in pending purchase.")
-                return redirect("courses:courses-list")
+                return redirect("course:courses-list")
 
             courses = Course.objects.filter(token__in=courses_tokens)
             for course in courses:
