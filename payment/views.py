@@ -67,6 +67,11 @@ def checkout(
         messages.info(request, "No items to purchase.")
         return redirect("courses:course-list")
 
+    request.session["pending_purchase"] = {
+        "course_tokens": items,
+        "total": str(total),
+    }
+
     paypal_dict = {
         "business": settings.PAYPAL_RECEIVER_EMAIL,
         "amount": f"{total:.2f}",
@@ -86,7 +91,6 @@ def checkout(
     request.session["pending_purchase"] = {
         "course_tokens": items,
         "total": str(total),
-        "invoice": paypal_dict["invoice"],
     }
 
     context = {
@@ -108,18 +112,17 @@ def payment_success(request):
                 messages.error(request, "No pending purchase found.")
                 return redirect("course:course-list")
 
-            courses_tokens = pending_purchase.get("course_tokens")
+            courses_tokens = pending_purchase.get("courses_tokens")
             courses = Course.objects.filter(token__in=courses_tokens)
             for course in courses:
-                enrollment, created = Enrollment.objects.create(
-                    user=request.user, course=course
-                )
-                if created:
-                    enrollments_created.append(enrollment.course.title)
-
+                enrollment = Enrollment.objects.create(user=request.user, course=course)
+                enrollments_created.append(enrollment.course.title)
             # clear the cart
-            for token in courses_tokens:
-                cart.remove_item(token)
+            cart_courses = cart.courses()
+            for course in courses:
+                if course in cart_courses:
+                    cart.remove_item(course.token)
+
             # delete the session after success payment
             if "pending_purchase" in request.session:
                 del request.session["pending_purchase"]
