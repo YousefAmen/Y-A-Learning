@@ -31,7 +31,7 @@ def checkout(
             items.append(course.token)
         except Course.DoesNotExist:
             messages.error(request, "Course not found.")
-            return redirect("courses:course-list")
+            return redirect("courses:courses-list")
     else:
 
         cart_courses = cart.courses()
@@ -65,7 +65,7 @@ def checkout(
 
     if total == 0:
         messages.info(request, "No items to purchase.")
-        return redirect("course:course-list")
+        return redirect("course:courses-list")
 
     paypal_dict = {
         "business": settings.PAYPAL_RECEIVER_EMAIL,
