@@ -79,6 +79,9 @@ def checkout(
         "cancel_url": f"https://{host}{reverse('payment:payment-failed')}",
     }
 
+    messages.info(
+        request, f"Return URL: https://{host}{reverse('payment:payment-success')}"
+    )
     paypal_form = PayPalPaymentsForm(initial=paypal_dict)
 
     request.session["pending_purchase"] = {
