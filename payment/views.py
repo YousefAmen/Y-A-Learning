@@ -97,8 +97,6 @@ def checkout(
     return render(request, "payment/checkout.html", context)
 
 
-@login_required
-@require_POST
 def payment_success(request):
     enrollments_created = []
     cart = Cart(request)
