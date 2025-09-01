@@ -113,6 +113,10 @@ def payment_success(request):
                 return redirect("course:course-list")
 
             courses_tokens = pending_purchase.get("courses_tokens")
+            if not courses_tokens:
+                messages.error(request, "No courses found in pending purchase.")
+                return redirect("courses:course-list")
+
             courses = Course.objects.filter(token__in=courses_tokens)
             for course in courses:
                 enrollment = Enrollment.objects.create(user=request.user, course=course)
