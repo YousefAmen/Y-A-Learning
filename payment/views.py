@@ -114,8 +114,11 @@ def payment_success(request):
 
             courses = Course.objects.filter(token__in=courses_tokens)
             for course in courses:
-                enrollment = Enrollment.objects.create(user=request.user, course=course)
-                enrollments_created.append(enrollment.course.title)
+                enrollment, created = Enrollment.objects.get_or_create(
+                    user=request.user, course=course
+                )
+                if created:
+                    enrollments_created.append(enrollment.course.title)
             # clear the cart
             cart_courses = cart.courses()
             if cart_courses:
