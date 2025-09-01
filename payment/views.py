@@ -119,9 +119,10 @@ def payment_success(request):
                 enrollments_created.append(enrollment.course.title)
             # clear the cart
             cart_courses = cart.courses()
-            for course in courses:
-                if course in cart_courses:
-                    cart.remove_item(course.token)
+            if cart_courses:
+                for course in courses:
+                    if course in cart_courses:
+                        cart.remove_item(course.token)
 
             # delete the session after success payment
             if "pending_purchase" in request.session:
