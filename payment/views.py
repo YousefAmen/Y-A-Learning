@@ -66,6 +66,7 @@ def checkout(
     if total == 0:
         messages.info(request, "No items to purchase.")
         return redirect("courses:course-list")
+
     paypal_dict = {
         "business": settings.PAYPAL_RECEIVER_EMAIL,
         "amount": f"{total:.2f}",
@@ -77,7 +78,13 @@ def checkout(
         "return_url": f"https://{host}{reverse('payment:payment-success')}",
         "cancel_url": f"https://{host}{reverse('payment:payment-failed')}",
     }
+
     paypal_form = PayPalPaymentsForm(initial=paypal_dict)
+    # In checkout function:
+    messages.info(
+        request,
+        f"Debug: Email={settings.PAYPAL_RECEIVER_EMAIL}, Host={request.get_host()}",
+    )
     request.session["pending_purchase"] = {
         "course_tokens": items,
         "total": str(total),
