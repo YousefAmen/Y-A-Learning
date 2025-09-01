@@ -74,7 +74,7 @@ def checkout(
         "invoice": str(uuid.uuid4()),
         "currency_code": "USD",
         "no_shipping": "2",
-        "notify_url": f"https://{host}{reverse('paypal-ipn')}",
+        # "notify_url": f"https://{host}{reverse('paypal-ipn')}",
         "return_url": f"https://{host}{reverse('payment:payment-success')}",
         "cancel_url": f"https://{host}{reverse('payment:payment-failed')}",
     }
