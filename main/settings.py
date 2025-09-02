@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-s2@0+7696a7sx$auaii@eb=^gii_o=zxva8^zp1!)av+w3po-="
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "y-a-learning-production.up.railway.app",
@@ -241,10 +241,10 @@ CLOUDINARY_STORAGE = {
 }
 
 MEDIA_URL = "/media/"
-if DEBUG:
-    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-else:
-    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+# if DEBUG:
+#     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# else:
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
