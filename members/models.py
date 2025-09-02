@@ -8,6 +8,7 @@ from django.utils.text import slugify
 from django_countries.fields import CountryField
 from django.db.models import Count, Avg
 from django.contrib.auth.models import Group
+from cloudinary.models import CloudinaryField
 
 GENDER_CHOICES = (
     ("male", "Male"),
@@ -37,12 +38,7 @@ class Profile(models.Model):
     role = models.CharField(max_length=255, choices=ROLE_CHOICES)
     bio = models.TextField(max_length=500, blank=True, null=True)
     gender = models.CharField(max_length=255, choices=GENDER_CHOICES)
-    profile_pic = models.ImageField(
-        upload_to="users/profile_images/%Y/%m/%d/",
-        blank=True,
-        null=True,
-        verbose_name="profile_picture",
-    )
+    profile_pic = CloudinaryField("image", null=True, blank=True)
     phone = models.CharField(max_length=11, blank=True, null=True)
     country = CountryField()
     birth_date = models.DateField()

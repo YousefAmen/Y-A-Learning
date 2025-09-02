@@ -140,4 +140,4 @@ def payment_success(request):
 
 
 def payment_failed(request):
-    return render(request, "payment/fails_payment.html")
+    return render(request, "payment/payment_failed.html")

@@ -9,7 +9,7 @@ from django.utils.text import slugify
 from moviepy import VideoFileClip
 from taggit.managers import TaggableManager
 from members.models import Instructor, Student
-
+from cloudinary.models import CloudinaryField
 
 CHOICES_CATEGORIES = [
     ("Development & Programming", "Development & Programming"),
@@ -87,13 +87,9 @@ class Course(models.Model):
     subtitle = models.CharField(max_length=250)
     description = models.TextField()
     requirements = models.TextField(blank=True, null=True)
-    thumbnail = models.ImageField(
-        upload_to="images/courses/courses_thumbnails/", null=True, blank=True
-    )
-    image = models.ImageField(upload_to="images/courses/images/")
-    promo_video = models.FileField(
-        upload_to="courses/promo_videos/", blank=True, null=True
-    )
+
+    image = CloudinaryField("image")
+    promo_video = CloudinaryField("video", resource_type="video")
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     discount_price = models.DecimalField(
         max_digits=8, decimal_places=2, blank=True, null=True
@@ -201,30 +197,6 @@ class Enrollment(models.Model):
         return f"{self.user.first_name} {self.user.last_name} enroll {self.course}"
 
 
-# class Rating(models.Model):
-#     RATING_CHOICES = (
-#         (1, "1 - Poor"),
-#         (2, "2 - Fair"),
-#         (3, "3 - Good"),
-#         (4, "4 - Vary Good"),
-#         (5, "5 - Excellent"),
-#     )
-
-#     rate = models.PositiveSmallIntegerField(
-#         choices=RATING_CHOICES, null=True, blank=True
-#     )
-#     user = models.ForeignKey(
-#         Student, on_delete=models.CASCADE, related_name="user_ratings"
-#     )
-#     course = models.ForeignKey(
-#         Course, on_delete=models.CASCADE, related_name="course_ratings"
-#     )
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return f"Rating by {self.user.first_name} {self.user.last_name} for {self.course} ({self.rate}/5)"
-
-
 class Review(models.Model):
     RATING_CHOICES = (
         (1, "1 - Poor"),
@@ -284,8 +256,8 @@ class Module(models.Model):
 class Lesson(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="lessons")
     title = models.CharField(max_length=255)
-    thumbnail = models.ImageField(upload_to="courses/videos/lesson_images/")
-    video = models.FileField(upload_to="courses/videos/lesson_videos/")
+    thumbnail = CloudinaryField("image")
+    video = CloudinaryField("video", resource_type="video")
     is_preview = models.BooleanField(default=False)
     duration = models.DurationField(blank=True, null=True)
     added_at = models.DateTimeField(auto_now_add=True)
