@@ -155,7 +155,11 @@
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="course-card">
                     <div class="course-image">
+                        {% if course.image %}
+                        <img src="{{course.image.url}}" alt="{{course.title}}">
+                        {% else %}
                         <img src="{% static 'assets/img/gallery/megamenu.png' %}" alt="Course">
+                        {% endif %}
                         <span class="badge-bestseller">Best Seller</span>
                     </div>
                     <div class="course-content">
