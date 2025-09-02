@@ -38,6 +38,11 @@ from .models import (
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv(".env")
+
 
 class Index(TemplateView):
     template_name = "course_pages/index.html"
@@ -57,7 +62,9 @@ class Index(TemplateView):
             .annotate(students=Count("instructor_courses__course_enrollments"))
             .order_by("-students")
         )
-
+        context["CLOUDINARY_NAME"] = os.getenv("CLOUDINARY_CLOUD_NAME")
+        context["CLOUDINARY_API"] = os.getenv("CLOUDINARY_API_KEY")
+        context["CLOUDINARY_API_SECRET"] = os.getenv("CLOUDINARY_API_SECRET")
         context["categories"] = top_categories
         context["courses"] = top_enrollments_courses
         context["instructors"] = top_instructors
