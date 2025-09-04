@@ -270,7 +270,7 @@ class Lesson(models.Model):
         super().save(*args, **kwargs)
 
         if self.video:
-            video_path = self.video.path
+            video_path = self.video.url
             try:
                 clip = VideoFileClip(video_path)
                 duration_secounds = clip.duration

@@ -252,13 +252,5 @@ DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# PAYPAL_CLIENT_ID = (
-#     "AcHgH09W-_qjP0biXl2nxNvqBU9_tJLbqhjffNPZu16hHT5w2i2GStfMxLtF2qih_cZKrVYaDRI5N5V6"
-# )
-# PAYPAL_SECRET = (
-#     "EPO88sDlV-xd0gqTQKkurkuDPVXfE3UTS6KUqEnS9FAa6ccAejwYir-oVrjbvAgGBtLQiDDh09dTDize"
-# )
 PAYPAL_RECEIVER_EMAIL = "yousefAmenbusiness@business.example.com"
 PAYPAL_TEST = True
-# Ppd*96%_
-# EG98NAC2X3S4CGZ3

@@ -1,7 +1,337 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
-{% for course in courses %}
-<p>{{course.title}}</p>
-{% endfor%}
+<style>
+    /* Course Cards */
+    .course-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .course-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .course-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .badge-bestseller {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: white;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .course-content {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .course-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .course-title a {
+        color: #1e293b;
+        text-decoration: none;
+    }
+
+    .course-title a:hover {
+        color: #667eea;
+    }
+
+    .course-desc {
+        font-size: 0.95rem;
+        color: #6b7280;
+        margin-bottom: 15px;
+        flex: 1;
+    }
+
+    .price {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #059669;
+    }
+
+    .free {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .btn-view {
+        display: block;
+        text-align: center;
+        padding: 10px 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: auto;
+    }
+
+    .btn-view:hover {
+        opacity: 0.9;
+        color: white;
+    }
+
+    .rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .stars {
+        font-size: 12px;
+        color: #f5c518;
+        letter-spacing: 2px;
+    }
+
+    .star {
+        color: #ccc;
+    }
+
+    .star.filled {
+        color: gold;
+    }
+
+    /* Equal height fix */
+    .row.courses-grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .courses-grid .col-lg-4,
+    .courses-grid .col-md-6 {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    /* No Courses Section */
+    .no-courses-container {
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        border-radius: 20px;
+        padding: 60px 40px;
+        text-align: center;
+        border: 2px dashed #cbd5e1;
+        margin: 40px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .no-courses-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-20px) rotate(180deg);
+        }
+    }
+
+    .no-courses-icon {
+        font-size: 4rem;
+        color: #94a3b8;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .no-courses-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 15px;
+    }
+
+    .no-courses-subtitle {
+        font-size: 1.1rem;
+        color: #64748b;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .btn-create-course {
+        display: inline-block;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-create-course:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .course-card {
+            margin-bottom: 20px;
+        }
+
+        .no-courses-container {
+            padding: 40px 20px;
+            margin: 20px 0;
+        }
+
+        .no-courses-icon {
+            font-size: 3rem;
+        }
+
+        .no-courses-title {
+            font-size: 1.5rem;
+        }
+
+        .no-courses-subtitle {
+            font-size: 1rem;
+        }
+
+        .btn-create-course {
+            padding: 12px 25px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+{% if courses %}
+<div class="courses-area section-padding40 fix">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-7 col-lg-8">
+                <div class="section-tittle text-center mb-55">
+                    <h2>Our featured courses</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row courses-grid">
+            {% for course in courses %}
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="course-card">
+                    <div class="course-image">
+                        {% if course.image %}
+                        <img src="{{course.image.url}}" alt="{{course.title}}">
+                        {% else %}
+                        <img src="{% static 'assets/img/gallery/megamenu.png' %}" alt="Course">
+                        {% endif %}
+                        <span class="badge-bestseller">Best Seller</span>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">
+                            <a href="{{course.get_absolute_url}}">{{course.title|title}}</a>
+                        </h3>
+                        <p class="course-desc">{{course.description|truncatechars:100}}</p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="rating">
+                                <span class="stars">
+                                    {% for i in "12345" %}
+                                    {% with star_num=forloop.counter %}
+                                    {% if course.avg_rating >= star_num %}
+                                    <span class="star filled">★</span>
+                                    {% elif course.avg_rating >= star_num|add:-0.5 %}
+                                    <span class="star half">⯨</span>
+                                    {% else %}
+                                    <span class="star empty">☆</span>
+                                    {% endif %}
+                                    {% endwith %}
+                                    {% endfor %}
+                                    <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+                                </span>
+                            </div>
+                            {% if course.discount %}
+                            <div class="price">
+                                ${{course.discount}}
+                            </div>
+                            {% else %}
+                            <div class="price">
+                                {% if course.price %}
+                                ${{course.price}}
+                                {% else %}
+                                <span class="free">Free</span>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <a href="{{course.get_absolute_url}}" class="btn-view mt-3">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- No Courses Section -->
+<div class="courses-area section-padding40 fix">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10">
+                <div class="no-courses-container">
+                    <span class="no-courses-icon">📚</span>
+                    <h2 class="no-courses-title">No Courses Available Yet</h2>
+                    <p class="no-courses-subtitle">
+                        You haven't created any courses yet. Start sharing your knowledge and expertise with students
+                        around the world!
+                    </p>
+                    <a href="{% url 'course:create-course' %}" class="btn-create-course">
+                        Create Your First Course
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

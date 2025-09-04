@@ -1,3 +1,330 @@
 {% extends 'base.html' %}
 {% block content %}
+
+<style>
+    .payment-failed-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .payment-failed-card {
+        background: white;
+        border-radius: 20px;
+        padding: 60px 40px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        margin: 0 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .payment-failed-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(239, 68, 68, 0.05) 0%, transparent 70%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 0.3;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.1;
+            transform: scale(1.1);
+        }
+    }
+
+    .payment-failed-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 30px;
+        background: linear-gradient(135deg, #fca5a5, #ef4444);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    .payment-failed-icon::before {
+        content: '✕';
+        font-size: 3rem;
+        color: white;
+        font-weight: bold;
+    }
+
+    .payment-failed-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .payment-failed-subtitle {
+        font-size: 1.2rem;
+        color: #64748b;
+        margin-bottom: 15px;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+    }
+
+    .payment-failed-message {
+        font-size: 1rem;
+        color: #6b7280;
+        margin-bottom: 40px;
+        line-height: 1.7;
+        position: relative;
+        z-index: 1;
+    }
+
+    .payment-actions {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-retry {
+        display: inline-block;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-retry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        display: inline-block;
+        padding: 15px 30px;
+        background: transparent;
+        color: #64748b;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: 2px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #f8fafc;
+        color: #1e293b;
+        text-decoration: none;
+        border-color: #cbd5e1;
+    }
+
+    .error-details {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border: 1px solid #fecaca;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 30px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .error-details h4 {
+        color: #dc2626;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .error-details p {
+        color: #7f1d1d;
+        font-size: 0.95rem;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .help-section {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 1px solid #bae6fd;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 30px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .help-section h4 {
+        color: #0369a1;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .help-list {
+        text-align: left;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .help-list li {
+        color: #075985;
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+        padding-left: 10px;
+        position: relative;
+    }
+
+    .help-list li::before {
+        content: '•';
+        color: #0ea5e9;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .payment-failed-card {
+            padding: 40px 20px;
+            margin: 0 15px;
+        }
+
+        .payment-failed-title {
+            font-size: 2rem;
+        }
+
+        .payment-failed-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .payment-failed-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 25px;
+        }
+
+        .payment-failed-icon::before {
+            font-size: 2.5rem;
+        }
+
+        .payment-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-retry,
+        .btn-secondary {
+            width: 100%;
+            max-width: 280px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .payment-failed-title {
+            font-size: 1.7rem;
+        }
+
+        .payment-failed-subtitle {
+            font-size: 1rem;
+        }
+
+        .btn-retry,
+        .btn-secondary {
+            padding: 12px 25px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div class="payment-failed-container">
+    <div class="payment-failed-card">
+        <div class="payment-failed-icon"></div>
+
+        <h1 class="payment-failed-title">Payment Failed</h1>
+        <p class="payment-failed-subtitle">
+            Oops! We couldn't process your payment
+        </p>
+        <p class="payment-failed-message">
+            Don't worry, your card has not been charged. Please check your payment details and try again.
+        </p>
+
+        <!-- Error Details Section (Optional - can be populated with Django context) -->
+        {% if error_message %}
+        <div class="error-details">
+            <h4>Error Details:</h4>
+            <p>{{ error_message }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="payment-actions">
+            <a href="{% url 'payment:checkout' %}" class="btn-retry">
+                Try Again
+            </a>
+            <a href="{% url 'course:courses-list' %}" class="btn-secondary">
+                Browse Courses
+            </a>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-section">
+            <h4>Need Help?</h4>
+            <ul class="help-list">
+                <li>Check that your card details are correct</li>
+                <li>Ensure your card has sufficient funds</li>
+                <li>Try using a different payment method</li>
+            </ul>
+            <p style="margin-top: 15px; font-size: 0.85rem; color: #0369a1;">
+                Still having trouble? <a href="{% url 'course:contact' %}"
+                    style="color: #0ea5e9; text-decoration: none;">Contact support</a>
+            </p>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
