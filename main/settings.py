@@ -211,15 +211,15 @@ LOGIN_REDIRECT_URL = "/"
 
 
 # -----Email Backend-----
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "ammenyoussef@gmail.com"
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
-EMAIL_PORT = 587
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_HOST_USER = "ammenyoussef@gmail.com"
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
+# EMAIL_PORT = 587
 # EMAIL_USE_SSL = True
-EMAIL_USE_TLS = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# EMAIL_USE_TLS = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
 # ------end Email Backend-----
 
 

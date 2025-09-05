@@ -37,6 +37,7 @@ from .models import (
 )
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 
 
 class Index(TemplateView):
@@ -530,6 +531,7 @@ def create_contact(request):
             save_form = form.save(commit=False)
             save_form.user = request.user
             save_form.save()
+
             messages.success(
                 request,
                 "Your Message Is Sent Successfully And You Get the Response Soon.",
