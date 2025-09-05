@@ -246,8 +246,8 @@ cloudinary.config(
     api_key=os.getenv("CLOUDINARY_API_KEY"),
     api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True,
-    timeout=300,  # 5 minutes timeout
-    chunk_size=6000000,  # 6MB chunks for large files
+    timeout=300,
+    chunk_size=1000000,
 )
 MEDIA_URL = "/media/"
 # if DEBUG:

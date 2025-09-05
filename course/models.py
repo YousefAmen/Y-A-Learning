@@ -269,17 +269,27 @@ class Lesson(models.Model):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-        if self.video:
-            video_path = self.video.url
+        if self.video and not self.duration:
             try:
-                clip = VideoFileClip(video_path)
-                duration_secounds = clip.duration
-                clip.close()
-                # convert the duration_secounds to timedelta to assign it ot the field
-                self.duration = timedelta(seconds=duration_secounds)
-                super().save(update_fields=["duration"])
+                import cloudinary.api
+
+                url = self.video.url
+
+                after_upload = url.split("/upload/")[1]
+
+                parts = after_upload.split("/")
+                public_id_with_ext = "/".join(parts[1:])
+                public_id = public_id_with_ext.rsplit(".", 1)[0]
+
+                result = cloudinary.api.resource(public_id, resource_type="video")
+                duration_seconds = result.get("duration")
+
+                if duration_seconds:
+                    self.duration = timedelta(seconds=duration_seconds)
+                    super().save(update_fields=["duration"])
+
             except Exception as e:
-                raise ValueError(f"Error reading video duration: {e}")
+                print(f"Error getting duration: {e}")
 
     def __str__(self):
         return self.title
