@@ -62,8 +62,8 @@
                                     </span>
                                 </div>
                                 <div class="price">
-                                    {% if course.discount %}
-                                    ${{discount}}
+                                    {% if course.discount_price %}
+                                    ${{course.discount}}
                                     {% else %}
                                     {% if course.price %}
                                     ${{course.price}}
