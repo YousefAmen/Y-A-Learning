@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+import cloudinary
 
 load_dotenv(".env")
 
@@ -240,6 +241,14 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
 }
 
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True,
+    timeout=300,  # 5 minutes timeout
+    chunk_size=6000000,  # 6MB chunks for large files
+)
 MEDIA_URL = "/media/"
 # if DEBUG:
 #     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
