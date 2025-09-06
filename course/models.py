@@ -10,6 +10,7 @@ from moviepy import VideoFileClip
 from taggit.managers import TaggableManager
 from members.models import Instructor, Student
 from cloudinary.models import CloudinaryField
+import cloudinary.api
 
 CHOICES_CATEGORIES = [
     ("Development & Programming", "Development & Programming"),
@@ -271,7 +272,6 @@ class Lesson(models.Model):
 
         if self.video and not self.duration:
             try:
-                import cloudinary.api
 
                 url = self.video.url
 

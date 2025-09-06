@@ -1581,8 +1581,7 @@
     </div>
 
     <!-- Pricing Sidebar -->
-    {% for enrollment in course.course_enrollments.all %}
-    {% if request.user != enrollment.user %}
+    {% if not is_enrolled %}
     <div class="pricing-card">
       {% if not course.is_free %}
       <div class="price-section">
@@ -1651,7 +1650,6 @@
 
     </div>
     {% endif %}
-    {% endfor %}
   </div>
 </div>
 

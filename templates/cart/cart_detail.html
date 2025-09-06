@@ -451,7 +451,11 @@
               <small>Duration: {{ course.total_course_duration|format_duration }}</small>
               <small>Level: {{ course.level|default:"Intermediate" }}</small>
             </td>
+            {% if course.discount %}
+            <td class="price-cell"><strong>${{ course.discount }}</strong></td>
+            {% else %}
             <td class="price-cell"><strong>${{ course.price }}</strong></td>
+            {% endif %}
             <td>
               <form action="" method="POST">
                 {% csrf_token %}

@@ -14,7 +14,16 @@ class Cart:
 
     def add_item(self, course):
         if course.token not in self.cart:
-            self.cart[course.token] = {"name": course.title, "price": str(course.price)}
+            if course.discount:
+                self.cart[course.token] = {
+                    "name": course.title,
+                    "price": str(course.discount),
+                }
+            else:
+                self.cart[course.token] = {
+                    "name": course.title,
+                    "price": str(course.price),
+                }
             self.save()
         else:
             return self.cart[course.token]
