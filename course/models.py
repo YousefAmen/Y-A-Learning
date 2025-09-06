@@ -269,27 +269,23 @@ class Lesson(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-
-        if self.video and not self.duration:
+        if not self.duration and self.video:
             try:
+                # Example URL:
+                # https://res.cloudinary.com/demo/video/upload/v169010/testvideo.mp4
+                path = self.video.split("/upload/")[-1]
+                public_id = path.rsplit(".", 1)[0]
 
-                url = self.video.url
+                resource = cloudinary.api.resource(public_id, resource_type="video")
+                seconds = int(resource.get("duration", 0))
 
-                after_upload = url.split("/upload/")[1]
-
-                parts = after_upload.split("/")
-                public_id_with_ext = "/".join(parts[1:])
-                public_id = public_id_with_ext.rsplit(".", 1)[0]
-
-                result = cloudinary.api.resource(public_id, resource_type="video")
-                duration_seconds = result.get("duration")
-
-                if duration_seconds:
-                    self.duration = timedelta(seconds=duration_seconds)
+                if seconds > 0:
+                    self.duration = timedelta(seconds=seconds)
+                    # Update only duration to avoid recursion
                     super().save(update_fields=["duration"])
 
             except Exception as e:
-                print(f"Error getting duration: {e}")
+                print("Error fetching video duration:", e)
 
     def __str__(self):
         return self.title
