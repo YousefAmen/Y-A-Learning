@@ -273,15 +273,16 @@ class Lesson(models.Model):
             try:
                 # Example URL:
                 # https://res.cloudinary.com/demo/video/upload/v169010/testvideo.mp4
-                path = self.video.split("/upload/")[-1]
-                public_id = path.rsplit(".", 1)[0]
+                public_id = self.video.public_id
+                resource = cloudinary.api.resource(
+                    public_id,
+                    resource_type="video",
+                    media_metadata=True,
+                )
 
-                resource = cloudinary.api.resource(public_id, resource_type="video")
                 seconds = int(resource.get("duration", 0))
-
                 if seconds > 0:
                     self.duration = timedelta(seconds=seconds)
-                    # Update only duration to avoid recursion
                     super().save(update_fields=["duration"])
 
             except Exception as e:
