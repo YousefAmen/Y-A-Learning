@@ -269,7 +269,7 @@ class Lesson(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-        if not self.duration and self.video:
+        if self.video:
             try:
                 # Example URL:
                 # https://res.cloudinary.com/demo/video/upload/v169010/testvideo.mp4
@@ -283,6 +283,7 @@ class Lesson(models.Model):
                 seconds = int(resource.get("duration", 0))
                 if seconds > 0:
                     self.duration = timedelta(seconds=seconds)
+
                     super().save(update_fields=["duration"])
 
             except Exception as e:
