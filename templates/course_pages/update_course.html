@@ -79,7 +79,7 @@
 
           <!-- Submit Buttons -->
           <div class="text-end mt-4">
-            <a href="#" class="btn-cancel">
+            <a href="{% url 'course:course-detail' course.slug course.token %}" class="btn-cancel">
               <i class="fas fa-arrow-left me-2"></i> Cancel
             </a>
             <a href="{% url 'course:delete-course' course.slug course.token %}" class="btn-delete">

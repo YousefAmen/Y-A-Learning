@@ -78,7 +78,7 @@ def user_profile(request, slug, token):
         messages.info(request, "This Profile Is Not Exsits!.")
         return redirect("course:index")
     instructor_courses = None
-    student_enrollments_courses = None
+    enrollments_courses = None
 
     if profile.role == "instructor":
         instructor_courses = (
@@ -86,13 +86,12 @@ def user_profile(request, slug, token):
             # .annotate(enroll=Count("course_enrollments", distinct=True))
             # .order_by("-enroll")
         )
-    if profile.role == "student":
-        student_enrollments_courses = Enrollment.objects.filter(user=profile.user)
+    enrollments_courses = Enrollment.objects.filter(user=profile.user)
     context = {
         "profile": profile,
         "instructor_courses": instructor_courses,
-        "student_enrollments": (
-            student_enrollments_courses if student_enrollments_courses else None
+        "enrollments_courses": (
+            enrollments_courses if enrollments_courses else None
         ),
     }
     return render(request, "account/user_profile.html", context)

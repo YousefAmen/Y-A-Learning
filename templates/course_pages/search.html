@@ -57,20 +57,20 @@
 
           <div class="dropdown-content">
             <label class="sort-option">
-              <input type="radio" name="sort" value="recommended" {% if request.GET.sort=="recommended" %} checked
+              <input type="radio" name="sort" value="recommended" {% if request.GET.sort  ==  "recommended" %} checked
                 {%endif %}>
               <span>Recommended</span>
             </label>
             <label class="sort-option">
-              <input type="radio" name="sort" value="popular" {% if request.GET.sort=="popular" %}checked{% endif %}>
+              <input type="radio" name="sort" value="popular" {% if request.GET.sort ==  "popular" %}checked{% endif %}>
               <span>Most Popular</span>
             </label>
             <label class="sort-option">
-              <input type="radio" name="sort" value="rating" {% if request.GET.sort=="rating" %}checked{% endif %}>
+              <input type="radio" name="sort" value="rating" {% if request.GET.sort == "rating" %}checked{% endif %}>
               <span>Highest Rated</span>
             </label>
             <label class="sort-option">
-              <input type="radio" name="sort" value="newest" {% if request.GET.sort=="newest" %}checked{% endif %}>
+              <input type="radio" name="sort" value="newest" {% if request.GET.sort == "newest" %}checked{% endif %}>
               <span>Newest</span>
             </label>
           </div>

@@ -473,7 +473,7 @@
             {% if profile.role == 'instructor' %}Instructor{% else %}Learner{% endif %}
             {% endif %}
         </p>
-        <div style="display: flex; justify-content:center;">
+       <div style="display: flex; justify-content:center;">
             {% if profile.role == "student" %}
             <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
                 class="profile-btn btn-profile-edit">
@@ -486,7 +486,7 @@
             {% endif %}
         </div>
         {% if profile.role == 'instructor' %}
-        <div class="profile-stats">
+      <div class="profile-stats">
             <div class="stat-item">
                 <div class="stat-value">{{ instructor_courses.count|default:"0" }}</div>
                 <div class="stat-label">Courses</div>
@@ -495,16 +495,27 @@
                 <div class="stat-value">{{ profile.followers.count|default:"0" }}</div>
                 <div class="stat-label">Followers</div>
             </div>
-            {% else %}
-            <div class="stat-value">{{ profile.course_enrollments.count|default:"0" }}</div>
-            <div class="stat-label">Ernollment Courses</div>
-            {% endif %}
+            <div class="stat-item">
+                <div class="stat-value">{{ enrollments_courses.count|default:"0" }}</div>
+                <div class="stat-label">Enrolled Courses</div>
+            </div>
             <div class="stat-item">
                 <div class="stat-value">{{ profile.create_at|date:"Y" }}</div>
                 <div class="stat-label">Member since</div>
             </div>
-
         </div>
+        {% else %}
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-value">{{ enrollments_courses.count|default:"0" }}</div>
+                <div class="stat-label">Enrolled Courses</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ profile.create_at|date:"Y" }}</div>
+                <div class="stat-label">Member since</div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="profile-layout">
@@ -564,166 +575,159 @@
 
         </div>
 
-        <!-- Main Content -->
-        <div class="profile-content">
-            {% if instructor_courses %}
-            <div class="section-header"
-                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-                <h2 class="section-title" style="margin: 0;">
-                    {% if profile.role == "instructor" %}
-                    My Courses
-                    {% else %}
-                    Learning Journey
-                    {% endif %}
-                </h2>
+<div class="profile-content">
+    <!-- Instructor's Own Courses Section -->
+    {% if instructor_courses %} 
+    <div class="section-header"
+        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h2 class="section-title" style="margin: 0;">
+            My Courses
+        </h2>
 
-                {% if profile.role == "instructor" %}
-                <a href="{% url 'course:create-course' %}" class="course-btn btn-create"
-                    style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-plus-circle"></i>
-                    Create New Course
-                </a>
-
-                <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
-                    class="course-btn btn-edit" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-edit"></i>
-                    Edit Your Profile
-                </a>
-                <a href="{% url 'members:delete_profile' profile.slug profile.role profile.token %}"
-                    class="course-btn btn-delete" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-trash"></i>
-                    Delete Your Profile
-                </a>
-
-                {% endif %}
-            </div>
-            {% endif %}
-
-
-            {% if instructor_courses %}
-            <div class="courses-grid">
-                {% for course in instructor_courses|slice:'4' %}
-                <div class="course-card">
-                    {% if course.image %}
-                    <img src="{{ course.image.url }}" class="course-image" alt="{{ course.title }}">
-                    {% else %}
-                    <img src="{% static 'assets/img/gallery/topic7.png' %}" class="course-image"
-                        alt="{{ course.title }}">
-                    {% endif %}
-
-                    <div class="course-details">
-                        <h3 class="course-title">{{ course.title }}</h3>
-                        <p class="course-instructor">By {{ course.instructor.first_name }}
-                            {{course.instructor.last_name}}</p>
-                        <div class="course-meta">
-
-                            <span class="stars">
-                                {% for i in "12345" %}
-                                {% with star_num=forloop.counter %}
-                                {% if course.avg_rating >= star_num %}
-                                <span class="star filled">★</span>
-                                {% elif course.avg_rating >= star_num|add:-0.5 %}
-                                <span class="star half">⯨</span>
-                                {% else %}
-                                <span class="star empty">☆</span>
-                                {% endif %}
-                                {% endwith %}
-                                {% endfor %}
-                                <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
-                            </span> <span>{{ course.course_enrollments.count|default:"0" }} students</span>
-                        </div>
-                        <div class="course-actions">
-                            <a href="{{ course.get_absolute_url }}" class="course-btn btn-view">
-                                <i class="fas fa-eye"></i> View Course
-                            </a>
-
-
-                            <a href="{% url 'course:update-course' course.slug course.token %}"
-                                class="course-btn btn-edit">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-
-
-                        </div>
-                    </div>
-
-                </div>
-                {% endfor %}
-            </div>
-            <br>
-            <br>
-            <br>
-            {% if profile.role == "instructor" %}
-            <a href="{% url 'members:user_public_profile' profile.slug profile.token %}"
-                class="course-btn btn-browse d-flex justify-content-center">
-                <i class="fas fa-search"></i> Public Profile
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'course:create-course' %}" class="course-btn btn-create"
+                style="display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-plus-circle"></i>
+                Create New Course
             </a>
-            {% endif %}
-            {% else %}
-            {% if profile.role == "student" %}
-            <div class="courses-grid">
-                {% for enroll in student_enrollments %}
-                <div class="course-card">
-                    {% if enroll.course.image %}
-                    <img src="{{ enroll.course.image.url }}" class="course-image" alt="{{ enroll.course.title }}">
-                    {% else %}
-                    <img src="{% static 'assets/img/gallery/topic7.png' %}" class="course-image"
-                        alt="{{ course.title }}">
-                    {% endif %}
 
-                    <div class="course-details">
-                        <h3 class="course-title">{{ enroll.course.title }}</h3>
-                        <p class="course-instructor">By {{ enroll.course.instructor.first_name }}
-                            {{enroll.course.instructor.last_name}}</p>
-                        <div class="course-meta">
-
-                            <span class="stars">
-                                {% for i in "12345" %}
-                                {% with star_num=forloop.counter %}
-                                {% if enroll.course.avg_rating >= star_num %}
-                                <span class="star filled">★</span>
-                                {% elif enroll.course.avg_rating >= star_num|add:-0.5 %}
-                                <span class="star half">⯨</span>
-                                {% else %}
-                                <span class="star empty">☆</span>
-                                {% endif %}
-                                {% endwith %}
-                                {% endfor %}
-                                <span class="rating-text">({{ enroll.course.avg_rating|floatformat:1 }})</span>
-                            </span>
-                            <span>{{ enroll.course.course_enrollments.count }} students</span>
-                        </div>
-                        <div class="course-actions">
-                            <a href="{{ enroll.course.get_absolute_url }}" class="course-btn btn-view">
-                                <i class="fas fa-eye"></i> View Course
-                            </a>
-
-
-                        </div>
-                    </div>
-
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <p>No courses found</p>
-
-                {% if profile.role == 'instructor' %}
-                <a href="{% url 'course:create-course' %}" class="course-btn btn-create">
-                    <i class="fas fa-plus-circle"></i> Create Your First Course
-                </a>
-                {% else %}
-
-                <a href="{% url 'course:courses-list' %}" class="course-btn btn-browse">
-                    <i class="fas fa-search"></i> Browse All Courses
-                </a>
-                {% endif %}
-            </div>
-            {% endif %}
-
-            {% endif %}
+            <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
+                class="course-btn btn-edit" style="display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-edit"></i>
+                Edit Your Profile
+            </a>
+            
+            <a href="{% url 'members:delete_profile' profile.slug profile.role profile.token %}"
+                class="course-btn btn-delete" style="display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-trash"></i>
+                Delete Your Profile
+            </a>
         </div>
+    </div>
+
+    <div class="courses-grid">
+        {% for course in instructor_courses|slice:'4' %}
+        <div class="course-card">
+            {% if course.image %}
+            <img src="{{ course.image.url }}" class="course-image" alt="{{ course.title }}">
+            {% else %}
+            <img src="{% static 'assets/img/gallery/topic7.png' %}" class="course-image"
+                alt="{{ course.title }}">
+            {% endif %}
+
+            <div class="course-details">
+                <h3 class="course-title">{{ course.title }}</h3>
+                <p class="course-instructor">By {{ course.instructor.first_name }}
+                    {{course.instructor.last_name}}</p>
+                <div class="course-meta">
+                    <span class="stars">
+                        {% for i in "12345" %}
+                        {% with star_num=forloop.counter %}
+                        {% if course.avg_rating >= star_num %}
+                        <span class="star filled">★</span>
+                        {% elif course.avg_rating >= star_num|add:-0.5 %}
+                        <span class="star half">⯨</span>
+                        {% else %}
+                        <span class="star empty">☆</span>
+                        {% endif %}
+                        {% endwith %}
+                        {% endfor %}
+                        <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+                    </span> 
+                    <span>{{ course.course_enrollments.count|default:"0" }} students</span>
+                </div>
+                <div class="course-actions">
+                    <a href="{{ course.get_absolute_url }}" class="course-btn btn-view">
+                        <i class="fas fa-eye"></i> View Course
+                    </a>
+                    <a href="{% url 'course:update-course' course.slug course.token %}"
+                        class="course-btn btn-edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="{% url 'members:user_public_profile' profile.slug profile.token %}"
+            class="course-btn btn-browse">
+            <i class="fas fa-search"></i> View Public Profile
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Enrolled Courses Section (for both instructors and students) -->
+    {% if enrollments_courses %}
+    <div class="section-header" style="margin: 40px 0 20px 0;">
+        <h2 class="section-title" style="margin: 0;">
+            {% if profile.role == "instructor" %}
+            Enrolled Courses
+            {% else %}
+            Learning Journey
+            {% endif %}
+        </h2>
+    </div>
+
+    <div class="courses-grid">
+        {% for enroll in enrollments_courses %}
+        <div class="course-card">
+            {% if enroll.course.image %}
+            <img src="{{ enroll.course.image.url }}" class="course-image" alt="{{ enroll.course.title }}">
+            {% else %}
+            <img src="{% static 'assets/img/gallery/topic7.png' %}" class="course-image"
+                alt="{{ enroll.course.title }}">
+            {% endif %}
+
+            <div class="course-details">
+                <h3 class="course-title">{{ enroll.course.title }}</h3>
+                <p class="course-instructor">By {{ enroll.course.instructor.first_name }}
+                    {{enroll.course.instructor.last_name}}</p>
+                <div class="course-meta">
+                    <span class="stars">
+                        {% for i in "12345" %}
+                        {% with star_num=forloop.counter %}
+                        {% if enroll.course.avg_rating >= star_num %}
+                        <span class="star filled">★</span>
+                        {% elif enroll.course.avg_rating >= star_num|add:-0.5 %}
+                        <span class="star half">⯨</span>
+                        {% else %}
+                        <span class="star empty">☆</span>
+                        {% endif %}
+                        {% endwith %}
+                        {% endfor %}
+                        <span class="rating-text">({{ enroll.course.avg_rating|floatformat:1 }})</span>
+                    </span>
+                    <span>{{ enroll.course.course_enrollments.count }} students</span>
+                </div>
+                <div class="course-actions">
+                    <a href="{{ enroll.course.get_absolute_url }}" class="course-btn btn-view">
+                        <i class="fas fa-eye"></i> View Course
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Empty State - when no courses at all -->
+    {% if not instructor_courses and not enrollments_courses %}
+    <div class="empty-state">
+        <p>No courses found</p>
+        {% if profile.role == 'instructor' %}
+        <a href="{% url 'course:create-course' %}" class="course-btn btn-create">
+            <i class="fas fa-plus-circle"></i> Create Your First Course
+        </a>
+        {% else %}
+        <a href="{% url 'course:courses-list' %}" class="course-btn btn-browse">
+            <i class="fas fa-search"></i> Browse All Courses
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
     </div>
 </div>
 {% endblock %}

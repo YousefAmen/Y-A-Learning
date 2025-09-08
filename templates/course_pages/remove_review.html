@@ -316,7 +316,7 @@
                     <i class="fas fa-trash"></i>
                     Delete Review
                 </button>
-                <a href="#" class="cancel-btn">
+                <a href="{% url 'course:course-detail' review.course.slug review.course.token %}" class="cancel-btn">
                     <i class="fas fa-times"></i>
                     Cancel
                 </a>
