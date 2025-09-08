@@ -90,6 +90,13 @@
               <i class="fas fa-plus-circle me-2"></i> Create Module
             </a>
 
+            <a href="{% url 'course:draft-modules' course.token %}" class="btn-module">
+              <i class="fas fa-file-alt me-2"></i> Draft Modules
+            </a>
+            <a href="{% url 'course:modules' course.token %}" class="btn-module">
+              <i class="fas fa-list-alt"></i> Modules
+            </a>
+
             <a href="{% url 'course:create-learning-objectives' course.slug course.token %}" class="btn-outcome">
               <i class="fas fa-plus-circle me-2"></i> Define Learning Objectives
             </a>
@@ -106,86 +113,287 @@
 </div>
 <style>
   .btn-save {
-    background-color: #2563eb;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: white;
     padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     font-weight: 600;
     transition: all 0.3s ease;
     border: none;
     margin-left: 10px;
-  }
-
-  .btn-save:hover {
-    background-color: #1e40af;
-  }
-
-  .btn-module {
-    background: #4f46e5;
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    font-weight: bold;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-
-  .btn-module:hover {
-    background: #3730a3;
-  }
-
-  .btn-outcome {
-    background-color: #7c3aed;
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    font-weight: bold;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-left: 5px;
-  }
-
-  .btn-outcome:hover {
-    background-color: #5b21b6;
-  }
-
-  .btn-cancel {
-    background-color: #e5e7eb;
-    color: #4b5563;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: none;
-    margin-right: 10px;
-  }
-
-  .btn-cancel:hover {
-    background-color: #d1d5db;
-
-  }
-
-
-  .btn-delete {
-    background-color: darkred;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-save:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+    color: white;
+  }
+
+  .btn-save:active {
+    transform: translateY(0);
+  }
+
+  .btn-module {
+    background: linear-gradient(135deg, #4f46e5, #3730a3);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 8px;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-module::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-module:hover {
+    background: linear-gradient(135deg, #3730a3, #312e81);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+
+  .btn-module:hover::before {
+    left: 100%;
+  }
+
+  .btn-outcome {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 8px;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-outcome::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-outcome:hover {
+    background: linear-gradient(135deg, #5b21b6, #4c1d95);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+
+  .btn-outcome:hover::before {
+    left: 100%;
+  }
+
+  .btn-cancel {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    color: #4b5563;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid #d1d5db;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+  }
+
+  .btn-cancel:hover {
+    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #374151;
+    border-color: #9ca3af;
+    text-decoration: none;
+  }
+
+  .btn-delete {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+    margin-left: 5px;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-delete::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
   }
 
   .btn-delete:hover {
-    background-color: #a30000;
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    color: white;
+    text-decoration: none;
+  }
 
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  .btn-delete:hover::after {
+    width: 300px;
+    height: 300px;
+  }
+
+  /* Button Group Improvements */
+  .text-end {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Icon animations */
+  .btn-save i,
+  .btn-module i,
+  .btn-outcome i,
+  .btn-delete i,
+  .btn-cancel i {
+    transition: transform 0.3s ease;
+  }
+
+  .btn-save:hover i {
+    transform: scale(1.1);
+  }
+
+  .btn-module:hover i {
+    transform: rotate(90deg);
+  }
+
+  .btn-outcome:hover i {
+    transform: scale(1.1) rotate(10deg);
+  }
+
+  .btn-delete:hover i {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  .btn-cancel:hover i {
+    transform: translateX(-3px);
+  }
+
+  @keyframes shake {
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    25% {
+      transform: translateX(-2px);
+    }
+
+    75% {
+      transform: translateX(2px);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .text-end {
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .btn-save,
+    .btn-module,
+    .btn-outcome,
+    .btn-delete,
+    .btn-cancel {
+      width: 100%;
+      justify-content: center;
+      margin: 5px 0;
+    }
+  }
+
+  /* Focus states for accessibility */
+  .btn-save:focus,
+  .btn-module:focus,
+  .btn-outcome:focus,
+  .btn-delete:focus,
+  .btn-cancel:focus {
+    outline: 3px solid rgba(79, 70, 229, 0.3);
+    outline-offset: 2px;
+  }
+
+  /* Loading state (optional - add to buttons when processing) */
+  .btn-loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .btn-loading i {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .upload-icon {

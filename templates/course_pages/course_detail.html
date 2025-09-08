@@ -1230,8 +1230,8 @@
             <span style="color: white;">{{course.total_course_duration|format_duration}} hours total</span>
           </div>
           <div class="meta-item">
-            <i class="fas fa-calendar" style="color: white;"></i>
-            <span style="color: white;">Created At {{ course.created_at|date:"F j, Y" }}</span>
+            <i class="fas fa-calendar text-info"></i>
+            <span style="color: white;">{{ course.created_at|date:"M d, Y" }}</span>
           </div>
         </div>
 
@@ -1411,6 +1411,7 @@
             </div>
           </div>
           {% for module in course.modules.all %}
+          {% if module.is_published %}
           <div class="lesson-section">
             <div class="section-header" onclick="toggleSection(this)">
               <div>
@@ -1462,6 +1463,7 @@
 
             </div>
           </div>
+          {% endif %}
           {% endfor %}
         </div>
       </div>

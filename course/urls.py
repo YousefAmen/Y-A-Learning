@@ -20,6 +20,7 @@ from .views import (
     best_seller,
     create_contact,
     create_review,
+    draft_modules,
     fetch_courses_by_category,
     fetch_courses_by_tag,
     remove_contact,
@@ -30,6 +31,7 @@ from .views import (
     update_contact,
     update_review,
     user_contact_messages,
+    modules,
 )
 
 app_name = "course"
@@ -77,6 +79,8 @@ urlpatterns = [
         DeleteModule.as_view(),
         name="delete-module",
     ),
+    path("draft-modules/<str:course_token>/", draft_modules, name="draft-modules"),
+    path("modules/<str:course_token>/", modules, name="modules"),
     path(
         "create-course/module/create-lesson/<slug:slug>/",
         AddLessonView.as_view(),

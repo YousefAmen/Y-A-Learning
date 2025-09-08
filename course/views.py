@@ -633,3 +633,19 @@ def top_instructors(request):
 
     context = {"top_instructors": top_instructors}
     return render(request, "course_pages/trending_now/top_instructors.html", context)
+
+
+def draft_modules(request, course_token):
+    course = Course.objects.get(token=course_token)
+    modules = Module.objects.filter(course=course, is_published=False).order_by(
+        "-created_at"
+    )
+    context = {"modules": modules, "course": course}
+    return render(request, "course_pages/draft_modules.html", context)
+
+
+def modules(request, course_token):
+    course = Course.objects.get(token=course_token)
+    modules = Module.objects.filter(course=course).order_by("-created_at")
+    context = {"modules": modules, "course": course}
+    return render(request, "course_pages/modules.html", context)

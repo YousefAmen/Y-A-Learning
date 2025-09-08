@@ -82,13 +82,12 @@ def user_profile(request, slug, token):
 
     if profile.role == "instructor":
         instructor_courses = (
-            Course.objects.filter(instructor=profile)
-            .annotate(enroll=Count("course_enrollments", distinct=True))
-            .order_by("-enroll")
+            Course.objects.filter(instructor=profile).order_by("-created_at")
+            # .annotate(enroll=Count("course_enrollments", distinct=True))
+            # .order_by("-enroll")
         )
     if profile.role == "student":
         student_enrollments_courses = Enrollment.objects.filter(user=profile.user)
-    print(profile.role)
     context = {
         "profile": profile,
         "instructor_courses": instructor_courses,
