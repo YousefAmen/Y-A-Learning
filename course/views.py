@@ -600,9 +600,11 @@ def top_courses(request):
         Course.objects.filter(is_puplished=True)
         .annotate(
             rating=Avg("course_reviews", distinct=True),
-            enroll=Count("course_enrollments", distinct=True),
+            total_enrollments=Count("course_enrollments", distinct=True),
+            review_count=Count("course_reviews", distinct=True),
         )
-        .order_by("-rating", "-enroll")
+        .filter(rating__gt=0)
+        .order_by("-rating", "-total_enrollments")
     )
 
     context = {"top_courses": courses}
@@ -614,6 +616,7 @@ def best_seller(request):
     courses = (
         Course.objects.filter(is_puplished=True)
         .annotate(enroll=Count("course_enrollments"))
+        .filter(enroll__gt=0)
         .order_by("-enroll")[:10]
     )
     context = {"best_courses": courses}
@@ -628,6 +631,7 @@ def top_instructors(request):
             students=Count("instructor_courses__course_enrollments"),
             courses=Count("instructor_courses"),
         )
+        .filter(students__gt=0)
         .order_by("-students", "-courses")[:8]
     )
 
