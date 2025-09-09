@@ -35,20 +35,28 @@
                         </h3>
                         <p class="course-desc">{{course.description|truncatechars:100}}</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
-
                             <div class="rating ">
+
                                 <span class="stars">
-                                    {% for i in 5|make_list %}
-                                    {% with i=forloop.counter %}
-                                    {% if course.avg_rating >= i %}
+                                    {% for i in "12345" %}
+                                    {% with star_num=forloop.counter %}
+                                    {% if course.avg_rating >= star_num %}
                                     <span class="star filled">★</span>
+                                    {% elif course.avg_rating >= star_num|add:-0.5 %}
+                                    <span class="star half">⯨</span>
                                     {% else %}
-                                    <span class="star">☆</span>
+                                    <span class="star empty">☆</span>
                                     {% endif %}
                                     {% endwith %}
                                     {% endfor %}
-                                </span>
+                                    <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
                             </div>
+                            {% if course.discount %}
+                            <div class="price">
+                                {{course.discount }}
+
+                            </div>
+                            {% else %}
                             <div class="price">
                                 {% if course.price %}
                                 ${{course.price}}
@@ -56,6 +64,7 @@
                                 <span class="free">Free</span>
                                 {% endif %}
                             </div>
+                            {% endif %}
                         </div>
                         <a href="{{course.get_absolute_url}}" class="btn-view mt-3">View Details</a>
                     </div>

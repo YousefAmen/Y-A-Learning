@@ -89,7 +89,10 @@ class Course(models.Model):
     description = models.TextField()
     requirements = models.TextField(blank=True, null=True)
 
-    image = CloudinaryField("image")
+    image = CloudinaryField(
+        "image",
+        resource_type="image",
+    )
     promo_video = CloudinaryField("video", resource_type="video")
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     discount_price = models.DecimalField(
@@ -257,7 +260,7 @@ class Module(models.Model):
 class Lesson(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="lessons")
     title = models.CharField(max_length=255)
-    thumbnail = CloudinaryField("image")
+    thumbnail = CloudinaryField("image", resource_type="image")
     video = CloudinaryField("video", resource_type="video")
     is_preview = models.BooleanField(default=False)
     duration = models.DurationField(blank=True, null=True)

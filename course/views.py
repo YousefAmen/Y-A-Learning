@@ -608,7 +608,7 @@ def top_courses(request):
             review_count=Count("course_reviews", distinct=True),
         )
         .filter(rating__gt=0)
-        .order_by("-rating", "-total_enrollments")
+        .order_by("rating", "-total_enrollments")
     )
 
     context = {"top_courses": courses}
