@@ -29,7 +29,6 @@ from .models import (
     Category,
     Contact,
     Course,
-    Enrollment,
     LearningOutcomes,
     Lesson,
     Module,
@@ -37,7 +36,6 @@ from .models import (
 )
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
 
 
 class Index(TemplateView):
@@ -49,10 +47,16 @@ class Index(TemplateView):
             "-count"
         )[:5]
 
-        top_enrollments_courses = Course.objects.annotate(
-            rating=Avg("course_reviews"),
-            enrollments_count=Count("course_enrollments"),
-        ).order_by("-rating", "-enrollments_count")[:5]
+        courses = (
+            Course.objects.filter(is_puplished=True)
+            .annotate(
+                rating=Avg("course_reviews__rate", distinct=True),
+                total_enrollments=Count("course_enrollments", distinct=True),
+                review_count=Count("course_reviews", distinct=True),
+            )
+            .filter(rating__gte=0)
+            .order_by("-rating", "-total_enrollments")
+        )
         top_instructors = (
             Instructor.objects.all()
             .annotate(students=Count("instructor_courses__course_enrollments"))
@@ -60,7 +64,7 @@ class Index(TemplateView):
         )
 
         context["categories"] = top_categories
-        context["courses"] = top_enrollments_courses
+        context["courses"] = courses
         context["instructors"] = top_instructors
 
         return context
