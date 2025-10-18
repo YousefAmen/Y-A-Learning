@@ -2,7 +2,6 @@ import uuid
 from datetime import timedelta
 from django.db.models import Sum, Count, Avg
 
-from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.text import slugify
@@ -11,6 +10,7 @@ from taggit.managers import TaggableManager
 from members.models import Instructor, Student
 from cloudinary.models import CloudinaryField
 import cloudinary.api
+from main import settings
 
 CHOICES_CATEGORIES = [
     ("Development & Programming", "Development & Programming"),
@@ -115,11 +115,10 @@ class Course(models.Model):
     instructor = models.ForeignKey(
         Instructor, on_delete=models.CASCADE, related_name="instructor_courses"
     )
-    loves = models.ManyToManyField(User, blank=True)
+    loves = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        self.slug = slugify(self.title)
         if not self.token:
             self.token = uuid.uuid4().hex[:16].upper()
 
@@ -149,7 +148,7 @@ class Course(models.Model):
 
     @property
     def discount_percentage(self):
-        if self.price and self.discount_price > 0:
+        if self.price and self.discount_price and self.discount_price > 0:
             return round(self.discount_price / self.price * 100, 2)
         return 0
 
@@ -175,8 +174,7 @@ class LearningOutcomes(models.Model):
     slug = models.SlugField(default="", unique=True, max_length=500)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.description)
+        self.slug = slugify(self.description)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -188,7 +186,9 @@ class LearningOutcomes(models.Model):
 
 class Enrollment(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="student_enrollments"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="student_enrollments",
     )
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name="course_enrollments"
@@ -213,7 +213,7 @@ class Review(models.Model):
         Course, on_delete=models.CASCADE, related_name="course_reviews"
     )
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="user_reviews"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_reviews"
     )
 
     rate = models.PositiveSmallIntegerField(
@@ -225,8 +225,8 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.body[:16])
+
+        self.slug = slugify(self.body)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -244,8 +244,7 @@ class Module(models.Model):
     slug = models.SlugField(default="", max_length=500)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -260,7 +259,6 @@ class Module(models.Model):
 class Lesson(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="lessons")
     title = models.CharField(max_length=255)
-    thumbnail = CloudinaryField("image", resource_type="image")
     video = CloudinaryField("video", resource_type="video")
     is_preview = models.BooleanField(default=False)
     duration = models.DurationField(blank=True, null=True)
@@ -269,13 +267,10 @@ class Lesson(models.Model):
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        self.slug = slugify(self.title)
         super().save(*args, **kwargs)
         if self.video:
             try:
-                # Example URL:
-                # https://res.cloudinary.com/demo/video/upload/v169010/testvideo.mp4
                 public_id = self.video.public_id
                 resource = cloudinary.api.resource(
                     public_id,
@@ -298,7 +293,7 @@ class Lesson(models.Model):
 
 class Contact(models.Model):
     name = models.CharField(max_length=255)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     email = models.EmailField(unique=True)
     subject = models.CharField(max_length=250)
     message = models.TextField(max_length=500)

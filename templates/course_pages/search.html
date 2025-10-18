@@ -41,110 +41,32 @@
     <h2>Results for "{{ query }}"</h2>
     <div class="results-meta">
       <span class="results-count">{{ results.courses|length }} courses found</span>
-      <div class="sort-dropdown">
-        <form id="sort-form" method="GET" action="{% url 'course:search' %}">
-          <!-- Hidden field to preserve search query -->
-          <input type="hidden" name="search" value="{{ request.GET.search }}">
-
-          <button type="button" class="sort-btn" aria-expanded="false">
-            <span>Sort by: {{ request.GET.sort|default:"Recommended" }}</span>
-            <span class="dropdown-arrow">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </span>
-          </button>
-
-          <div class="dropdown-content">
-            <label class="sort-option">
-              <input type="radio" name="sort" value="recommended" {% if request.GET.sort  ==  "recommended" %} checked
-                {%endif %}>
-              <span>Recommended</span>
-            </label>
-            <label class="sort-option">
-              <input type="radio" name="sort" value="popular" {% if request.GET.sort ==  "popular" %}checked{% endif %}>
-              <span>Most Popular</span>
-            </label>
-            <label class="sort-option">
-              <input type="radio" name="sort" value="rating" {% if request.GET.sort == "rating" %}checked{% endif %}>
-              <span>Highest Rated</span>
-            </label>
-            <label class="sort-option">
-              <input type="radio" name="sort" value="newest" {% if request.GET.sort == "newest" %}checked{% endif %}>
-              <span>Newest</span>
-            </label>
-          </div>
-        </form>
-      </div>
-
     </div>
   </div>
 
   <div class="results-grid">
-
+    <!-- Filters Sidebar -->
     <div class="search-container">
-      <!-- Search Form (must contain all filter inputs) -->
-      <form method="GET" action="{% url 'course:search' %}" class="search-form">
-        <!-- Hidden search input (if you have a separate search bar) -->
+      <form method="GET" action="{% url 'course:search' %}" class="search-form-filters">
+        <!-- Hidden search input to preserve search query -->
         <input type="hidden" name="search" value="{{ query|default:'' }}">
 
-        <!-- Filters Sidebar -->
         <aside class="filters-sidebar">
           <div class="filter-section">
             <h3>Filter Results</h3>
-
-            <!-- Category Filter -->
-            <div class="filter-group">
-              <h4>Categories</h4>
-              <div class="filter-options">
-                {% with dummy|top_categorise as top_categories %}
-                {% for category in top_categories %}
-                <label class="filter-option">
-                  <input type="checkbox" name="category" value="{{ category.id }}">
-                  <span>{{ category.name }}</span>
-                  <span class="count">({{ category.course_set.count }})</span>
-                </label>
-                {% endfor %}
-                {% endwith %}
-              </div>
-            </div>
-
-            <!-- Level Filter -->
-            <div class="filter-group">
-              <h4>Levels</h4>
-              <div class="filter-options" id="level-filters">
-                <label class="filter-option">
-                  <input type="checkbox" name="level" value="Beginner" {% if 'Beginner' in selected_levels %}
-                    checked{%endif %}>
-                  <span class="filter-tag">Beginner</span>
-                </label>
-                <label class="filter-option">
-                  <input type="checkbox" name="level" value="Intermediate" {% if 'Intermediate' in selected_levels %}
-                    checked{% endif %}>
-                  <span class="filter-tag">Intermediate</span>
-                </label>
-                <label class="filter-option">
-                  <input type="checkbox" name="level" value="Advanced" {% if 'Advanced' in selected_levels %}
-                    checked{%endif %}>
-                  <span class="filter-tag">Advanced</span>
-                </label>
-              </div>
-            </div>
-
-
+            {{ course_form|crispy }}
+            <button type="submit" class="filter-btn">Apply Filters</button>
           </div>
         </aside>
-
-
       </form>
     </div>
 
+    <!-- Results Content -->
     <div class="results-content" id="course-results-container">
       {% if results.courses %}
       <div class="courses-grid">
         {% for course in results.courses %}
         <article class="course-card">
-          <!-- Your existing course card HTML -->
           <a href="{{ course.get_absolute_url }}">
             <div class="card-image">
               {% if course.image %}
@@ -168,9 +90,21 @@
             <p class="instructor">by {{ course.instructor.first_name }} {{ course.instructor.last_name }}</p>
             <div class="course-meta">
               <div class="rating-container">
-                <span class="rating-value">{{ course.rating|default:"4.8" }}</span>
-                <div class="stars" style="--rating: {{ course.rating|default:'4.8' }}"></div>
-                <span class="reviews">({{ course.enrollment_count|default:"1,234" }})</span>
+                <span class="rating-value">{{ course.avg_rating|floatformat:1|default:"4.8" }}</span>
+                <span class="stars">
+                  {% for i in "12345" %}
+                  {% with star_num=forloop.counter %}
+                  {% if course.avg_rating >= star_num %}
+                  <span class="star filled">★</span>
+                  {% elif course.avg_rating >= star_num|add:-0.5 %}
+                  <span class="star half">⯨</span>
+                  {% else %}
+                  <span class="star empty">☆</span>
+                  {% endif %}
+                  {% endwith %}
+                  {% endfor %}
+                </span>
+                <span class="reviews">({{ course.enrollment_count|default:"0" }})</span>
               </div>
               <div class="duration">
                 <span class="clock-icon">
@@ -209,100 +143,7 @@
       {% endif %}
     </div>
   </div>
-  <!-- <div class="empty-search">
-    <div class="empty-search-content">
-      <h2>Start Your Learning Journey</h2>
-      <p>Explore our vast library of courses in various domains</p>
-      <div class="popular-categories">
-        <h3>Top Categories</h3>
-        <div class="categories-grid">
-          {% with dummy|top_categorise as top_categories %}
-          {% for category in top_categories %}
-          <a href="{{ course.category.get_absolute_url }}" class="category-card">
-            <div class="category-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
-            </div>
-            <span>{{ category }}</span>
-          </a>
-          {% endfor %}
-          {% endwith %}
-        </div>
-      </div>
-    </div>
-  </div> -->
 </main>
-
-<!-- Featured Courses Section -->
-<section class="featured-courses">
-  <div class="section-container">
-    <div class="section-header">
-      <h2>Featured Courses</h2>
-      <a href="{% url 'course:courses-list' %}" class="view-all">View All</a>
-    </div>
-    <div class="courses-carousel">
-      {% for course in top_enrollments_courses %}
-      <div class="courses-grid">
-        <article class="course-card">
-          <a href="{{ course.get_absolute_url }}">
-            <div class="card-image">
-              {% if course.image %}
-              <img src="{{ course.image.url }}" alt="{{ course.title }}">
-              {% else %}
-              <img src="{% static 'assets/img/gallery/topic1.png' %}" alt="{{ course.title }}">
-              {% endif %}
-              <div class="image-overlay">
-                <span class="difficulty-badge">{{ course.level }}</span>
-                <button class="wishlist-btn" aria-label="Add to wishlist">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path
-                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </a>
-          <div class="card-content">
-            <h3><a href="{{ course.get_absolute_url }}">{{ course.title }}</a></h3>
-            <p class="instructor">by {{ course.instructor.first_name }} {{ course.instructor.last_name }}</p>
-            <div class="course-meta">
-              <div class="rating-container">
-                <span class="rating-value">{{ course.rating|default:"4.8" }}</span>
-                <div class="stars" style="--rating: {{ course.rating|default:'4.8' }}"></div>
-                <span class="reviews">({{ course.enrollment_count|default:"1,234" }})</span>
-              </div>
-              <div class="duration">
-                <span class="clock-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
-                </span>
-                {{ course.total_course_duration|format_duration }} h
-              </div>
-            </div>
-            <div class="price-container">
-              {% if course.discount_price %}
-              <div class="price-discount">
-                <span class="current-price">${{ course.discount_price }}</span>
-                <span class="original-price">${{ course.price }}</span>
-              </div>
-              {% else %}
-              <span class="current-price">
-                {% if course.price %}${{ course.price|default:"19.99" }}{% else %}Free{% endif %}
-              </span>
-              {% endif %}
-              <a href="{{ course.get_absolute_url }}" class="enroll-btn">Enroll Now</a>
-            </div>
-          </div>
-        </article>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
 
 
 <style>
@@ -326,15 +167,29 @@
   body {
     font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--dark);
-    background-color: var(--white);
+    background-color: #fafafa;
     line-height: 1.6;
     margin: 0;
   }
 
+  /* Search Hero Section */
   .search-hero {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    padding: 3rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 4rem 1rem;
     color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .search-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
   }
 
   .hero-container {
@@ -342,64 +197,91 @@
     margin: 0 auto;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
+    position: relative;
+    z-index: 1;
   }
 
   .hero-content {
     flex: 1;
+    animation: fadeInUp 0.8s ease-out;
   }
 
-  .hero-image {
-    flex: 1;
-    display: none;
-  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
 
-  .hero-image img {
-    width: 100%;
-    max-width: 450px;
-    height: auto;
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .search-hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
     font-weight: 700;
     margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .search-hero .subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.3px;
   }
 
   .search-form {
-    max-width: 600px;
+    max-width: 700px;
   }
 
   .search-input-container {
     display: flex;
     align-items: stretch;
     background: var(--white);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+
+  .search-input-container:focus-within {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
   }
 
   .search-icon {
     display: flex;
     align-items: center;
-    padding: 0 1rem;
+    padding: 0 1.25rem;
     color: var(--medium-gray);
+    transition: color 0.3s ease;
+  }
+
+  .search-input-container:focus-within .search-icon {
+    color: var(--primary);
   }
 
   .search-input-container .form-control {
     flex: 1;
-    padding: 0.75rem 0.75rem 0.75rem 0;
+    padding: 1rem 0.75rem 1rem 0;
     border: none;
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--dark);
     background: transparent;
     box-shadow: none;
+    font-weight: 400;
+  }
+
+  .search-input-container .form-control::placeholder {
+    color: var(--medium-gray);
+    font-weight: 300;
   }
 
   .search-input-container .form-control:focus {
@@ -409,49 +291,123 @@
   .search-input-container .form-group {
     margin: 0;
     flex: 1;
+    display: flex;
+    align-items: center;
   }
 
   .search-btn {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: var(--white);
     border: none;
-    padding: 0 1.5rem;
-    font-weight: 500;
+    padding: 0 2rem;
+    font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.2s ease;
-    border-radius: 0 8px 8px 0;
+    transition: all 0.3s ease;
+    border-radius: 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .search-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .search-btn:hover::before {
+    left: 100%;
   }
 
   .search-btn:hover {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #0d47a1 100%);
+    transform: translateX(2px);
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .search-btn:active {
+    transform: scale(0.98);
   }
 
   .popular-tags {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    font-size: 0.9rem;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    align-items: center;
+    animation: fadeIn 1s ease-out 0.3s both;
   }
 
-  .popular-tags span {
-    opacity: 0.8;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .popular-tags span:first-child {
+    opacity: 0.9;
+    font-weight: 500;
+    margin-right: 0.25rem;
   }
 
   .popular-tags .tag {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
     color: var(--white);
     text-decoration: none;
-    transition: background 0.2s ease;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.9rem;
   }
 
   .popular-tags .tag:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
   }
 
+  .hero-image {
+    flex: 1;
+    display: none;
+    animation: fadeInRight 0.8s ease-out 0.2s both;
+  }
+
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .hero-image img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15));
+  }
+
+  /* Search Results Container */
   .search-results-container {
     max-width: 1280px;
     margin: 2rem auto;
@@ -465,6 +421,7 @@
   .results-header h2 {
     font-size: 1.5rem;
     font-weight: 600;
+    color: var(--dark);
   }
 
   .results-meta {
@@ -473,74 +430,21 @@
     align-items: center;
     font-size: 0.9rem;
     color: var(--medium-gray);
+    margin-top: 0.5rem;
   }
 
-  .sort-dropdown {
-    position: relative;
-  }
-
-  .sort-btn {
-    background: var(--white);
-    border: 1px solid var(--light-gray);
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--dark);
-  }
-
-  .sort-btn:hover {
-    border-color: var(--medium-gray);
-  }
-
-  .dropdown-arrow svg {
-    transition: transform 0.2s ease;
-  }
-
-  .sort-btn[aria-expanded="true"] .dropdown-arrow svg {
-    transform: rotate(180deg);
-  }
-
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    right: 0;
-    background: var(--white);
-    min-width: 180px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 0.5rem 0;
-    z-index: 10;
-  }
-
-  .sort-btn[aria-expanded="true"]+.dropdown-content {
-    display: block;
-  }
-
-  .dropdown-content a {
-    display: block;
-    padding: 0.5rem 1rem;
-    color: var(--dark);
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
-
-  .dropdown-content a:hover {
-    background: var(--light);
-  }
-
-  .dropdown-content a.active {
-    color: var(--primary);
-    font-weight: 500;
-  }
-
+  /* Results Grid Layout */
   .results-grid {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 300px 1fr;
     gap: 2rem;
+    align-items: start;
+  }
+
+  /* Enhanced Filter Sidebar */
+  .search-container {
+    position: sticky;
+    top: 20px;
   }
 
   .filters-sidebar {
@@ -549,50 +453,155 @@
 
   .filter-section {
     background: var(--white);
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
   }
 
   .filter-section h3 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--dark);
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary);
+  }
+
+  /* Django Filter Form Styling */
+  .filter-section form p {
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-section label {
+    display: block;
     font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .filter-group {
-    margin-bottom: 1rem;
-  }
-
-  .filter-group h4 {
     font-size: 0.9rem;
-    font-weight: 500;
     color: var(--dark-gray);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
-  .filter-options {
+  /* Style regular inputs */
+  .filter-section input[type="text"],
+  .filter-section input[type="number"],
+  .filter-section select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #fafafa;
+  }
+
+  .filter-section input:focus,
+  .filter-section select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+  }
+
+  /* Style checkboxes and radios as button pills */
+  .filter-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .filter-option {
+  .filter-section ul li {
+    margin: 0;
+  }
+
+  /* Hide actual checkbox/radio */
+  .filter-section input[type="checkbox"],
+  .filter-section input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Style label as button */
+  .filter-section input[type="checkbox"]+label,
+  .filter-section input[type="radio"]+label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    background: #fafafa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--dark);
+    margin: 0;
   }
 
-  .filter-option input {
-    accent-color: var(--primary);
+  .filter-section input[type="checkbox"]+label:hover,
+  .filter-section input[type="radio"]+label:hover {
+    background: #e8f4f8;
+    border-color: var(--primary);
+    transform: translateX(4px);
   }
 
-  .filter-option .count {
-    margin-left: auto;
-    color: var(--medium-gray);
-    font-size: 0.8rem;
+  /* Checked state */
+  .filter-section input[type="checkbox"]:checked+label,
+  .filter-section input[type="radio"]:checked+label {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+  }
+
+  /* Add checkmark */
+  .filter-section input[type="checkbox"]:checked+label::before {
+    content: "✓ ";
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+
+  /* Radio button indicator */
+  .filter-section input[type="radio"]:checked+label::before {
+    content: "● ";
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+
+  /* Apply Filter Button */
+  .filter-btn {
+    width: 100%;
+    background: var(--primary);
+    color: var(--white);
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+  }
+
+  .filter-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Results Content */
+  .results-content {
+    min-height: 400px;
   }
 
   .courses-grid {
@@ -601,28 +610,36 @@
     gap: 1.5rem;
   }
 
+  /* Course Cards */
   .course-card {
     background: var(--white);
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
   }
 
   .course-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 
   .card-image {
     position: relative;
     height: 180px;
+    overflow: hidden;
   }
 
   .card-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .course-card:hover .card-image img {
+    transform: scale(1.05);
   }
 
   .image-overlay {
@@ -640,32 +657,35 @@
   .difficulty-badge {
     background: var(--white);
     color: var(--dark);
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    padding: 0.375rem 0.875rem;
+    border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .wishlist-btn {
     background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
     border: none;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     color: var(--white);
-    transition: background 0.2s ease;
+    transition: all 0.3s ease;
   }
 
   .wishlist-btn:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--danger);
+    transform: scale(1.1);
   }
 
   .card-content {
-    padding: 1rem;
+    padding: 1.25rem;
   }
 
   .course-card h3 {
@@ -673,20 +693,33 @@
     font-weight: 600;
     margin-bottom: 0.5rem;
     line-height: 1.4;
+    color: var(--dark);
+  }
+
+  .course-card h3 a {
+    color: var(--dark);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .course-card h3 a:hover {
+    color: var(--primary);
   }
 
   .instructor {
     font-size: 0.9rem;
     color: var(--medium-gray);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .course-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     font-size: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
   }
 
   .rating-container {
@@ -696,35 +729,27 @@
   }
 
   .rating-value {
-    font-weight: 600;
+    font-weight: 700;
     color: var(--rating);
   }
 
   .stars {
-    width: 80px;
-    height: 16px;
-    position: relative;
-    display: inline-block;
-  }
-
-  .stars::before {
-    content: '★★★★★';
-    color: var(--light-gray);
-    position: absolute;
-  }
-
-  .stars::after {
-    content: '★★★★★';
+    font-size: 14px;
     color: var(--rating);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: calc(var(--rating) * 20%);
-    overflow: hidden;
+    letter-spacing: 1px;
+  }
+
+  .star {
+    color: #e0e0e0;
+  }
+
+  .star.filled {
+    color: var(--rating);
   }
 
   .reviews {
     color: var(--medium-gray);
+    font-size: 0.8rem;
   }
 
   .duration {
@@ -738,6 +763,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: 0.75rem;
   }
 
   .price-discount {
@@ -747,14 +773,15 @@
   }
 
   .current-price {
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--dark);
   }
 
   .original-price {
     text-decoration: line-through;
     color: var(--medium-gray);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
   .enroll-btn {
@@ -762,116 +789,68 @@
     color: var(--white);
     padding: 0.5rem 1rem;
     border-radius: 6px;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     text-decoration: none;
-    font-weight: 500;
-    transition: background 0.2s ease;
+    font-weight: 600;
+    transition: all 0.3s ease;
   }
 
   .enroll-btn:hover {
     background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
   }
 
+  /* Empty State */
   .empty-state {
     text-align: center;
-    padding: 4rem 0;
+    padding: 4rem 2rem;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
   .empty-state img {
-    max-width: 200px;
-    margin-bottom: 1rem;
+    max-width: 250px;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
   }
 
   .empty-state h3 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--dark);
   }
 
   .empty-state p {
     color: var(--medium-gray);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
   }
 
   .primary-btn {
+    display: inline-block;
     background: var(--primary);
     color: var(--white);
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: 500;
-    transition: background 0.2s ease;
+    font-weight: 600;
+    transition: all 0.3s ease;
   }
 
   .primary-btn:hover {
     background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
   }
 
-  .empty-search {
-    padding: 4rem 0;
-    text-align: center;
-  }
-
-  .empty-search-content {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .empty-search h2 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .empty-search p {
-    font-size: 1rem;
-    color: var(--medium-gray);
-    margin-bottom: 2rem;
-  }
-
-  .popular-categories h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 1rem;
-  }
-
-  .category-card {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: center;
-    text-decoration: none;
-    color: var(--dark);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .category-icon {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 0.5rem;
-    background: rgba(26, 115, 232, 0.1);
-    border-radius: 50%;
-    color: var(--primary);
-  }
-
+  /* Featured Courses Section */
   .featured-courses {
-    padding: 3rem 0;
-    background: var(--light);
+    padding: 4rem 0;
+    background: var(--white);
+    border-top: 1px solid #e0e0e0;
   }
 
   .section-container {
@@ -884,21 +863,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
 
   .section-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dark);
   }
 
   .view-all {
     color: var(--primary);
-    font-weight: 500;
+    font-weight: 600;
     text-decoration: none;
+    transition: color 0.3s ease;
   }
 
   .view-all:hover {
+    color: var(--primary-dark);
     text-decoration: underline;
   }
 
@@ -908,104 +890,56 @@
     overflow-x: auto;
     padding-bottom: 1rem;
     scrollbar-width: thin;
+    scrollbar-color: var(--primary) #f0f0f0;
   }
 
   .courses-carousel::-webkit-scrollbar {
-    height: 8px;
+    height: 10px;
+  }
+
+  .courses-carousel::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 5px;
   }
 
   .courses-carousel::-webkit-scrollbar-thumb {
-    background: var(--light-gray);
-    border-radius: 4px;
+    background: var(--primary);
+    border-radius: 5px;
   }
 
-  .testimonials {
-    padding: 3rem 0;
+  .courses-carousel::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
   }
 
-  .testimonials h2 {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
+  .courses-carousel .course-card {
+    min-width: 320px;
+    flex-shrink: 0;
   }
 
-  .testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .testimonial-card {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-
-  .testimonial-content {
-    position: relative;
-    margin-bottom: 1rem;
-  }
-
-  .quote-icon {
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    opacity: 0.1;
-  }
-
-  .testimonial-content p {
-    font-size: 0.9rem;
-    color: var(--dark-gray);
-  }
-
-  .testimonial-author {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .testimonial-author img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .testimonial-author h4 {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .testimonial-author span {
-    font-size: 0.8rem;
-    color: var(--medium-gray);
-  }
-
+  /* Responsive Design */
   @media (min-width: 768px) {
-    .hero-container {
-      padding: 4rem 0;
+    .filters-sidebar {
+      display: block;
     }
 
     .hero-image {
       display: block;
     }
 
-    .filters-sidebar {
-      display: block;
-    }
-
     .search-hero h1 {
-      font-size: 3rem;
+      font-size: 3.25rem;
     }
 
-    .results-grid {
-      grid-template-columns: 280px 1fr;
+    .search-hero .subtitle {
+      font-size: 1.3rem;
     }
   }
 
   @media (max-width: 767px) {
+    .search-hero {
+      padding: 3rem 1rem;
+    }
+
     .hero-container {
       flex-direction: column;
       text-align: center;
@@ -1015,192 +949,64 @@
       font-size: 2rem;
     }
 
+    .search-hero .subtitle {
+      font-size: 1rem;
+    }
+
+    .results-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .search-container {
+      position: static;
+    }
+
     .courses-grid {
       grid-template-columns: 1fr;
     }
 
-    .categories-grid {
-      grid-template-columns: 1fr 1fr;
+    .search-input-container {
+      flex-direction: column;
+    }
+
+    .search-btn {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .search-icon {
+      padding: 1rem 1.25rem 0.5rem;
+    }
+
+    .search-input-container .form-control {
+      padding: 0.5rem 1.25rem 1rem;
     }
   }
+
+  /* Crispy Forms Adjustments */
+  .search-input-container #div_id_search {
+    margin: 0;
+    width: 100%;
+  }
+
+  .search-input-container #div_id_search label {
+    display: none;
+  }
+
+  .search-input-container #div_id_search .form-control {
+    margin: 0;
+  }
+
+  /* Focus States for Accessibility */
+  .search-input-container .form-control:focus-visible,
+  .search-btn:focus-visible,
+  .popular-tags .tag:focus-visible,
+  .filter-btn:focus-visible,
+  .enroll-btn:focus-visible {
+    outline: 3px solid rgba(26, 115, 232, 0.4);
+    outline-offset: 2px;
+  }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Get all filter inputs
-    const filterInputs = document.querySelectorAll('.filter-option input');
-    const searchForm = document.querySelector('.search-form'); // Your main search form
-    const resultsContainer = document.getElementById('course-results-container');
 
-    // Debounce function to prevent rapid requests
-    function debounce(func, timeout = 300) {
-      let timer;
-      return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => { func.apply(this, args); }, timeout);
-      };
-    }
-
-    // Collect all filter data
-    function getFilterParams() {
-      const params = new URLSearchParams();
-
-      // Get search query if exists
-      if (searchForm) {
-        const searchInput = searchForm.querySelector('input[name="search"]');
-        if (searchInput && searchInput.value) {
-          params.set('search', searchInput.value);
-        }
-      }
-
-      // Get all checked filters
-      document.querySelectorAll('.filter-option input:checked').forEach(input => {
-        params.append(input.name, input.value);
-      });
-
-      return params;
-    }
-
-    // Main filter function
-    const applyFilters = debounce(async function () {
-      const params = getFilterParams();
-
-      try {
-        // Show loading state
-        resultsContainer.innerHTML = `
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            `;
-
-        // Fetch results
-        const response = await fetch(`{% url 'course:search' %}?${params.toString()}`, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-
-        if (response.ok) {
-          const html = await response.text();
-          // Parse the full response but extract only the results
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const newResults = doc.getElementById('course-results-container');
-
-          if (newResults) {
-            resultsContainer.innerHTML = newResults.innerHTML;
-            // Update URL without reload
-            window.history.pushState({}, '', `{% url 'course:search' %}?${params.toString()}`);
-          }
-        }
-      } catch (error) {
-        console.error('Filter error:', error);
-        resultsContainer.innerHTML = `
-                <div class="alert alert-danger">
-                    Error loading results. Please try again.
-                </div>
-            `;
-      }
-    });
-
-    // Attach events to all filter inputs
-    filterInputs.forEach(input => {
-      input.addEventListener('change', applyFilters);
-    });
-
-    // Also trigger on search input if you have one
-    if (searchForm) {
-      const searchInput = searchForm.querySelector('input[name="search"]');
-      if (searchInput) {
-        searchInput.addEventListener('input', applyFilters);
-      }
-    }
-  });
-  document.addEventListener('DOMContentLoaded', function () {
-    const sortBtn = document.querySelector('.sort-btn'); // button to toggle dropdown
-    const dropdownContent = document.querySelector('.dropdown-content'); // dropdown menu
-    const resultsContainer = document.querySelector('.results-content'); // courses container
-
-    // Toggle dropdown on button click
-    sortBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      const isExpanded = sortBtn.getAttribute('aria-expanded') === 'true';
-      sortBtn.setAttribute('aria-expanded', !isExpanded);
-      dropdownContent.style.display = isExpanded ? 'none' : 'block';
-
-      // Rotate arrow if you have one
-      const arrow = sortBtn.querySelector('.dropdown-arrow svg');
-      if (arrow) {
-        arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-      }
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function () {
-      sortBtn.setAttribute('aria-expanded', 'false');
-      dropdownContent.style.display = 'none';
-      const arrow = sortBtn.querySelector('.dropdown-arrow svg');
-      if (arrow) arrow.style.transform = 'rotate(0deg)';
-    });
-
-    // Handle sort option clicks
-    document.querySelectorAll('.sort-option').forEach(option => {
-      option.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Get sort value from input or data attribute
-        let sortValue = this.dataset.sort || this.querySelector('input[type="radio"]').value;
-
-        // Preserve current query params
-        const params = new URLSearchParams(window.location.search);
-        params.set('sort', sortValue);
-
-        // Loading spinner
-        resultsContainer.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            `;
-
-        // Close dropdown after selecting
-        sortBtn.setAttribute('aria-expanded', 'false');
-        dropdownContent.style.display = 'none';
-        const arrow = sortBtn.querySelector('.dropdown-arrow svg');
-        if (arrow) arrow.style.transform = 'rotate(0deg)';
-
-        // Update button text with selected label
-        const label = this.querySelector('span').textContent;
-        sortBtn.querySelector('span:first-child').textContent = `Sort by: ${label}`;
-
-        // Fetch updated results
-        fetch(`?${params.toString()}`, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-          .then(response => response.text())
-          .then(html => {
-            // Extract results section from response
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newResults = doc.querySelector('.results-content');
-            if (newResults) {
-              resultsContainer.innerHTML = newResults.innerHTML;
-            }
-            // Update URL
-            window.history.pushState({}, '', `?${params.toString()}`);
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            resultsContainer.innerHTML = `
-                    <div class="alert alert-danger">Error loading results. Please try again.</div>
-                `;
-          });
-      });
-    });
-  });
-
-</script>
 {% endblock %}

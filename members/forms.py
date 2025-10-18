@@ -4,7 +4,7 @@ from crispy_forms.layout import Column, Layout, Row, Submit
 from django import forms
 from django.db.models.signals import post_save
 
-from .models import ROLE_CHOICES, Instructor, Profile, Student, SocialLinks
+from .models import Instructor, Student, SocialLinks, User
 from .signals import user_signed_up
 
 
@@ -82,7 +82,9 @@ class SignUpForms(SignupForm, forms.ModelForm):
 class RoleSelectionForm(forms.Form):
 
     role = forms.ChoiceField(
-        choices=ROLE_CHOICES, widget=forms.RadioSelect, label="Select your account type"
+        choices=User.Role.choices,
+        widget=forms.RadioSelect,
+        label="Select your account type",
     )
 
     def __init__(self, *args, **kwargs):

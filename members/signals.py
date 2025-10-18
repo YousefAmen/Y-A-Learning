@@ -14,7 +14,6 @@ def create_profile(sender, user, signup_data, **kwargs):
 
     if signup_data["role"] == "instructor":
         profile = Instructor.objects.create(
-            user=user,
             first_name=signup_data["first_name"],
             last_name=signup_data["last_name"],
             role=signup_data["role"],
@@ -26,7 +25,6 @@ def create_profile(sender, user, signup_data, **kwargs):
 
     else:
         profile = Student.objects.create(
-            user=user,
             first_name=signup_data["first_name"],
             last_name=signup_data["last_name"],
             role=signup_data["role"],

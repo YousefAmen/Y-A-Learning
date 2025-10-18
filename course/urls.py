@@ -32,6 +32,7 @@ from .views import (
     update_review,
     user_contact_messages,
     modules,
+    course_filter,
 )
 
 app_name = "course"
@@ -122,4 +123,5 @@ urlpatterns = [
     path("top-courses/", top_courses, name="top-courses"),
     path("best-seller/", best_seller, name="best-seller"),
     path("top-instructors/", top_instructors, name="top-instructors"),
+    path("course_filter/", course_filter, name="course-filer"),
 ]

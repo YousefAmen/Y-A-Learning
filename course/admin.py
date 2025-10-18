@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import (
     Category,
     Contact,
-    # Rating,
     Course,
     Enrollment,
     LearningOutcomes,
@@ -38,11 +37,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
 class ModuleAdmin(admin.ModelAdmin):
     list_filter = ["is_published", "created_at", "updated_at"]
     ordering = ["title", "created_at", "updated_at"]
-
-
-# class RatingAdmin(admin.ModelAdmin):
-#     list_filter = ["created_at"]
-#     ordering = ["rate", "created_at"]
+    prepopulated_fields = {"slug": ("title",)}
 
 
 class ReviewAdmin(admin.ModelAdmin):
@@ -63,12 +58,16 @@ class ContactAdmin(admin.ModelAdmin):
     readonly_fields = ["token"]
 
 
+class LearningOutcomesAdmin(admin.ModelAdmin):
+    ordering = ["created_at"]
+    prepopulated_fields = {"slug": ("description",)}
+
+
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson, LessonAdmin)
-# admin.site.register(Rating, RatingAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Module, ModuleAdmin)
 admin.site.register(Enrollment, EnrollmentAdmin)
-admin.site.register(LearningOutcomes)
+admin.site.register(LearningOutcomes, LearningOutcomesAdmin)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Category, CategoryAdmin)

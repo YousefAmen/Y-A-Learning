@@ -13,7 +13,7 @@ from django.views.generic import (
 from course.models import Course, Enrollment
 
 from .forms import RoleSelectionForm, SocialLinksForm, UpdateUserProfile
-from .models import Instructor, Profile, SocialLinks, Student
+from .models import Instructor, SocialLinks, Student
 from .signals import user_signed_up
 from django.db.models import Count
 from django.http import JsonResponse
@@ -78,21 +78,23 @@ def user_profile(request, slug, token):
         messages.info(request, "This Profile Is Not Exsits!.")
         return redirect("course:index")
     instructor_courses = None
-    enrollments_courses = None
 
     if profile.role == "instructor":
         instructor_courses = (
-            Course.objects.filter(instructor=profile).order_by("-created_at")
+            Course.objects.filter(instructor=profile)
+            .select_related("instructor", "category")
+            .prefetch_related("course_enrollments")
+            .order_by("-created_at")
             # .annotate(enroll=Count("course_enrollments", distinct=True))
             # .order_by("-enroll")
         )
-    enrollments_courses = Enrollment.objects.filter(user=profile.user)
+    enrollments_courses = Enrollment.objects.filter(user=profile).select_related(
+        "course", "user"
+    )
     context = {
         "profile": profile,
         "instructor_courses": instructor_courses,
-        "enrollments_courses": (
-            enrollments_courses if enrollments_courses else None
-        ),
+        "enrollments_courses": (enrollments_courses if enrollments_courses else None),
     }
     return render(request, "account/user_profile.html", context)
 

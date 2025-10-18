@@ -1187,6 +1187,204 @@
     color: white;
 
   }
+
+
+  /* Cards */
+  .course-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .course-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  }
+
+  .course-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+
+  .course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .badge-featured {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .course-content {
+    padding: 20px;
+  }
+
+  .course-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .course-title a {
+    color: #1e293b;
+    text-decoration: none;
+  }
+
+  .course-title a:hover {
+    color: #667eea;
+  }
+
+  .course-desc {
+    font-size: 0.95rem;
+    color: #6b7280;
+    min-height: 48px;
+  }
+
+  .price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #059669;
+  }
+
+  .free {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .btn-view {
+    display: block;
+    text-align: center;
+    padding: 10px 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .btn-view:hover {
+    opacity: 0.9;
+    color: white;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stars {
+    font-size: 12px;
+    color: #f5c518;
+    letter-spacing: 2px;
+  }
+
+  .star {
+    color: #ccc;
+  }
+
+  .star.filled {
+    color: gold;
+  }
+
+  .header-text {
+
+    margin: 30px 10px;
+    font-size: 25px;
+    background-color: #fffdfd;
+    padding: 15px;
+    border-radius: 10px;
+    text-shadow: 1px;
+    color: #1c1d1f;
+  }
+
+  .instructor-name {
+    color: #5022c3;
+  }
+
+  .buy-now {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background-color: #5022c3;
+    /* Udemy purple */
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 100%;
+    /* Remove if you don't want full width */
+    letter-spacing: -0.02rem;
+    margin-top: 10px;
+
+  }
+
+  buy-now:hover {
+    background-color: #8710d8;
+    /* Darker purple on hover */
+  }
+
+  .buy-now:active {
+    transform: scale(0.98);
+  }
+
+  .buy-now i {
+    font-size: 18px;
+  }
+
+
+  .cart-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background-color: #5022c3;
+    /* Udemy purple */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 100%;
+    /* Remove if you don't want full width */
+    letter-spacing: -0.02rem;
+  }
+
+  .cart-button:hover {
+    background-color: #8710d8;
+    /* Darker purple on hover */
+  }
+
+  .cart-button:active {
+    transform: scale(0.98);
+  }
+
+  .cart-button i {
+    font-size: 18px;
+  }
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -1601,13 +1799,13 @@
       <div class="action-buttons">
         <form action="" method="POST">
           {% csrf_token %}
-          <button class="btn btn-secondary" name="token" id="add-cart" value='{{course.token}}'>
+          <button class="cart-button" name="token" id="add-cart" value='{{course.token}}'>
             <i class="fas fa-shopping-cart"></i>
             Add to Cart
           </button>
         </form>
 
-        <a href="{% url 'payment:checkout' %}?token={{ course.token }}/" class="btn btn-primary">
+        <a href="{% url 'payment:checkout' %}?token={{ course.token }}/" class="buy-now">
           <i class="fas fa-credit-card"></i> Buy Now
         </a>
       </div>
@@ -1653,7 +1851,133 @@
     </div>
     {% endif %}
   </div>
+  <div>
+
+
+  </div>
 </div>
+
+<section class="top-courses-grid py-5">
+
+  <h2 class="header-text">Students also bought</h2>
+  <div class="container">
+    <div class="row g-4">
+      {% for course in related_courses %}
+      <div class="col-lg-4 col-md-6">
+        <div class="course-card">
+          <div class="course-image">
+            {% if course.image %}
+            <img src="{{course.image.url}}" alt="{{course.title}}">
+            {% else %}
+            <img src="{% static 'images/default-course.jpg' %}" alt="Course">
+            {% endif %}
+            <span class="badge-featured">Featured</span>
+          </div>
+          <div class="course-content">
+            <h3 class="course-title">
+              <a href="{{course.get_absolute_url}}">{{course.title|title}}</a>
+            </h3>
+            <p class="course-desc">{{course.description|truncatechars:100}}</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+
+              <div class="rating ">
+                <span class="stars">
+                  {% for i in "12345" %}
+                  {% with star_num=forloop.counter %}
+                  {% if course.avg_rating >= star_num %}
+                  <span class="star filled">★</span>
+                  {% elif course.avg_rating >= star_num|add:-0.5 %}
+                  <span class="star half">⯨</span>
+                  {% else %}
+                  <span class="star empty">☆</span>
+                  {% endif %}
+                  {% endwith %}
+                  {% endfor %}
+                  <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+                </span>
+              </div>
+              <div class="price">
+                {% if course.discount_price %}
+                ${{course.discount}}
+                {% else %}
+                {% if course.price %}
+                ${{course.price}}
+                {% else %}
+                <span class="free">Free</span>
+                {% endif %}
+                {% endif %}
+              </div>
+            </div>
+            <a href="{{course.get_absolute_url}}" class="btn-view mt-3">View Details</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% if instructor_courses %}
+<section class="top-courses-grid py-5">
+
+  <h2 class="header-text">More Courses by <span class="instructor-name">{{course.instructor.first_name }}
+      {{course.instructor.last_name }}</span></h2>
+  <div class="container">
+    <div class="row g-4">
+      {% for course in instructor_courses %}
+      <div class="col-lg-4 col-md-6">
+        <div class="course-card">
+          <div class="course-image">
+            {% if course.image %}
+            <img src="{{course.image.url}}" alt="{{course.title}}">
+            {% else %}
+            <img src="{% static 'images/default-course.jpg' %}" alt="Course">
+            {% endif %}
+            <span class="badge-featured">Featured</span>
+          </div>
+          <div class="course-content">
+            <h3 class="course-title">
+              <a href="{{course.get_absolute_url}}">{{course.title|title}}</a>
+            </h3>
+            <p class="course-desc">{{course.description|truncatechars:100}}</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+
+              <div class="rating ">
+                <span class="stars">
+                  {% for i in "12345" %}
+                  {% with star_num=forloop.counter %}
+                  {% if course.avg_rating >= star_num %}
+                  <span class="star filled">★</span>
+                  {% elif course.avg_rating >= star_num|add:-0.5 %}
+                  <span class="star half">⯨</span>
+                  {% else %}
+                  <span class="star empty">☆</span>
+                  {% endif %}
+                  {% endwith %}
+                  {% endfor %}
+                  <span class="rating-text">({{ course.avg_rating|floatformat:1 }})</span>
+                </span>
+              </div>
+              <div class="price">
+                {% if course.discount_price %}
+                ${{course.discount}}
+                {% else %}
+                {% if course.price %}
+                ${{course.price}}
+                {% else %}
+                <span class="free">Free</span>
+                {% endif %}
+                {% endif %}
+              </div>
+            </div>
+            <a href="{{course.get_absolute_url}}" class="btn-view mt-3">View Details</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <!-- Lesson Video Modal -->
 <div id="lessonVideoModal" class="video-modal lesson-video-modal">

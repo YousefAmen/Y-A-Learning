@@ -36,6 +36,7 @@ from .models import (
 )
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
+from .filters import CourseFilter
 
 
 class Index(TemplateView):
@@ -49,6 +50,8 @@ class Index(TemplateView):
 
         courses = (
             Course.objects.filter(is_puplished=True)
+            .select_related("instructor", "category")
+            .prefetch_related("course_reviews", "course_enrollments", "course_outcomes")
             .annotate(
                 rating=Avg("course_reviews__rate", distinct=True),
                 total_enrollments=Count("course_enrollments", distinct=True),
@@ -354,6 +357,31 @@ class CourseDetail(DetailView):
     template_name = "course_pages/course_detail.html"
     context_object_name = "course"
 
+    def get_related_courses(self, course):
+        return (
+            Course.objects.filter(
+                is_puplished=True, tags__in=course.tags.all(), category=course.category
+            )
+            .select_related("instructor")
+            .prefetch_related(
+                "tags",
+            )
+            .exclude(token=course.token)
+            .distinct()
+            .order_by("created_at")[:6]
+        )
+
+    def instructor_related_courses(self, course):
+        return (
+            Course.objects.filter(is_puplished=True, instructor=course.instructor)
+            .select_related("instructor")
+            .prefetch_related("tags", "course_enrollments", "course_reviews")
+            .annotate(enroll=Count("course_enrollments"), rate=Count("course_reviews"))
+            .distinct()
+            .order_by("-enroll", "-rate")
+            .exclude(token=course.token)[:6]
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = self.get_object()
@@ -362,6 +390,10 @@ class CourseDetail(DetailView):
                 context["is_enrolled"] = True
             else:
                 context["is_enrolled"] = False
+
+        context["related_courses"] = self.get_related_courses(course)
+        context["instructor_courses"] = self.instructor_related_courses(course)
+
         return context
 
 
@@ -374,12 +406,18 @@ def fetch_courses_by_tag(request, tag):
 
 def fetch_courses_by_category(request, slug):
 
-    courses = Course.objects.filter(category__slug=slug).order_by("-created_at")
+    courses = (
+        Course.objects.filter(category__slug=slug)
+        .select_related("category", "instructor")
+        .order_by("-created_at")
+    )
     category = Category.objects.get(slug=slug)
 
-    popular_categories = Category.objects.annotate(count=Count("course")).order_by(
-        "-count"
-    )[:5]
+    popular_categories = (
+        Category.objects.annotate(count=Count("course"))
+        .select_related("course")
+        .order_by("-count")[:5]
+    )
 
     context = {
         "courses": courses,
@@ -393,10 +431,8 @@ def search(request):
     results = {"instructors": None, "courses": None}
     query = None
     form = SearchForm(request.GET or None)
-    selected_levels = request.GET.getlist("level")
-    sort = request.GET.get("sort")
-    courses = Course.objects.filter(is_puplished=True).order_by("-created_at")
 
+    courses = Course.objects.filter(is_puplished=True).order_by("-created_at")
     if "search" in request.GET and form.is_valid():
         query = form.cleaned_data["search"]
         courses = (
@@ -416,50 +452,26 @@ def search(request):
         if instructors.exists():
             results["instructors"] = instructors
 
-    # level filter
-    if selected_levels:
-        courses = (
-            Course.objects.filter(level__in=selected_levels, is_puplished=True)
-            .filter(Q(title__icontains=query) | Q(description__icontains=query))
-            .annotate(enroll_count=Count("course_enrollments"))
-            .order_by("-enroll_count")
-        )
-
-        results["courses"] = courses
-    # recommanded courses
-    if sort == "recommended":
-        courses = courses.annotate(enroll_counts=Count("course_enrollments")).order_by(
-            "-enroll_counts"
-        )
-    if sort == "newest":
-        courses = courses.order_by("-created_at")
-    if sort == "popular":
-
-        courses = courses.annotate(
-            views_counter=Sum("modules__lessons__views")
-        ).order_by("-views_counter")
-    if sort == "rating":
-        courses = courses.annotate(avg_rating=Avg("reviews__rating")).order_by(
-            "-avg_rating"
-        )
-
-    results["courses"] = courses
-
-    # sidebar data
-    top_enrollments_courses = Course.objects.annotate(
-        enrollments_count=Count("course_enrollments")
-    ).order_by("-enrollments_count")[:5]
-    top_topics = Tag.objects.annotate(popular_topics=Count("course")).order_by(
-        "-popular_topics"
-    )[:5]
+    course_form = CourseFilter(request.GET, queryset=courses)
+    results["courses"] = course_form.qs
     context = {
         "form": form,
         "query": query,
         "results": results,
-        "top_enrollments_courses": top_enrollments_courses,
-        "top_topices": top_topics,
+        "course_form": course_form.form,
     }
     return render(request, "course_pages/search.html", context)
+
+
+def course_filter(request):
+    course_form = CourseFilter(
+        request.GET, queryset=Course.objects.filter(is_puplished=True)
+    )
+    return render(
+        request,
+        "course_pages/course_filter.html",
+        {"course_form": course_form.form, "course_qs": course_form.qs},
+    )
 
 
 @login_required

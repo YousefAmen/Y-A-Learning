@@ -15,9 +15,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 import cloudinary
+from datetime import timedelta
 
 load_dotenv(".env")
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,6 +39,11 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://y-a-learning-production.up.railway.app",
     "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://localhost:5173",
     "http://127.0.0.1:8000",
 ]
 # Application definition
@@ -75,13 +80,22 @@ INSTALLED_APPS = [
     # paypal app
     "paypal.standard.ipn",
     "whitenoise.runserver_nostatic",
+    # restframmework
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
+    "djoser",
+    "debug_toolbar",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -114,14 +128,14 @@ WSGI_APPLICATION = "main.wsgi.application"
 
 DATABASES = {
     "default": {
-        # "ENGINE": "django.db.backends.sqlite3",
-        # "NAME": BASE_DIR / "db.sqlite3",
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "railway",
-        "USER": "postgres",
-        "PASSWORD": os.environ["DB_PASSWORD"],
-        "HOST": "switchback.proxy.rlwy.net",
-        "PORT": "14628",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+        # "ENGINE": "django.db.backends.postgresql",
+        # "NAME": "railway",
+        # "USER": "postgres",
+        # "PASSWORD": os.environ["DB_PASSWORD"],
+        # "HOST": "switchback.proxy.rlwy.net",
+        # "PORT": "14628",
     }
 }
 
@@ -145,6 +159,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "members.User"
+
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -159,7 +175,7 @@ SOCIALACCOUNT_PROVIDERS = {
             "secret": os.getenv("OAUTH_GOOGLE_SECRET"),
             "key": "",
         },
-        "SCOPE": ["profile", "email"],
+        "SCOPE": ["User", "email"],
         "AUTH_PARAMS": {
             "access_type": "offline",
             "prompt": "consent",
@@ -180,6 +196,39 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 
+# RestFrammework
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+}
+
+DJOSER = {
+    "SERIALIZERS": {
+        "user": "members.APIs.serializers.BaseUserSerializer",
+        "current_user": "members.APIs.serializers.BaseUserSerializer",
+        "user_create": "members.APIs.serializers.CustomUserCreateSerializer",
+    },
+    "LOGIN_FIELD": "email",
+    "PASSWORD_RESET_CONFIRM_RETYPE": True,
+    "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
+    "SEND_CONFIRMATION_EMAIL": True,
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+    "USERNAME_CHANGED_EMAIL_CONFIRMATION": False,
+    "USER_CREATE_PASSWORD_RETYPE": False,
+    "SET_PASSWORD_RETYPE": False,
+    "LOGOUT_ON_PASSWORD_CHANGE": False,
+}
+
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("JWT",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -193,17 +242,20 @@ ACCOUNT_ADAPTER = "members.adapters.AccountAdapter"
 
 USE_TZ = True
 
+
 SITE_ID = 1
-
-
 # ----social Login-----
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
 # ----end social Login-----
 
-ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
 # ------Redirects-----
 LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_REDIRECT_URL = "/"
@@ -212,15 +264,14 @@ LOGIN_REDIRECT_URL = "/"
 
 
 # -----Email Backend-----
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = "smtp.gmail.com"
-# EMAIL_HOST_USER = "ammenyoussef@gmail.com"
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
-# EMAIL_PORT = 587
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "ammenyoussef@gmail.com"
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = True
-# EMAIL_USE_TLS = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
 # ------end Email Backend-----
 
 
@@ -263,3 +314,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 PAYPAL_RECEIVER_EMAIL = "yousefAmenbusiness@business.example.com"
 PAYPAL_TEST = True
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
