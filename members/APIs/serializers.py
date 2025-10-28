@@ -111,8 +111,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         user.save()
         # also creating a email adddress object when the user is sign in with djoser
 
-        # EmailAddress.objects.create(
-        #     user=user, email=user.email, primary=True, verified=True
-        # )
+        EmailAddress.objects.create(
+            user=user, email=user.email, primary=True, verified=True
+        )
 
         return user
