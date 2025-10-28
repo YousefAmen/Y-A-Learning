@@ -478,7 +478,7 @@
                 class="profile-btn btn-profile-edit">
                 <i class=" fas fa-edit"></i>
             </a>
-            <a href="{% url 'members:edit_profile' user.slug user.role user.token %}"
+            <a href="{% url 'members:delete_profile' user.slug user.role user.token %}"
                 class="profile-btn btn-profile-delete">
                 <i class="fas fa-trash"></i>
             </a>
@@ -548,7 +548,7 @@
                     <i class="fas fa-plus"></i>
                 </a>
                 <div class="social-links">
-                    {% for link in request.user.profile.instructor_links.all %}
+                    {% for link in request.user.instructor.instructor_links.all %}
                     <div class="link-item">
                         <a href="{{ link.link }}" target="_blank" class="profile-link">
                             {{ link.link_name }}

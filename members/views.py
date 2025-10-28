@@ -204,8 +204,8 @@ class CreateLink(CreateView):
         return reverse_lazy(
             "members:user_profile",
             args=[
-                self.object.instructor.slug,
-                self.object.instructor.token,
+                self.object.instructor.user.slug,
+                self.object.instructor.user.token,
             ],
         )
 
@@ -219,12 +219,11 @@ class UpdateLink(UpdateView):
     slug_url_kwarg = "name"
 
     def get_success_url(self):
-
         return reverse_lazy(
             "members:user_profile",
             args=[
-                self.object.instructor.slug,
-                self.object.instructor.token,
+                self.object.instructor.user.slug,
+                self.object.instructor.user.token,
             ],
         )
 
@@ -236,12 +235,10 @@ class DeleteLink(DeleteView):
     slug_url_kwarg = "name"
 
     def get_success_url(self):
-        instructor = self.object.instructor
-
         return reverse_lazy(
             "members:user_profile",
             args=[
-                instructor.slug,
-                instructor.token,
+                self.object.instructor.user.slug,
+                self.object.instructor.user.token,
             ],
         )

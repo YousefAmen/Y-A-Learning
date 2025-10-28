@@ -67,7 +67,7 @@
             {{ form|crispy }}
 
             <div class="form-actions">
-                <a href="{% url 'members:user_profile' request.user.instructor.slug request.user.instructor.token %}"
+                <a href="{% url 'members:user_profile' request.user.slug request.user.token %}"
                     class="btn-cancel">Cancel</a>
                 <button type="submit" class="btn-update">Update Link</button>
             </div>

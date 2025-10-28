@@ -60,7 +60,7 @@ class Category(models.Model):
         choices=CHOICES_CATEGORIES,
         default="Development & Programming",
     )
-
+    image = CloudinaryField("image", resource_type="image", blank=True, null=True)
     slug = models.SlugField(default="", unique=True, max_length=500)
 
     def __str__(self):

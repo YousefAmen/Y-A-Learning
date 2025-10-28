@@ -13,8 +13,7 @@
         <form method="POST" class="delete-actions" action="{% url 'members:delete_link' object.link_name %}">
             {% csrf_token %}
             <button type="submit" class="btn-delete">Yes, Delete</button>
-            <a href="{% url 'members:user_profile' request.user.instructor.slug request.user.instructor.token %}"
-                class="btn-cancel">
+            <a href="{% url 'members:user_profile' request.user.slug request.user.token %}" class="btn-cancel">
                 Cancel
             </a>
         </form>
