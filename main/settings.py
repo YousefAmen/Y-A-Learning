@@ -33,6 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "y-a-learning-production.up.railway.app",
+    "https://y-a-learning-production.up.railway.app",
     "127.0.0.1",
     "localhost",
 ]
