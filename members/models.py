@@ -36,10 +36,7 @@ TEACHING_EXPERIENCE_CHOICES = (
 
 class User(AbstractUser):
     class Role(models.TextChoices):
-        STUDENT = (
-            "student",
-            "STUDENT",
-        )
+        STUDENT = "student", "Student"
         INSTRUCTOR = "instructor", "Instructor"
 
     class Gender(models.TextChoices):
@@ -78,11 +75,7 @@ class User(AbstractUser):
         return reverse("members:user_profile", args=[self.slug, self.token])
 
 
-class Instructor(User):
-    """
-    - Instructor profile it will inherit form the profile model
-    - it will have the his owen Fields
-    """
+class Instructor(models.Model):
 
     class TeachingExperience(models.TextChoices):
         ONE_YEAR = "1", "1 year"
@@ -92,8 +85,8 @@ class Instructor(User):
         FIVE_PLUS = "5", "5+ years"
 
     about = models.TextField(max_length=500)
-
-    teaching_exe = models.PositiveSmallIntegerField(
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    teaching_exe = models.CharField(
         choices=TeachingExperience.choices,
         default=TeachingExperience.ONE_YEAR,
         blank=True,
@@ -104,13 +97,13 @@ class Instructor(User):
         verbose_name_plural = "Instructors"
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} (Instructor)"
+        return f"{self.user.first_name} {self.user.last_name} (Instructor)"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         instructor_group = Group.objects.get(name="Instructors")
-        if not self.groups.filter(pk=instructor_group.pk).exists():
-            self.groups.add(instructor_group)
+        if not self.user.groups.filter(pk=instructor_group.pk).exists():
+            self.user.groups.add(instructor_group)
 
     @property
     def get_students_count(self):
@@ -134,6 +127,18 @@ class Instructor(User):
         return total_rate or 0
 
 
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    enrollments = models.CharField(max_length=500, blank=True, null=True)
+    courses_complete = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Students"
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name} (Student)"
+
+
 class SocialLinks(models.Model):
     instructor = models.ForeignKey(
         Instructor, on_delete=models.CASCADE, related_name="instructor_links"
@@ -152,19 +157,3 @@ class SocialLinks(models.Model):
 
     def __str__(self):
         return f"{self.link_name}"
-
-
-class Student(User):
-    """
-    - Instructor profile it will inherit form the profile model
-    - it will have the his owen Fields
-    """
-
-    enrollments = models.CharField(max_length=500, blank=True, null=True)
-    courses_complete = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        verbose_name_plural = "Students"
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} (Student)"

@@ -128,14 +128,14 @@ WSGI_APPLICATION = "main.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-        # "ENGINE": "django.db.backends.postgresql",
-        # "NAME": "railway",
-        # "USER": "postgres",
-        # "PASSWORD": os.environ["DB_PASSWORD"],
-        # "HOST": "switchback.proxy.rlwy.net",
-        # "PORT": "14628",
+        # "ENGINE": "django.db.backends.sqlite3",
+        # "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "railway",
+        "USER": "postgres",
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "HOST": "shuttle.proxy.rlwy.net",
+        "PORT": "25202",
     }
 }
 
@@ -226,7 +226,7 @@ DJOSER = {
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
 }
 
 # Internationalization

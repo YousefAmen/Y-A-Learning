@@ -181,12 +181,12 @@
                     {% endif %}
                 </div>
                 <div class="cat-cap">
-                    <h5><a href="{% url 'members:user_public_profile' instructor.slug instructor.token %}">Mr.
-                            {{instructor.first_name}} {{instructor.last_name}}</a></h5>
-                    {% if instructor.about %}
-                    <p>{{instructor.about|truncatechars:120}}</p>
+                    <h5><a href="{% url 'members:user_public_profile' instructor.user.slug instructor.user.token %}">Mr.
+                            {{instructor.user.first_name}} {{instructor.user.last_name}}</a></h5>
+                    {% if instructor.user.about %}
+                    <p>{{instructor.user.about|truncatechars:120}}</p>
                     {% else %}
-                    <p>{{instructor.bio|truncatechars:120}}</p>
+                    <p>{{instructor.user.bio|truncatechars:120}}</p>
                     {% endif %}
                 </div>
             </div>

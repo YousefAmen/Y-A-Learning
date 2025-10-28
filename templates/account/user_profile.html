@@ -459,33 +459,31 @@
     <div class="profile-header text-center">
 
         <div class="profile-avatar">
-            {% if profile.profile_pic %}
-            <img src="{{ profile.profile_pic.url }}" alt="{{ profile.first_name }} {{ profile.last_name }}">
+            {% if user.profile_pic %}
+            <img src="{{ user.profile_pic.url }}" alt="{{ user.first_name }} {{ user.last_name }}">
             {% else %}
-            {{ profile.first_name|first|upper }}{{ profile.last_name|first|upper }}
+            {{user.first_name|first|upper }}{{ user.last_name|first|upper }}
             {% endif %}
         </div>
-        <h1 class="profile-name">{{ profile.first_name }} {{ profile.last_name }}</h1>
+        <h1 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h1>
         <p class="profile-title">
             {% if profile.bio %}
-            {{ profile.bio }}
+            {{ user.bio }}
             {% else %}
-            {% if profile.role == 'instructor' %}Instructor{% else %}Learner{% endif %}
+            {% if profile_type == 'instructor' %}Instructor{% else %}Learner{% endif %}
             {% endif %}
         </p>
         <div style="display: flex; justify-content:center;">
-            {% if profile.role == "student" %}
-            <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
+            <a href="{% url 'members:edit_profile' user.slug user.role user.token %}"
                 class="profile-btn btn-profile-edit">
                 <i class=" fas fa-edit"></i>
             </a>
-            <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
+            <a href="{% url 'members:edit_profile' user.slug user.role user.token %}"
                 class="profile-btn btn-profile-delete">
                 <i class="fas fa-trash"></i>
             </a>
-            {% endif %}
         </div>
-        {% if profile.role == 'instructor' %}
+        {% if profile_type == 'instructor' %}
         <div class="profile-stats">
             <div class="stat-item">
                 <div class="stat-value">{{ instructor_courses.count|default:"0" }}</div>
@@ -500,7 +498,7 @@
                 <div class="stat-label">Enrolled Courses</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">{{ profile.created_at|date:"Y" }}</div>
+                <div class="stat-value">{{ user.created_at|date:"Y" }}</div>
                 <div class="stat-label">Member since</div>
             </div>
         </div>
@@ -511,7 +509,7 @@
                 <div class="stat-label">Enrolled Courses</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">{{ profile.created_at|date:"Y" }}</div>
+                <div class="stat-value">{{ user.created_at|date:"Y" }}</div>
                 <div class="stat-label">Member since</div>
             </div>
         </div>
@@ -525,32 +523,32 @@
                 <h3 class="sidebar-title">About</h3>
                 <div class="info-item">
                     <i class="fas fa-envelope"></i>
-                    <span>{{ profile.user.email }}</span>
+                    <span>{{ user.email }}</span>
                 </div>
-                {% if profile.phone %}
+                {% if user.phone %}
                 <div class="info-item">
                     <i class="fas fa-phone"></i>
-                    <span>{{ profile.phone }}</span>
+                    <span>{{ user.phone }}</span>
                 </div>
                 {% endif %}
                 <div class="info-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span>{{ profile.country|default:"Not specified" }}</span>
+                    <span>{{ user.country|default:"Not specified" }}</span>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>Joined {{ profile.create_at|date:"M Y" }}</span>
+                    <span>Joined {{ user.created_at|date:"M Y" }}</span>
                 </div>
             </div>
 
-            {% if profile.instructor %}
+            {% if profile_type == "instructor" %}
             <div class="sidebar-card">
                 <h3 class="sidebar-title">Social Links</h3>
                 <a href="{% url 'members:add_link' %}" title="Add Link">
                     <i class="fas fa-plus"></i>
                 </a>
                 <div class="social-links">
-                    {% for link in request.user.instructor.instructor_links.all %}
+                    {% for link in request.user.profile.instructor_links.all %}
                     <div class="link-item">
                         <a href="{{ link.link }}" target="_blank" class="profile-link">
                             {{ link.link_name }}
@@ -591,13 +589,13 @@
                         Create New Course
                     </a>
 
-                    <a href="{% url 'members:edit_profile' profile.slug profile.role profile.token %}"
+                    <a href="{% url 'members:edit_profile' user.slug user.role user.token %}"
                         class="course-btn btn-edit" style="display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-edit"></i>
                         Edit Your Profile
                     </a>
 
-                    <a href="{% url 'members:delete_profile' profile.slug profile.role profile.token %}"
+                    <a href="{% url 'members:delete_profile' user.slug user.role user.token %}"
                         class="course-btn btn-delete" style="display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-trash"></i>
                         Delete Your Profile
@@ -651,8 +649,7 @@
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="{% url 'members:user_public_profile' profile.slug profile.token %}"
-                    class="course-btn btn-browse">
+                <a href="{% url 'members:user_public_profile'  user.slug  user.token %}" class="course-btn btn-browse">
                     <i class="fas fa-search"></i> View Public Profile
                 </a>
             </div>
@@ -662,7 +659,7 @@
             {% if enrollments_courses %}
             <div class="section-header" style="margin: 40px 0 20px 0;">
                 <h2 class="section-title" style="margin: 0;">
-                    {% if profile.role == "instructor" %}
+                    {% if profile_type == "instructor" %}
                     Enrolled Courses
                     {% else %}
                     Learning Journey
@@ -716,7 +713,7 @@
             {% if not instructor_courses and not enrollments_courses %}
             <div class="empty-state">
                 <p>No courses found</p>
-                {% if profile.role == 'instructor' %}
+                {% if profile_type == 'instructor' %}
                 <a href="{% url 'course:create-course' %}" class="course-btn btn-create">
                     <i class="fas fa-plus-circle"></i> Create Your First Course
                 </a>

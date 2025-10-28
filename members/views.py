@@ -1,7 +1,7 @@
 from allauth.account.views import PasswordChangeView
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render, reverse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (
     ListView,
@@ -12,8 +12,13 @@ from django.views.generic import (
 )
 from course.models import Course, Enrollment
 
-from .forms import RoleSelectionForm, SocialLinksForm, UpdateUserProfile
-from .models import Instructor, SocialLinks, Student
+from .forms import (
+    RoleSelectionForm,
+    SocialLinksForm,
+    UpdateUserProfile,
+    InstructorEditProfile,
+)
+from .models import Instructor, SocialLinks, Student, User
 from .signals import user_signed_up
 from django.db.models import Count
 from django.http import JsonResponse
@@ -34,11 +39,6 @@ def select_role(request):
             social_account = request.user.socialaccount_set.first()
             extra_data = social_account.extra_data if social_account else {}
             signup_data = {
-                "first_name": extra_data.get("given_name", "John"),
-                "last_name": extra_data.get("family_name", "Doe"),
-                "gender": extra_data.get("gender", "male"),
-                "birth_date": extra_data.get("brithdate", "2000-01-01"),
-                "country": extra_data.get("country", ""),
                 "role": role,
             }
 
@@ -69,17 +69,16 @@ class CustomPasswordChangeView(PasswordChangeView):
 
 
 def user_profile(request, slug, token):
-    profile_models = [Instructor, Student]
-    for model in profile_models:
-        profile = model.objects.filter(slug=slug, token=token).first()
-        if profile:
-            break
-    else:
-        messages.info(request, "This Profile Is Not Exsits!.")
-        return redirect("course:index")
+    try:
+        user = User.objects.get(slug=slug, token=token)
+    except User.DoesNotExist:
+        return messages.info(request, "this user is not found.")
+    profile = None
     instructor_courses = None
 
-    if profile.role == "instructor":
+    if user.role == "instructor":
+        profile = Instructor.objects.get(user=user)
+
         instructor_courses = (
             Course.objects.filter(instructor=profile)
             .select_related("instructor", "category")
@@ -88,11 +87,16 @@ def user_profile(request, slug, token):
             # .annotate(enroll=Count("course_enrollments", distinct=True))
             # .order_by("-enroll")
         )
-    enrollments_courses = Enrollment.objects.filter(user=profile).select_related(
+    else:
+        profile = Student.objects.get(user=user)
+
+    enrollments_courses = Enrollment.objects.filter(user=user).select_related(
         "course", "user"
     )
     context = {
         "profile": profile,
+        "user": user,
+        "profile_type": user.role,
         "instructor_courses": instructor_courses,
         "enrollments_courses": (enrollments_courses if enrollments_courses else None),
     }
@@ -101,24 +105,31 @@ def user_profile(request, slug, token):
 
 def edit_profile(request, slug, role, token):
     # get the profile by looping through models and if founded it will break the loop
-    profile_models = [Instructor, Student]
-    for model in profile_models:
-        profile = model.objects.filter(slug=slug, role=role, token=token).first()
-        if profile:
-            break
+    user = get_object_or_404(User, slug=slug, role=role, token=token)
+    instructor = None
+    instructor_form = None
+    if user.role == "instructor":
 
-    # check the request method and implement edit profile proccess
+        instructor = Instructor.objects.get(user=user)
+        # check the request method and implement edit profile proccess
+
     if request.method == "POST":
-        form = UpdateUserProfile(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
+        form = UpdateUserProfile(request.POST, request.FILES, instance=user)
+        if instructor:
+            instructor_form = InstructorEditProfile(request.POST, instance=instructor)
+        if form.is_valid() and instructor_form.is_valid():
             form.save()
+            instructor_form.save()
             messages.success(request, "Profile Is Updated Successfully.")
-            return redirect(profile.get_absolute_url())
+            return redirect(user.get_absolute_url())
         else:
-            messages.error(request, "Error")
+            messages.error(request, "Please correct the errors below.")
     else:
-        form = UpdateUserProfile(instance=profile)
-    context = {"form": form, "profile": profile}
+        form = UpdateUserProfile(instance=user)
+        if instructor:
+            instructor_form = InstructorEditProfile(instance=instructor)
+
+    context = {"form": form, "profile": user, "instructor_form": instructor_form}
     return render(request, "account/edit_user_profile.html", context)
 
 
@@ -133,7 +144,7 @@ def delete_profile(request, slug, role, token):
 
 def public_instructor_profile(request, slug, token):
     try:
-        instructor = Instructor.objects.get(slug=slug, token=token)
+        instructor = Instructor.objects.get(user__slug=slug, user__token=token)
     except Instructor.DoesNotExist:
         return redirect("course:home")
     instructor_courses = Course.objects.filter(instructor=instructor).order_by(
@@ -149,7 +160,7 @@ def follow_instructor(request):
     if not request.user.is_authenticated:
         messages.info(request, "You must be logged in to follow an instructor.")
         return redirect("account_login")
-    instructor = Instructor.objects.get(token=token)
+    instructor = Instructor.objects.get(user__token=token)
     if not instructor.followers.filter(id=request.user.id).exists():
         instructor.followers.add(request.user)
         return JsonResponse({"action": "added"})

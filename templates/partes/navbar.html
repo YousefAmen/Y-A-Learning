@@ -43,7 +43,7 @@
                                                     <li><a href="{% url 'course:create-course' %}">Create a Course</a>
                                                     </li>
                                                     <li><a
-                                                            href="{% url 'members:user_public_profile' request.user.instructor.slug request.user.instructor.token  %}">Public
+                                                            href="{% url 'members:user_public_profile' request.user.slug request.user.token  %}">Public
                                                             Profile</a></li>
                                                     <li><a href="{% url 'members:instructor_top_courses' %}">My Best
                                                             Courses</a></li>
@@ -83,21 +83,11 @@
 
                                             <!-- Authentication Buttons -->
                                             {% if user.is_authenticated %}
-                                            {% if request.user.instructor %}
-                                            <li class="button-header"><a
-                                                    href="{{ request.user.instructor.get_absolute_url }}"
+                                            <li class="button-header"><a href="{{ request.user.get_absolute_url }}"
                                                     class="btn btn3">Profile</a></li>
                                             <li class="button-header margin-left">
                                                 <a href="{% url 'account_logout' %}" class="btn">Logout</a>
                                             </li>
-                                            {% else %}
-                                            <li class="button-header"><a
-                                                    href="{{ request.user.student.get_absolute_url }}"
-                                                    class="btn btn3">Profile</a></li>
-                                            <li class="button-header margin-left">
-                                                <a href="{% url 'account_logout' %}" class="btn">Logout</a>
-                                            </li>
-                                            {% endif %}
                                             {% else %}
                                             <li class="button-header margin-left">
                                                 <a href="{% url 'account_signup' %}" class="btn">Join</a>

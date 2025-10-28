@@ -98,109 +98,11 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
-class InstructorAdmin(admin.ModelAdmin):
-    list_display = [
-        "first_name",
-        "last_name",
-        "bio",
-        "gender",
-        "profile_pic",
-        "phone",
-        "birth_date",
-        "country",
-        "slug",
-        "token",
-        "created_at",
-        "updated_at",
-    ]
-    readonly_fields = ["email", "created_at", "updated_at", "token"]
-    prepopulated_fields = {"slug": ("first_name", "last_name")}
-    search_fields = ("email", "first_name", "last_name")
-    ordering = ("email",)
-    fieldsets = (
-        (
-            "Personal Information",
-            {
-                "fields": (
-                    "email",
-                    "first_name",
-                    "last_name",
-                    "bio",
-                    "profile_pic",
-                )
-            },
-        ),
-        (
-            "Additional Info",
-            {"fields": ("phone", "gender", "country", "birth_date")},
-        ),
-        (
-            "Permissions",
-            {"fields": ("groups",)},
-        ),
-        (
-            "SEO",
-            {"fields": ("slug", "token")},
-        ),
-        (
-            "Dates",
-            {"fields": ("created_at", "updated_at")},
-        ),
-    )
-
-
-class StudentAdmin(admin.ModelAdmin):
-    list_display = [
-        "first_name",
-        "last_name",
-        "bio",
-        "gender",
-        "profile_pic",
-        "phone",
-        "birth_date",
-        "country",
-        "slug",
-        "token",
-        "created_at",
-        "updated_at",
-    ]
-    readonly_fields = ["email", "created_at", "updated_at", "token"]
-    prepopulated_fields = {"slug": ("first_name", "last_name")}
-    search_fields = ("email", "first_name", "last_name")
-    ordering = ("email",)
-    fieldsets = (
-        (
-            "Personal Information",
-            {
-                "fields": (
-                    "email",
-                    "first_name",
-                    "last_name",
-                    "bio",
-                    "profile_pic",
-                )
-            },
-        ),
-        (
-            "Additional Info",
-            {"fields": ("phone", "gender", "country", "birth_date")},
-        ),
-        (
-            "SEO",
-            {"fields": ("slug", "token")},
-        ),
-        (
-            "Dates",
-            {"fields": ("created_at", "updated_at")},
-        ),
-    )
-
-
 class SocialLinks_Admin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("link_name",)}
 
 
 admin.site.register(SocialLinks, SocialLinks_Admin)
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(Instructor, InstructorAdmin)
-admin.site.register(Student, StudentAdmin)
+admin.site.register(Instructor)
+admin.site.register(Student)

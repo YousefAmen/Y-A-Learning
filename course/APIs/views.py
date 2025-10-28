@@ -410,7 +410,6 @@ def delete_lesson(request, lesson_token):
 def create_review(request, course_slug, course_token):
     course = get_course_or_module_object(slug=course_slug, token=course_token)
 
-    print(f"--------{course.course_enrollments.count()}-----------")
     if course.course_enrollments.filter(user=request.user).exists():
         print("success")
         serializer = ReviewSerializer(data=request.data)

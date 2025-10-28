@@ -213,7 +213,15 @@
                                     class="profile-picture rounded-circle" id="profileImagePreview">
                                 {% else %}
                                 <div class="initials-placeholder" id="initialsPlaceholder">
-                                    {{ form.first_name.value|first }}{{ form.last_name.value|first }}
+                                    {% if form.first_name.value and form.last_name.value %}
+                                    {{ form.first_name.value|first|upper }}{{ form.last_name.value|first|upper }}
+                                    {% elif form.first_name.value %}
+                                    {{ form.first_name.value|first|upper }}
+                                    {% elif profile.user.first_name and profile.user.last_name %}
+                                    {{ profile.user.first_name|first|upper }}{{ profile.user.last_name|first|upper }}
+                                    {% else %}
+                                    ?
+                                    {% endif %}
                                 </div>
                                 {% endif %}
                                 <div class="image-upload-icon"
@@ -223,11 +231,27 @@
                             </label>
                             <input type="file" name="profile_pic" accept="image/*" id="id_profile_pic" class="d-none">
                         </div>
-                        <h2 class="profile-name">{{form.first_name.value}} {{form.last_name.value}}</h2>
-                        {% if form.bio.value %}
-                        <p class="text-muted mb-4">{{form.bio.value}}</p>
+                        <h2 class="profile-name">
+                            {% if form.first_name.value or form.last_name.value %}
+                            {{ form.first_name.value|default:'' }} {{ form.last_name.value|default:'' }}
+                            {% elif profile.user.first_name or profile.user.last_name %}
+                            {{ profile.user.first_name }} {{ profile.user.last_name }}
+                            {% else %}
+                            User Profile
+                            {% endif %}
+                        </h2>
+                        {% if profile.instructor %}
+                        {% if profile.instructor.about %}
+                        <p class="text-muted mb-4">{{ profile.instructor.about }}</p>
                         {% else %}
                         <p class="text-muted mb-4">Tell Us About You !</p>
+                        {% endif %}
+                        {% else %}
+                        {% if profile.bio %}
+                        <p class="text-muted mb-4">{{ profile.bio }}</p>
+                        {% else %}
+                        <p class="text-muted mb-4">Tell Us About You !</p>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -252,7 +276,21 @@
                                 {{ form.last_name }}
                             </div>
                         </div>
-
+                        {% if instructor_form %}
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ instructor_form.about.id_for_label }}" class="form-label">About</label>
+                                {{ instructor_form.about }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ instructor_form.teaching_exe.id_for_label }}" class="form-label">Teaching
+                                    Ex</label>
+                                {{ instructor_form.teaching_exe }}
+                            </div>
+                        </div>
+                        {% endif %}
                         <!-- Bio Field -->
                         <div class="col-12">
                             <div class="form-group">
@@ -291,7 +329,7 @@
                         </div>
 
                         <!-- Social Links (Conditional) -->
-                        {% if user.profile.role == 'instructor' %}
+                        {% if profile.role == 'instructor' %}
                         <div class="col-12">
                             <h4 class="mt-4 mb-3"
                                 style="color: #1f2937; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem;">
@@ -326,6 +364,7 @@
                             </div>
                         </div>
                         {% endif %}
+
                     </div>
 
                     <!-- Button Container -->
@@ -334,7 +373,8 @@
                             <i class="fas fa-key me-2"></i> Change Password
                         </a>
 
-                        <a href="{{ get_absolute_url }}" class="btn-cancel">
+                        <a href="{% if user.get_absolute_url %}{{ user.get_absolute_url }}{% else %}{{ user.get_absolute_url }}{% endif %}"
+                            class="btn-cancel">
                             <i class="fas fa-arrow-left me-2"></i> Cancel
                         </a>
 
@@ -342,7 +382,7 @@
                             <i class="fas fa-save me-2"></i> Save Changes
                         </button>
 
-                        <a href="{% url 'members:delete_profile' profile.slug profile.role profile.token %}"
+                        <a href="{% url 'members:delete_profile' user.slug user.role user.token %}"
                             class="delete-profile-btn">
                             <i class="fas fa-trash me-2"></i> Delete Profile
                         </a>
