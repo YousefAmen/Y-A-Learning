@@ -16,6 +16,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import cloudinary
 from datetime import timedelta
+import dj_database_url
 
 load_dotenv(".env")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -125,17 +126,20 @@ WSGI_APPLICATION = "main.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "railway",
-        "USER": "postgres",
-        "PASSWORD": os.environ["DB_PASSWORD"],
-        "HOST": "trolley.proxy.rlwy.net",
-        "PORT": "25723",
+if os.environ.get("DATABASE_PUBLIC_URL"):
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_PUBLIC_URL"), conn_max_age=600
+        )
     }
-}
+else:
+    # Local development - Use SQLite
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 ACCOUNT_FORMS = {"signup": "members.forms.SignUpForms"}
 
@@ -248,9 +252,8 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 # ----end social Login-----
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_LOGIN_METHODS = ["email"]
+ACCOUNT_SIGNUP_FIELDS = ["email", "password1", "password2"]
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
