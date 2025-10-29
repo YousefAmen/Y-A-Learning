@@ -132,8 +132,8 @@ DATABASES = {
         "NAME": "railway",
         "USER": "postgres",
         "PASSWORD": os.environ["DB_PASSWORD"],
-        "HOST": "centerbeam.proxy.rlwy.net",
-        "PORT": "28103",
+        "HOST": "trolley.proxy.rlwy.net",
+        "PORT": "25723",
     }
 }
 
