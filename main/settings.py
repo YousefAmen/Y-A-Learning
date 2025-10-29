@@ -129,14 +129,12 @@ WSGI_APPLICATION = "main.wsgi.application"
 
 DATABASES = {
     "default": {
-        # "ENGINE": "django.db.backends.sqlite3",
-        # "NAME": BASE_DIR / "db.sqlite3",
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "railway",
         "USER": "postgres",
-        "PASSWORD": os.environ["DB_PASSWORD"],
-        "HOST": "shuttle.proxy.rlwy.net",
-        "PORT": "25202",
+        "PASSWORD": os.environ["DB_Password"],
+        "HOST": "centerbeam.proxy.rlwy.net",
+        "PORT": "28103",
     }
 }
 
