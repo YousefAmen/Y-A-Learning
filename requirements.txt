@@ -17,7 +17,6 @@ django-cloudinary-storage==0.3.0
 django-cors-headers==4.8.0
 django-countries==7.6.1
 django-crispy-forms==2.4
-django-debug-toolbar==6.0.0
 django-filter==25.1
 django-paypal==2.1
 django-taggit==6.1.0

@@ -86,7 +86,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "djoser",
-    # "debug_toolbar",
     "django_filters",
 ]
 
@@ -314,6 +313,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 PAYPAL_RECEIVER_EMAIL = "yousefAmenbusiness@business.example.com"
 PAYPAL_TEST = True
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+# ]
