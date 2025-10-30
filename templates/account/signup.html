@@ -21,16 +21,17 @@
                 <!-- Registration Form -->
                 <form method="POST" action="{% url 'account_signup' %}" class="text-start">
                     {% csrf_token %}
-                    
+
                     {{ form|crispy }}
-                    
+
                     <!-- Submit Button -->
                     <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Sign Up</button>
                 </form>
 
                 <!-- Login Link -->
                 <div class="mt-4">
-                    <p class="mb-0">Already have an account? <a href="{% url 'account_login' %}" class="text-primary">Log in</a></p>
+                    <p class="mb-0">Already have an account? <a href="{% url 'account_login' %}"
+                            class="text-primary">Log in</a></p>
                 </div>
                 <div class="relative flex items-center my-4 mt-10">
                     <div class="flex-grow border-t border-gray-300"></div>
@@ -46,76 +47,86 @@
 </main>
 
 <style>
-/* Base Styles */
-body { 
-    background: linear-gradient(135deg, #f0eaf7, #b5cbf3);
+    body {
+        background: linear-gradient(135deg, #f0eaf7, #b5cbf3);
 
-}
-.register-body {
-    min-height: 100vh;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Inter', sans-serif;
-    padding: 20px;
-    margin-top:90px ;
-}
+    }
 
-.register-container {
-    width: 100%;
-    max-width: 700px;
-}
+    .register-body {
+        min-height: 100vh;
 
-.card {
-    border-radius: 12px;
-    overflow: hidden;
-}
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Inter', sans-serif;
+        padding: 20px;
+        margin-top: 90px;
+    }
 
-.logo-img {
-    max-width: 80px;
-    height: auto;
-}
+    .register-container {
+        width: 100%;
+        max-width: 700px;
+    }
 
-.card-title {
-    font-size: 24px;
-    color: #333;
-}
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
 
-.card-subtitle {
-    font-size: 14px;
-    color: #666;
-}
+    .logo-img {
+        max-width: 80px;
+        height: auto;
+    }
 
-.form-control {
-    padding: 12px 16px;
-    font-size: 14px;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    transition: all 0.3s ease;
-}
+    .card-title {
+        font-size: 24px;
+        color: #333;
+    }
 
-.form-control:focus {
-    border-color: #6a11cb;
-    box-shadow: 0 0 8px rgba(106, 17, 203, 0.3);
-}
+    .card-subtitle {
+        font-size: 14px;
+        color: #666;
+    }
 
-.btn-primary {
-    background: #6a11cb;
-    border: none;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
+    .form-control {
+        padding: 12px 16px;
+        font-size: 14px;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
 
-.btn-primary:hover {
-    background: #2575fc;
-    transform: translateY(-2px);
-}
+    .form-control:focus {
+        border-color: #6a11cb;
+        box-shadow: 0 0 8px rgba(106, 17, 203, 0.3);
+    }
 
-.btn-primary:active {
-    transform: translateY(0);
-}
+    .btn-primary {
+        background: #6a11cb;
+        border: none;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #2575fc;
+        transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const countrySelect = document.querySelector('select[name="country"]');
+        if (countrySelect) {
+            countrySelect.setAttribute('size', '6');
+            countrySelect.style.height = '200px';
+            countrySelect.style.overflowY = 'auto';
+        }
+    });
+</script>
 {% endblock %}

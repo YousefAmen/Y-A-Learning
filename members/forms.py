@@ -6,6 +6,9 @@ from django import forms
 from .models import Instructor, Student, SocialLinks, User
 from .signals import user_signed_up
 
+from django_countries.fields import CountryField
+from django_countries.widgets import CountrySelectWidget
+
 
 class SignUpForms(SignupForm):
     first_name = forms.CharField(
@@ -36,12 +39,11 @@ class SignUpForms(SignupForm):
         widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}),
     )
 
-    country = forms.CharField(
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Country"}
+    country = CountryField(blank_label="Select Country").formfield(
+        widget=CountrySelectWidget(
+            attrs={"class": "form-control", "size": "5", "placeholder": "Country"}
         ),
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):

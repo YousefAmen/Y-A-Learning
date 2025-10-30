@@ -28,35 +28,24 @@
       <small class="form-help">Detailed lesson material and instructions</small>
     </div>
 
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="{{ form.thumbnail.id_for_label }}">Thumbnail</label>
-        {{ form.thumbnail }}
-        <small class="form-help">Recommended size: 800x450px</small>
-      </div>
-      <div class="form-group col-md-6">
-        <label for="{{ form.video.id_for_label }}">Video</label>
-        {{ form.video }}
-        <small class="form-help">MP4 format recommended</small>
-      </div>
-    </div>
 
-    <div class="form-group">
-      <label for="{{ form.order.id_for_label }}">Order</label>
-      {{ form.order }}
-      <small class="form-help">Sequence position in the module</small>
+    <div class="form-group col-md-6">
+      <label for="{{ form.video.id_for_label }}">Video</label>
+      {{ form.video }}
+      <small class="form-help">MP4 format recommended</small>
     </div>
+</div>
 
-    <div class="form-actions">
-      <button type="submit" class="btn-save">
-        <i class="fas fa-save me-2"></i> Update Lesson
-      </button>
-      <a href="{% url 'course:create-module' object.module.course.slug object.module.course.token %}"
-        class="btn-cancel">
-        <i class="fas fa-times me-2"></i> Cancel
-      </a>
-    </div>
-  </form>
+
+<div class="form-actions">
+  <button type="submit" class="btn-save">
+    <i class="fas fa-save me-2"></i> Update Lesson
+  </button>
+  <a href="{% url 'course:create-module' object.module.course.slug object.module.course.token %}" class="btn-cancel">
+    <i class="fas fa-times me-2"></i> Cancel
+  </a>
+</div>
+</form>
 </div>
 
 <style>

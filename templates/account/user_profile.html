@@ -614,9 +614,10 @@
                     {% endif %}
 
                     <div class="course-details">
-                        <h3 class="course-title">{{ course.title }}</h3>
-                        <p class="course-instructor">By {{ course.instructor.first_name }}
-                            {{course.instructor.last_name}}</p>
+                        <h3 class="course-title"> <a href="{% url 'course:course-detail' course.slug course.token %}">
+                                {{ course.title }}</a></h3>
+                        <p class="course-instructor">By <a href="{% url 'members:user_profile' user.slug user.token %}">
+                                {{course.instructor.user.first_name }}{{course.instructor.user.last_name}}</a></p>
                         <div class="course-meta">
                             <span class="stars">
                                 {% for i in "12345" %}

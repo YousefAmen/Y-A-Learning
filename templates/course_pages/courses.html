@@ -94,12 +94,12 @@
                 </div>
             </div>
             <div class="row">
-                {% for category in categories %}
+                {% for category in categories|slice:"5" %}
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="single-topic text-center mb-30">
                         <div class="topic-img">
-                            {% if category.thumbnail %}
-                            <img src="{{ category.thumbnail.url }}" alt="">
+                            {% if category.image %}
+                            <img src="{{ category.image.url }}" alt="">
                             {% else %}
                             <img src="{% static 'assets/img/gallery/topic1.png' %}" alt="">
                             {% endif %}

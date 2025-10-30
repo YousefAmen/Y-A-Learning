@@ -1669,19 +1669,21 @@
       <!-- Instructor Tab -->
       <div class="tab-content" id="instructor">
         <div class="instructor-card">
-          {% if course.instructor.profile_pic %}
-          <a href="{% url 'members:user_public_profile' course.instructor.slug course.instructor.token %}"><img
-              src="{{course.instructor.profile_pic.url}}"
-              alt="{{course.instructor.first_name}} {{course.instructor.last_name}}" class="instructor-avatar"></a>
+          {% if course.instructor.user.profile_pic %}
+          <a href="{% url 'members:user_public_profile' course.instructor.user.slug course.instructor.user.token %}"><img
+              src="{{course.instructor.user.profile_pic.url}}"
+              alt="{{course.instructor.user.first_name}} {{course.instructor.user.last_name}}"
+              class="instructor-avatar"></a>
           {% else %}
-          <a href="{% url 'members:user_public_profile' course.instructor.slug course.instructor.token %}"><img
+          <a href="{% url 'members:user_public_profile' course.instructor.user.slug course.instructor.user.token %}"><img
               src="{% static 'assets/img/gallery/team1.png' %}"
-              alt="{{course.instructor.first_name}} {{course.instructor.last_name}}" class="instructor-avatar"></a>
+              alt="{{course.instructor.user.first_name}} {{course.instructor.user.last_name}}"
+              class="instructor-avatar"></a>
           {% endif %}
           <div class="instructor-info">
             <h4><a
-                href="{% url 'members:user_public_profile' course.instructor.slug course.instructor.token %}">{{course.instructor.first_name}}
-                {{course.instructor.last_name}}</a></h4>
+                href="{% url 'members:user_public_profile' course.instructor.user.slug course.instructor.user.token %}">{{course.instructor.user.first_name}}
+                {{course.instructor.user.last_name}}</a></h4>
             <p class="instructor-title">{{course.instructor.bio}}</p>
             <div class="instructor-stats">
               <div class="instructor-stat">
@@ -1713,22 +1715,12 @@
         {% for review in course.course_reviews.all %}
         <div class="review-item">
           <div class="review-header">
-            {% if review.user.instructor %}
-            {% if review.user.instructor.profile_pic %}
-            <div class="reviewer-avatar"><img src="{{review.user.instructor.profile_pic.url }}"
-                alt="{{review.user.instructor.first_name}} {{review.user.instructor.last_name}}"></div>
-            {% else %}
-            <div class="reviewer-avatar"><img src="{% static 'assets/img/gallery/team1.png' %}"
-                alt="{{review.user.instructor.first_name}} {{review.user.instructor.last_name}}"></div>
-            {% endif %}
-            {% else %}
-            {% if review.user.student.profile_pic %}
-            <div class="reviewer-avatar"><img src="{{review.user.student.profile_pic.url }}"
+            {% if review.user.profile_pic %}
+            <div class="reviewer-avatar"><img src="{{review.user.profile_pic.url }}"
                 alt="{{review.user.student.first_name}} {{review.user.student.last_name}}"></div>
             {% else %}
             <div class="reviewer-avatar"><img src="{% static 'assets/img/gallery/team1.png' %}"
-                alt="{{review.user.student.first_name}} {{review.user.student.last_name}}"></div>
-            {% endif %}
+                alt="{{review.user.first_name}} {{review.user.last_name}}"></div>
             {% endif %}
             <div class="reviewer-info">
               <h5>{{review.user.first_name}} {{review.user.last_name}} </h5>
@@ -1764,7 +1756,9 @@
           <p>{{ review.body }}</p>
         </div>
         {% endfor %}
+
         {% if request.user.is_authenticated %}
+        {% if not course.is_free %}
         {% for enrollment in course.course_enrollments.all%}
         {% if request.user == enrollment.user %}
         <div class="review-link-wrapper">
@@ -1774,6 +1768,14 @@
         </div>
         {% endif %}
         {% endfor %}
+        {% else %}
+        <div class="review-link-wrapper">
+          <a href="{% url 'course:create-review' course.token %}" class="review-link-btn">
+            Add Your Review
+          </a>
+        </div>
+
+        {% endif %}
         {% endif %}
       </div>
 
@@ -1809,7 +1811,37 @@
           <i class="fas fa-credit-card"></i> Buy Now
         </a>
       </div>
+      <div class="course-includes">
+        <h4>This course includes:</h4>
+        <ul class="includes-list">
+          <li>
+            <i class="fas fa-video"></i>
+            {{course.total_course_duration|format_duration }} hours on-demand video
+          </li>
+          <li>
+            <i class="fas fa-file-code"></i>
+            19 coding exercises
+          </li>
+          <li>
+            <i class="fas fa-download"></i>
+            Downloadable resources
+          </li>
+          <li>
+            <i class="fas fa-infinity"></i>
+            Full lifetime access
+          </li>
+          <li>
+            <i class="fas fa-mobile-alt"></i>
+            Access on mobile and TV
+          </li>
+          <li>
+            <i class="fas fa-certificate"></i>
+            Certificate of completion
+          </li>
+        </ul>
+      </div>
       {% else %}
+
       <div class="price-section">
         <div class="current-price">
 

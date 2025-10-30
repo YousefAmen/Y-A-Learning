@@ -309,6 +309,11 @@ class EditLesson(PermissionRequiredMixin, UpdateView):
     form_class = AddLessonForm
     permission_required = "course.add_lesson"
 
+    def get_object(self):
+        token = self.kwargs["token"]
+        slug = self.kwargs["slug"]
+        return Lesson.objects.get(token=token, slug=slug)
+
     def get_success_url(self):
         lesson = self.object
         return reverse_lazy(

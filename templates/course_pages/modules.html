@@ -111,7 +111,6 @@
                 <div class="lessons-preview">
                     {% for lesson in module.lessons.all|slice:":3" %}
                     <div class="lesson-preview">
-                        <img src="{{ lesson.thumbnail.url }}" alt="{{ lesson.title }}" class="lesson-thumb-small">
                         <span class="lesson-title-small">{{ lesson.title|truncatewords:4 }}</span>
                     </div>
                     {% empty %}
