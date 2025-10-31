@@ -90,6 +90,7 @@ class Instructor(models.Model):
         choices=TeachingExperience.choices,
         default=TeachingExperience.ONE_YEAR,
         blank=True,
+        max_length=50,
     )
     followers = models.ManyToManyField(User, blank=True, related_name="followers")
 
