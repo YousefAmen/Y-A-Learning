@@ -1,1 +1,2 @@
-web: python manage.py migrate --fake-initial && gunicorn main.wsgi --log-file -
+release: python manage.py migrate --fake-initial
+web: gunicorn main.wsgi --log-file - --bind 0.0.0.0:$PORT
