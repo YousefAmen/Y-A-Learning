@@ -128,14 +128,9 @@ WSGI_APPLICATION = "main.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 # if os.environ.get("DATABASE_PUBLIC_URL"):
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "railway",
-        "USER": "postgres",
-        "PASSWORD": os.environ["DB_PASSWORD"],
-        "HOST": "trolley.proxy.rlwy.net",
-        "PORT": "25723",
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_PUBLIC_URL"), conn_max_age=600
+    )
 }
 # else:
 #     # Local development - Use SQLite
