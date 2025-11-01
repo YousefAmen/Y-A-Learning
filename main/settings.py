@@ -177,7 +177,7 @@ SOCIALACCOUNT_PROVIDERS = {
             "secret": os.getenv("OAUTH_GOOGLE_SECRET"),
             "key": "",
         },
-        "SCOPE": ["User", "email"],
+        "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {
             "access_type": "offline",
             "prompt": "consent",
