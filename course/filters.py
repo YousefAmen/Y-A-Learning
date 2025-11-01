@@ -24,7 +24,7 @@ class CourseFilter(django_filters.FilterSet):
     )
 
     def filter_ordering(self, queryset, name, value):
-        queryset = queryset.filter(is_published=True)
+        queryset = queryset.filter(is_puplished=True)
         if value == "newest":
             return queryset.order_by("-created_at")
         elif value == "oldest":

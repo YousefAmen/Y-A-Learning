@@ -57,7 +57,7 @@ class Index(TemplateView):
                 total_enrollments=Count("course_enrollments", distinct=True),
                 review_count=Count("course_reviews", distinct=True),
             )
-            # .filter(rating__gte=0)
+            .filter(rating__gte=0)
             .order_by("-rating", "-total_enrollments")
         )
         top_instructors = (
@@ -449,7 +449,7 @@ def search(request):
             .distinct()
         )
         instructors = Instructor.objects.filter(
-            Q(first_name__icontains=query) | Q(last_name__icontains=query)
+            Q(user__first_name__icontains=query) | Q(user__last_name__icontains=query)
         ).distinct()
 
         if courses.exists():

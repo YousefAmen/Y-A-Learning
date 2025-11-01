@@ -108,33 +108,36 @@
     <div class="instructors-grid">
         {% for instructor in top_instructors %}
         <div class="instructor-card">
-            {% if instructor.profile_pic %}
-            <img src="{{ instructor.profile_pic.url }}" alt="{{ instructor.first_name }} {{ instructor.last_name }}"
-                class="instructor-image">
+            {% if instructor.user.profile_pic %}
+            <img src="{{ instructor.user.profile_pic.url }}"
+                alt="{{ instructor.user.first_name }} {{ instructor.user.last_name }}" class="instructor-image">
             {% else %}
             <img src="{% static 'assets/img/gallery/team1.png' %}"
-                alt="{{ instructor.first_name }} {{ instructor.last_name }}" class="instructor-image">
+                alt="{{ instructor.user.first_name }} {{ instructor.user.last_name }}" class="instructor-image">
             {% endif %}
-            <h3 class="instructor-name">{{ instructor.first_name }} {{ instructor.last_name }}</h3>
-            <p class="instructor-role">{{ instructor.specialization }}</p>
+            <h3 class="instructor-name">{{ instructor.user.first_name }} {{ instructor.user.last_name }}</h3>
+            {% if instructor.about %}
+            <p class="instructor-bio">{{ instructor.about|truncatewords:20 }}</p>
+            {% else %}
             <p class="instructor-bio">{{ instructor.bio|truncatewords:20 }}</p>
+            {% endif %}
 
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-number">{{ instructor.total_courses }}</div>
+                    <div class="stat-number">{{ instructor.instructor_courses.count }}</div>
                     <div class="stat-label">Courses</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">{{ instructor.students_count }}</div>
+                    <div class="stat-number">{{ instructor.get_students_count }}</div>
                     <div class="stat-label">Students</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">{{ instructor.rating }}</div>
+                    <div class="stat-number">{{ instructor.get_avg_instructor_rating }}</div>
                     <div class="stat-label">Rating</div>
                 </div>
             </div>
 
-            <a href="{% url 'members:user_public_profile' instructor.slug instructor.token %}"
+            <a href="{% url 'members:user_public_profile' instructor.user.slug instructor.user.token %}"
                 class="view-profile-btn">View Profile</a>
         </div>
         {% endfor %}
