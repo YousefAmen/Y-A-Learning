@@ -87,7 +87,7 @@
           </a>
           <div class="card-content">
             <h3><a href="{{ course.get_absolute_url }}">{{ course.title }}</a></h3>
-            <p class="instructor">by {{ course.instructor.first_name }} {{ course.instructor.last_name }}</p>
+            <p class="instructor">by {{ course.instructor.user.first_name }} {{ course.instructor.user.last_name }}</p>
             <div class="course-meta">
               <div class="rating-container">
                 <span class="rating-value">{{ course.avg_rating|floatformat:1|default:"4.8" }}</span>

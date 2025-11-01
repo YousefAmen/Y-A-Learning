@@ -680,8 +680,8 @@
 
                     <div class="course-details">
                         <h3 class="course-title">{{ enroll.course.title }}</h3>
-                        <p class="course-instructor">By {{ enroll.course.instructor.first_name }}
-                            {{enroll.course.instructor.last_name}}</p>
+                        <p class="course-instructor">By {{ enroll.course.instructor.user.first_name }}
+                            {{enroll.course.instructor.user.last_name}}</p>
                         <div class="course-meta">
                             <span class="stars">
                                 {% for i in "12345" %}

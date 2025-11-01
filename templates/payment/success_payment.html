@@ -175,17 +175,9 @@
 
         <!-- Buttons -->
         <div class="actions">
-            {% if request.user.instructor %}
-            <a href="{% url 'members:user_profile' request.user.instructor.slug request.user.instructor.token %}"
-                class="btn btn-secondary">
+            <a href="{% url 'members:user_profile' request.user.slug request.user.token %}" class="btn btn-secondary">
                 Go to My Courses
             </a>
-            {% else %}
-            <a href="{% url 'members:user_profile' request.user.student.slug request.user.student.token %}"
-                class="btn btn-secondary">
-                Go to My Courses
-            </a>
-            {% endif %}
         </div>
 
         <!-- Footer -->

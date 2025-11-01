@@ -23,6 +23,7 @@ from .signals import user_signed_up
 from django.db.models import Count
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.core.exceptions import PermissionDenied
 
 
 @login_required
@@ -103,11 +104,17 @@ def user_profile(request, slug, token):
     return render(request, "account/user_profile.html", context)
 
 
+@login_required
 def edit_profile(request, slug, role, token):
     # get the profile by looping through models and if founded it will break the loop
     user = get_object_or_404(User, slug=slug, role=role, token=token)
+
+    if request.user != user:
+        raise PermissionDenied("You can only edit your own profile.")
+
     instructor = None
     instructor_form = None
+
     if user.role == "instructor":
 
         instructor = Instructor.objects.get(user=user)
@@ -117,9 +124,11 @@ def edit_profile(request, slug, role, token):
         form = UpdateUserProfile(request.POST, request.FILES, instance=user)
         if instructor:
             instructor_form = InstructorEditProfile(request.POST, instance=instructor)
-        if form.is_valid() and instructor_form.is_valid():
+
+        if form.is_valid():
             form.save()
-            instructor_form.save()
+            if instructor_form and instructor_form.is_valid():
+                instructor_form.save()
             messages.success(request, "Profile Is Updated Successfully.")
             return redirect(user.get_absolute_url())
         else:
