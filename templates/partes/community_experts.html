@@ -174,8 +174,9 @@
             {% for instructor in instructors %}
             <div class="single-cat">
                 <div class="cat-icon">
-                    {% if instructor.profile_pic %}
-                    <img src="{{instructor.profile_pic.url}}" alt="{{instructor.first_name}} {{instructor.last_name}}">
+                    {% if instructor.user.profile_pic %}
+                    <img src="{{instructor.user.profile_pic.url}}"
+                        alt="{{instructor.first_name}} {{instructor.last_name}}">
                     {% else %}
                     <img src="{% static 'assets/img/gallery/team1.png' %}" alt="Default Avatar">
                     {% endif %}
@@ -184,7 +185,7 @@
                     <h5><a href="{% url 'members:user_public_profile' instructor.user.slug instructor.user.token %}">Mr.
                             {{instructor.user.first_name}} {{instructor.user.last_name}}</a></h5>
                     {% if instructor.user.about %}
-                    <p>{{instructor.user.about|truncatechars:120}}</p>
+                    <p>{{instructor.about|truncatechars:120}}</p>
                     {% else %}
                     <p>{{instructor.user.bio|truncatechars:120}}</p>
                     {% endif %}
