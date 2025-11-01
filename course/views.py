@@ -412,15 +412,20 @@ def fetch_courses_by_tag(request, tag):
 def fetch_courses_by_category(request, slug):
 
     courses = (
-        Course.objects.filter(category__slug=slug)
+        Course.objects.filter(
+            category__slug=slug,
+        )
+        .annotate(enroll=Count("course_enrollments"), rating=Count("course_reviews"))
+        .filter(rating__gt=0)
         .select_related("category", "instructor")
-        .order_by("-created_at")
+        .order_by("-enroll", "-rating")[:5]
     )
     category = Category.objects.get(slug=slug)
 
     popular_categories = (
         Category.objects.annotate(count=Count("course"))
-        .select_related("course")
+        .prefetch_related("course_set")
+        .exclude(slug=slug)
         .order_by("-count")[:5]
     )
 
