@@ -184,7 +184,7 @@
                 <div class="cat-cap">
                     <h5><a href="{% url 'members:user_public_profile' instructor.user.slug instructor.user.token %}">Mr.
                             {{instructor.user.first_name}} {{instructor.user.last_name}}</a></h5>
-                    {% if instructor.user.about %}
+                    {% if instructor.about %}
                     <p>{{instructor.about|truncatechars:120}}</p>
                     {% else %}
                     <p>{{instructor.user.bio|truncatechars:120}}</p>
